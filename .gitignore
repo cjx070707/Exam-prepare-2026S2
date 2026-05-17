@@ -1,1 +1,9 @@
 Materials2026/
+
+# macOS
+.DS_Store
+
+# Obsidian auto-generated files (change on every file open)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/command-palette.json
