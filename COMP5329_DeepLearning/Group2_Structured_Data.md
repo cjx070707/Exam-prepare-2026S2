@@ -194,7 +194,7 @@ $$\Delta = I - D^{-1/2}AD^{-1/2}$$
 
 **图上的 Fourier 变换**：将拉普拉斯矩阵做特征分解：
 
-$$\Delta = \Phi^\top \Lambda \Phi$$
+$$\Delta = \Phi \Lambda \Phi^\top$$
 
 其中 $\Phi$ 的列是特征向量（图的"频率基"），$\Lambda$ 是特征值（频率）。
 

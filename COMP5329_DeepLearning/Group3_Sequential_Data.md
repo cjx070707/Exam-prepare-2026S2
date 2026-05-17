@@ -78,13 +78,15 @@ $$\boxed{c_t = c_{t-1} \otimes f_t + \tilde{c}_t \otimes i_t}$$
 
 $$h_t = o_t \otimes \tanh(c_t)$$
 
-### 为什么 LSTM 解决了梯度消失？
+### 为什么 LSTM 缓解了梯度消失？
 
-关键在于 $c_t$ 的更新是**加法结构**：
+关键在于细胞状态的**加法更新结构**使梯度路径更短：
 
-$$\frac{\partial c_t}{\partial c_{t-1}} = f_t + \text{其他项}$$
+$$c_t = c_{t-1} \otimes f_t + \tilde{c}_t \otimes i_t \implies \frac{\partial c_t}{\partial c_{t-1}} \approx f_t$$
 
-不同于 RNN 的纯乘法链，LSTM 的梯度包含加法项，遗忘门 $f_t$ 可以学习保持接近 1——让梯度"畅通无阻"地传回去。这是 LSTM 的核心数学洞察。
+梯度通过 $c_t \to c_{t-1}$ 这条路径传播时，只需乘以 $f_t$，而 $f_t$ 是**可学习的**——网络可以将它训练到接近 1，从而让梯度几乎无损地传回去。
+
+相比之下，RNN 的梯度必须逐步乘以 $\tanh'(\cdot) \cdot W_{hh}$，而 $\tanh'$ 的最大值为 1（通常远小于 1），这个乘积几乎总是小于 1，连乘后指数级衰减。LSTM 并没有消除乘法——它让那个乘数变成了可学习的参数，而不是固定的小常数。
 
 ### GRU（Gated Recurrent Unit）
 
