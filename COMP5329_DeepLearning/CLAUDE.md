@@ -35,7 +35,7 @@ equivariance → but CNN requires grid data → GNN extends convolution to arbit
 
 ---
 
-### Group 3 — Sequential Data *(coming soon)*
+### Group 3 — Sequential Data `→` [Group3_Sequential_Data.md](Group3_Sequential_Data.md)
 **Week 7 (RNN/LSTM/GRU) + Week 8 (Transformer, BERT, GPT, ViT, SSM)**
 
 The story: static models can't handle sequences → RNN adds memory → but gradients vanish
@@ -44,7 +44,7 @@ cheaper alternative.
 
 ---
 
-### Group 4 — Beyond Supervised Learning *(coming soon)*
+### Group 4 — Beyond Supervised Learning `→` [Group4_Beyond_Supervised.md](Group4_Beyond_Supervised.md)
 **Week 9 (Multi-modal) + Week 10 (RL) + Week 11 (Self-supervised) + Week 12 (Generative)**
 
 The story: supervised learning requires labels → four escape routes:

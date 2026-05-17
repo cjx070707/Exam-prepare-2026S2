@@ -1,0 +1,445 @@
+# Group 3 — Sequential Data
+**Week 7: RNN / LSTM / GRU / Attention + Week 8: Transformer / BERT / GPT / ViT / SSM**
+
+---
+
+## 这一组在讲什么
+
+CNN 和 GNN 处理的是静态数据——一张图片或一个图。但很多真实问题天生是有顺序的：
+- "今天天气很好" 和 "好很天气今天" 意思完全不同
+- 股价第一天涨、第二天跌，顺序就是信息
+
+MLP 和 CNN 的输入长度是固定的，而且不区分前后顺序。
+
+这一组的叙事线：
+
+> **静态模型处理不了序列** → RNN 加入记忆 → 但梯度消失 → LSTM 用门控解决 → 但无法并行 → Attention 机制 → Transformer 完全替代 RNN → BERT / GPT 分别做理解和生成 → ViT 把图像当序列处理 → Attention 的二次方复杂度 → SSM/Mamba 线性复杂度替代方案
+
+---
+
+## Part 1 — RNN：给网络加上记忆
+
+### 核心思想
+
+RNN 引入一个**隐藏状态 $h_t$**，在处理每个时间步时，同时接受当前输入和上一时刻的隐藏状态：
+
+$$h_t = \tanh(W_{hh} h_{t-1} + W_{hx} x_t + b)$$
+
+$$y_t = W_{yh} h_t$$
+
+$h_t$ 就是网络的"记忆"——它压缩了过去所有时间步的信息。
+
+### RNN 的优缺点
+
+| 优点 | 缺点 |
+|------|------|
+| 理论上可以记住任意长度的历史 | **无法并行**：每步依赖上一步 |
+| 参数少（权重在所有时间步共享） | **梯度消失/爆炸** |
+
+### 为什么梯度会消失？
+
+反向传播时，梯度需要从最后一个时间步传回第一个：
+
+$$\frac{\partial E_k}{\partial W} = \frac{\partial E_k}{\partial h_k} \prod_{t=2}^{k} \frac{\partial h_t}{\partial h_{t-1}} \cdot \frac{\partial h_1}{\partial W}$$
+
+每个 $\frac{\partial h_t}{\partial h_{t-1}} = \tanh'(\cdot) \cdot W_{hh}$，而 $\tanh'$ 最大值是 1（通常小于 1）。
+
+**$k$ 步的连乘积 → 指数级缩小 → 梯度消失，网络记不住长期依赖。**
+
+反之，如果 $W_{hh}$ 很大，连乘积爆炸 → **梯度爆炸**（用 gradient clipping 解决）。
+
+> **考试提示**：梯度消失和 tanh 的饱和性是 RNN 的核心弱点，是 LSTM 被发明的直接动机。
+
+---
+
+## Part 2 — LSTM：用门控保护梯度
+
+LSTM 在 RNN 的基础上加入了一个**细胞状态 $c_t$**（cell state），通过三个门控来控制信息的流入和流出。
+
+### 三个门
+
+**遗忘门（Forget gate）**：决定从旧的细胞状态中忘掉多少：
+
+$$f_t = \sigma(W_{fh} h_{t-1} + W_{fx} x_t)$$
+
+**输入门（Input gate）**：决定把多少新信息写入细胞状态：
+
+$$i_t = \sigma(W_{ih} h_{t-1} + W_{ix} x_t)$$
+
+$$\tilde{c}_t = \tanh(W_{hh} h_{t-1} + W_{hx} x_t) \quad \text{（候选新信息）}$$
+
+**输出门（Output gate）**：决定从细胞状态中读取多少作为输出：
+
+$$o_t = \sigma(W_{oh} h_{t-1} + W_{ox} x_t)$$
+
+### 细胞状态更新
+
+$$\boxed{c_t = c_{t-1} \otimes f_t + \tilde{c}_t \otimes i_t}$$
+
+$$h_t = o_t \otimes \tanh(c_t)$$
+
+### 为什么 LSTM 解决了梯度消失？
+
+关键在于 $c_t$ 的更新是**加法结构**：
+
+$$\frac{\partial c_t}{\partial c_{t-1}} = f_t + \text{其他项}$$
+
+不同于 RNN 的纯乘法链，LSTM 的梯度包含加法项，遗忘门 $f_t$ 可以学习保持接近 1——让梯度"畅通无阻"地传回去。这是 LSTM 的核心数学洞察。
+
+### GRU（Gated Recurrent Unit）
+
+LSTM 的简化版，只有两个门（reset gate 和 update gate），没有独立的 cell state：
+
+$$r_t = \sigma(W_r[h_{t-1}, x_t])$$
+$$z_t = \sigma(W_z[h_{t-1}, x_t])$$
+$$\tilde{h}_t = \tanh(W[r_t \otimes h_{t-1}, x_t])$$
+$$h_t = (1-z_t) \otimes h_{t-1} + z_t \otimes \tilde{h}_t$$
+
+参数更少，速度更快，性能和 LSTM 接近。
+
+| | RNN | LSTM | GRU |
+|---|---|---|---|
+| 记忆机制 | $h_t$ | $h_t + c_t$ | $h_t$ |
+| 门的数量 | 0 | 3 | 2 |
+| 梯度消失 | 严重 | 大幅缓解 | 大幅缓解 |
+| 参数量 | 少 | 多 | 中 |
+
+---
+
+## Part 3 — Seq2Seq + Attention：翻译长句子
+
+### Seq2Seq 问题
+
+机器翻译需要把一个变长序列映射到另一个变长序列，比如英文翻译成中文。
+
+Encoder-Decoder 架构：Encoder 把输入序列压缩成一个固定长度的 context vector，Decoder 从这个 vector 生成输出。
+
+**致命缺陷**：一个固定长度的向量装不下很长的句子的所有信息——Encoder 处理完整个句子后，早期的词信息基本上已经被覆盖了。
+
+### Attention 机制
+
+Attention 的核心思想：Decoder 生成每个词时，不再只用一个固定的 context vector，而是动态地"关注"Encoder 在每个位置的输出。
+
+对齐分数（alignment score）：
+
+$$\text{score}(s_{t-1}, h_i) = v_a^\top \tanh(W_a [s_{t-1}; h_i])$$
+
+注意力权重（softmax 归一化）：
+
+$$\alpha_{t,i} = \frac{\exp(\text{score}(s_{t-1}, h_i))}{\sum_{i'} \exp(\text{score}(s_{t-1}, h_{i'}))}$$
+
+上下文向量（加权求和）：
+
+$$c_t = \sum_i \alpha_{t,i} h_i$$
+
+**直觉**：翻译第 $t$ 个目标词时，$\alpha_{t,i}$ 告诉网络应该重点关注源句子的第 $i$ 个词。
+
+---
+
+## Part 4 — Self-Attention & Transformer：抛弃 RNN
+
+### 从 Attention 到 Self-Attention
+
+上面的 Attention 是 Decoder 对 Encoder 的注意力（cross-attention）。Self-attention 是序列对自身的注意力——每个位置都可以直接看到序列中所有其他位置。
+
+### Query, Key, Value
+
+每个位置 $i$ 的输入 $a_i$ 被线性变换为三个向量：
+
+$$q_i = W^q a_i, \quad k_i = W^k a_i, \quad v_i = W^v a_i$$
+
+**直觉**：Query 是"我在找什么"，Key 是"我有什么"，Value 是"如果你关注我，你得到什么"。
+
+### Scaled Dot-Product Attention
+
+$$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V$$
+
+- $QK^\top$：计算所有 query-key 对的相似度，形状 $(N, N)$
+- $\sqrt{d_k}$：缩放，防止内积太大导致 softmax 饱和
+- $\text{softmax}$：归一化成权重
+- $\times V$：加权求和
+
+### Multi-Head Attention
+
+用 $h$ 个独立的 attention head，每个 head 学习不同的关注模式，最后拼接：
+
+$$\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O$$
+
+### Transformer 的优势
+
+| | RNN/LSTM | Transformer |
+|---|---|---|
+| 长距离依赖 | 通过隐状态间接传递，容易衰减 | 任意两个位置直接相互关注 |
+| 并行训练 | 不能（每步依赖上一步）| 完全并行 |
+| 复杂度 | $O(N)$ 时间，$O(1)$ 内存 | $O(N^2)$ 时间和内存 |
+
+> **考试提示**：为什么要除以 $\sqrt{d_k}$？因为 $q$ 和 $k$ 的维度是 $d_k$，内积的量级约为 $d_k$，不缩放会导致 softmax 的梯度趋近于零（进入饱和区）。
+
+---
+
+## Part 5 — BERT vs GPT：同样是 Transformer，方向相反
+
+BERT 和 GPT 共享 Transformer 的架构，但 **attention mask 完全不同**——这是两者的本质区别。
+
+### BERT（Encoder-only）
+
+**Attention mask**：完全不 mask（双向），每个位置可以看到序列的所有位置。
+
+**预训练目标**：Masked Language Modeling（MLM）——随机遮掩 15% 的 token，让模型从上下文预测被遮掩的词。
+
+**为什么需要双向**：预测被遮掩的词需要同时利用左边和右边的上下文。
+
+**下游任务**：在 `[CLS]` 位置接分类头 → 情感分析、问答、NER 等理解任务。
+
+### GPT（Decoder-only）
+
+**Attention mask**：因果 mask（causal/lower-triangular），位置 $i$ 只能看到 $j \leq i$ 的位置。
+
+$$M_{ij} = \begin{cases} 1 & j \leq i \\ 0 & j > i \end{cases}$$
+
+**预训练目标**：Next-token prediction——给定前缀，预测下一个 token。
+
+$$\mathcal{L} = -\sum_t \log p_\theta(x_t | x_{<t})$$
+
+**下游任务**：自回归生成，一次预测一个 token。
+
+### 对比表
+
+| | BERT | GPT |
+|---|---|---|
+| 架构 | Encoder-only | Decoder-only |
+| Attention | 双向（全部可见）| 因果（只看左边）|
+| 预训练目标 | MLM（填空）| Next-token（接龙）|
+| 适合场景 | 理解：分类、问答 | 生成：对话、补全 |
+| 推理方式 | 一次前向传播 | 逐 token 自回归 |
+
+> **考试高频**："BERT 和 GPT 的 attention mask 有什么区别？各自适合什么任务？为什么？"——这道题必须从 mask 出发来回答，不能只说"BERT 理解 GPT 生成"。
+
+---
+
+## Part 6 — ViT：把图像当成序列
+
+### 核心问题
+
+Transformer 是为 1D 序列（tokens）设计的，图像是 2D 的。ViT 的回答：**把图像切成 patch，每个 patch 就是一个 token**。
+
+### Pipeline（必须能默写）
+
+1. **Unfold**：把 $H\times W$ 的图像切成 $T = \frac{H}{P}\cdot\frac{W}{P}$ 个 $P\times P$ 的 patch
+2. **Linear projection**：每个 patch 展平后线性投影到 $D$ 维 embedding
+3. **Prepend [CLS]**：在最前面加一个可学习的 `[CLS]` token
+4. **Add positional encoding**：加上可学习的位置编码（不用 sinusoidal，直接 learned）
+5. **Transformer encoder**：标准 Transformer encoder 处理
+6. **分类**：取 `[CLS]` 位置的输出接分类头
+
+**为什么需要位置编码**：Self-attention 是置换不变的（shuffle tokens → 同样的输出集合），不加位置编码网络无法区分 patch 的空间位置。
+
+**为什么 ViT 在小数据集上不如 CNN**：CNN 内置了局部性和平移等变性这两个 inductive bias，小数据就能学好；ViT 没有这些假设，需要海量数据才能学到类似的规律。
+
+---
+
+## Part 7 — SSM/Mamba：线性复杂度替代方案
+
+### Transformer 的瓶颈
+
+Self-attention 的复杂度是 $O(N^2)$——序列长度翻倍，计算量翻四倍。对于长文档、长视频、基因组序列，这个代价是不可接受的。
+
+### 线性状态空间模型（SSM）
+
+从控制论借来的思想。连续时间系统：
+
+$$h'(t) = Ah(t) + Bx(t), \quad y(t) = Ch(t)$$
+
+**离散化**（步长 $\Delta$，Euler 方法）：
+
+$$\bar{A} = I + \Delta A, \quad \bar{B} = \Delta B$$
+
+$$\boxed{h_{k+1} = \bar{A} h_k + \bar{B} x_k, \quad y_k = C h_k}$$
+
+这就是一个**线性 RNN**，但因为是线性的，可以展开成卷积！
+
+### 卷积等价形式（训练时用）
+
+令初始状态 $h_0 = 0$，展开递推：
+
+$$y_k = \sum_{i=0}^{k} \underbrace{(C\bar{A}^{k-i}\bar{B})}_{K_{k-i}} x_i = (K * x)_k$$
+
+其中卷积核 $K_i = C\bar{A}^i\bar{B}$，可以用 FFT 在 $O(N\log N)$ 内计算。
+
+**训练时**：用卷积形式，完全并行。  
+**推理时**：用递推形式，$O(N)$ 状态，不需要存整个序列。
+
+### S4 → Mamba：选择性机制
+
+S4 的问题：$\bar{A}, \bar{B}, C$ 对所有输入是固定的，不能"选择性"关注某些 token。
+
+Mamba 让 $\Delta, B, C$ 都是输入的函数：
+
+$$\Delta_t = \text{softplus}(\text{Linear}(x_t)), \quad B_t = \text{Linear}(x_t), \quad C_t = \text{Linear}(x_t)$$
+
+**代价**：输入相关的参数使得卷积核 $K_i$ 不再固定，卷积等价性消失，必须用 **parallel scan**（并行扫描算法）来训练。
+
+| | Transformer | S4/Mamba |
+|---|---|---|
+| 训练复杂度 | $O(N^2)$ | $O(N \log N)$ |
+| 推理（每 token）| $O(N)$（需要 KV cache）| $O(N_\text{state})$（常数！）|
+| 长序列 | 代价高 | 高效 |
+| 选择性关注 | ✓ (Attention) | Mamba ✓，S4 ✗ |
+
+---
+
+## 能力检查清单
+
+**概念理解（短答 / 选择）**
+- [ ] 解释 RNN 梯度消失的根本原因（连乘积中 tanh' 小于 1）
+- [ ] 写出 LSTM 的三个门的公式（$f_t, i_t, o_t$）和细胞状态更新公式
+- [ ] 解释 LSTM 为什么能缓解梯度消失（加法结构 + 遗忘门）
+- [ ] 写出 scaled dot-product attention 的公式，解释为什么要除以 $\sqrt{d_k}$
+- [ ] 画出 BERT 和 GPT 的 attention mask 矩阵，说出各自适合什么任务
+- [ ] 列出 ViT 的 patch embedding pipeline 的 4 个步骤
+- [ ] 解释为什么 ViT 需要位置编码（self-attention 是置换不变的）
+- [ ] 说出 SSM 的卷积等价形式的卷积核公式 $K_i = C\bar{A}^i\bar{B}$
+- [ ] 解释为什么 Mamba 失去了卷积等价性（输入相关参数）
+
+**手写代码（手写代码题）**
+- [ ] 手写 LSTM 的前向计算（三个门 + 细胞状态 + 输出）
+- [ ] 手写 Scaled Dot-Product Attention（矩阵运算版本）
+- [ ] 手写 ViT Patch Embedding（unfold → linear → [CLS] → pos_embed）
+- [ ] 手写 SSM 递推形式和卷积核的构建
+
+**分析比较（论述题）**
+- [ ] 比较 RNN / LSTM / Transformer 在处理长序列时的优缺点
+- [ ] 解释 BERT 和 GPT 的 mask 机制差异如何决定它们的用途
+- [ ] 分析 ViT 在小数据集上不如 CNN 的原因（inductive bias）
+- [ ] 比较 Transformer 和 SSM 在训练/推理复杂度上的权衡
+
+---
+
+## 代码对应数学
+
+### 算法一：LSTM 前向计算
+
+```python
+def lstm_forward(x_t, h_prev, c_prev, W_f, W_i, W_o, W_c):
+    # 输入拼接：[h_{t-1}, x_t]
+    combined = torch.cat([h_prev, x_t], dim=-1)
+
+    # 三个门：全都是 sigmoid
+    f_t = torch.sigmoid(combined @ W_f)   # 遗忘门：决定忘掉多少 c_{t-1}
+    i_t = torch.sigmoid(combined @ W_i)   # 输入门：决定写入多少新信息
+    o_t = torch.sigmoid(combined @ W_o)   # 输出门：决定读出多少 c_t
+
+    # 候选细胞状态（用 tanh，范围 -1 到 1）
+    c_tilde = torch.tanh(combined @ W_c)
+
+    # 细胞状态更新：加法结构（这里是关键！）
+    c_t = c_prev * f_t + c_tilde * i_t   # ⊗ 就是逐元素乘
+
+    # 输出
+    h_t = o_t * torch.tanh(c_t)
+
+    return h_t, c_t
+```
+
+**记忆要点**：三个门都用 sigmoid（输出 0-1 作为"阀门"），候选状态用 tanh。细胞状态是加法更新，不是乘法链。
+
+---
+
+### 算法二：Scaled Dot-Product Attention
+
+**数学**：$\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$
+
+```python
+def scaled_dot_product_attention(Q, K, V, mask=None):
+    # Q: (B, N, d_k), K: (B, N, d_k), V: (B, N, d_v)
+    d_k = Q.shape[-1]
+
+    # 计算相似度分数：(B, N, N)
+    scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+    #        ↑ QK^T                   ↑ 除以 sqrt(d_k) 防止饱和
+
+    # 因果 mask（GPT 用，BERT 不用）
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+
+    # softmax → 注意力权重
+    weights = torch.softmax(scores, dim=-1)   # (B, N, N)
+
+    # 加权求和
+    output = weights @ V                       # (B, N, d_v)
+    return output
+```
+
+**记忆要点**：
+- `Q @ K.T` 的形状是 `(N, N)`，代表每对 token 的相似度
+- mask 用 `-inf` 填充，softmax 后变成 0，实现因果屏蔽
+- 最后乘以 V 是加权求和
+
+---
+
+### 算法三：ViT Patch Embedding
+
+```python
+class ViTPatchEmbedding(nn.Module):
+    def __init__(self, img_size, patch_size, in_chans, embed_dim):
+        super().__init__()
+        self.num_patches = (img_size // patch_size) ** 2
+        self.unfold = nn.Unfold(kernel_size=patch_size, stride=patch_size)
+        self.proj   = nn.Linear(in_chans * patch_size**2, embed_dim)
+        self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+        self.pos_embed = nn.Parameter(torch.zeros(1, 1 + self.num_patches, embed_dim))
+
+    def forward(self, x):
+        B = x.shape[0]
+        # Step 1: unfold → (B, C*P*P, T)
+        patches = self.unfold(x)
+        # Step 2: project → (B, T, D)
+        tokens = self.proj(patches.transpose(1, 2))
+        # Step 3: prepend [CLS]
+        cls = self.cls_token.expand(B, -1, -1)
+        tokens = torch.cat([cls, tokens], dim=1)  # (B, T+1, D)
+        # Step 4: add positional embedding
+        tokens = tokens + self.pos_embed
+        return tokens
+```
+
+---
+
+### 算法四：SSM 卷积核构建
+
+```python
+def build_ssm_kernel(A_bar, B_bar, C, L):
+    K = torch.zeros(L)
+    A_pow_B = B_bar.clone()          # 初始化为 B_bar（对应 A^0 B = B）
+
+    for i in range(L):
+        K[i] = (C @ A_pow_B).squeeze()   # K_i = C * A_bar^i * B_bar
+        A_pow_B = A_bar @ A_pow_B         # 递推：A_bar^{i+1} B = A_bar * (A_bar^i B)
+
+    return K   # y = conv(x, K) 等价于递推形式
+```
+
+**记忆要点**：用递推避免每次都算 $\bar{A}^i$（$O(L N^2)$ vs 朴素的 $O(L^2 N^3)$）。
+
+---
+
+### 默写练习
+
+1. 从空白写出 LSTM 一个时间步的前向计算（三个门 + 细胞状态 + 输出）
+2. 从空白写出 Scaled Dot-Product Attention，包含 causal mask 的处理
+3. 默写 ViT Patch Embedding 的 forward 方法（4 步）
+4. 解释：为什么 SSM 的卷积核 $K_i = C\bar{A}^i\bar{B}$ 要用递推而不是直接算幂次？
+
+---
+
+## 下一组预告
+
+到目前为止，所有方法都是**有监督学习**——需要人工标注的标签。但标签是昂贵的、稀缺的。
+
+Group 4 讲的是四条"脱离标签束缚"的路：
+- **多模态**：用不同模态的数据互相监督
+- **强化学习**：用环境的奖励信号代替标签
+- **自监督学习**：用数据本身作为监督信号
+- **生成模型**：不分类，直接学习数据分布来生成新数据
+
+→ **Group 4：超越有监督学习**
