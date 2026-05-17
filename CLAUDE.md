@@ -27,7 +27,7 @@ model overfits → regularization fixes this.
 
 ---
 
-### Group 2 — Structured Data *(coming soon)*
+### Group 2 — Structured Data `→` [Group2_Structured_Data.md](Group2_Structured_Data.md)
 **Week 4 (CNN) + Week 5 (GNN)**
 
 The story: MLP ignores spatial structure in images → CNN exploits locality and translation
