@@ -244,9 +244,9 @@ $$\hat{x} = \frac{x - \mu_\text{batch}}{\sqrt{\sigma^2_\text{batch} + \varepsilo
 学完这一组，你应该能做到：
 
 **概念理解（短答 / 选择）**
-- [ ] 用一句话解释为什么 Perceptron 解决不了 XOR
-- [ ] 解释 Universal Approximation Theorem 的含义和局限
-- [ ] 说出 Sigmoid 的两个主要缺点（梯度消失 + 不以零为中心）
+- [x] 用一句话解释为什么 Perceptron 解决不了 XOR
+- [x] 解释 Universal Approximation Theorem 的含义和局限
+- [x] 说出 Sigmoid 的两个主要缺点（梯度消失 + 不以零为中心）
 - [ ] 解释为什么深层网络首选 ReLU 而非 Sigmoid
 - [ ] 解释 Adam 为什么需要 bias correction
 - [ ] 说出 L2 正则化的贝叶斯解释
