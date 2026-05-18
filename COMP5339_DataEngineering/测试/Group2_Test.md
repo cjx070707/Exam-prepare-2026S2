@@ -15,12 +15,8 @@
 - C. An analyst queries three years of regional sales trends
 - D. An employee updates their personal profile in an HR system
 
-<details>
-<summary>Answer</summary>
-
-**C** — OLAP (Online Analytical Processing) is designed for large-scale, historical, aggregation-heavy queries by analysts. Options A, B, and D are short, transactional operations on current data — typical OLTP workloads.
-
-</details>
+> [!note]- Answer
+> **C** — OLAP is designed for large-scale, historical, aggregation-heavy queries by analysts. Options A, B, and D are short, transactional operations on current data — typical OLTP workloads.
 
 ---
 
@@ -31,12 +27,8 @@
 - C. Bridge Table
 - D. Lookup Table
 
-<details>
-<summary>Answer</summary>
-
-**B** — A **Fact Table** stores measurable business events (`Sales_Amt`) and holds foreign keys to each Dimension Table (`Market_Id`, `Product_Id`, `Time_Id`). Dimension Tables store descriptive attributes about those dimensions.
-
-</details>
+> [!note]- Answer
+> **B** — A **Fact Table** stores measurable business events (`Sales_Amt`) and holds foreign keys to each Dimension Table. Dimension Tables store descriptive attributes about those dimensions.
 
 ---
 
@@ -47,12 +39,8 @@
 - C. ETL supports unstructured data; ELT only handles structured data
 - D. ELT requires an external transformation tool; ETL does not
 
-<details>
-<summary>Answer</summary>
-
-**B** — ETL = Extract → Transform → Load (transformation happens outside the destination). ELT = Extract → Load → Transform (raw data is loaded first, transformation happens inside the data warehouse or lake using its own compute power). ELT is common in modern cloud data warehouses like BigQuery and Snowflake.
-
-</details>
+> [!note]- Answer
+> **B** — ETL = Extract → Transform → Load (transformation happens outside the destination). ELT = Extract → Load → Transform (raw data is loaded first, transformation happens inside the data warehouse using its own compute). ELT is common in modern cloud warehouses like BigQuery and Snowflake.
 
 ---
 
@@ -63,12 +51,8 @@
 - C. A Data Warehouse stores raw data; a Data Lake stores refined data
 - D. A Data Lake does not support SQL queries
 
-<details>
-<summary>Answer</summary>
-
-**B** — **Schema-on-read** means structure is defined when data is queried (flexible, but may be messy). **Schema-on-write** means structure is enforced when data is loaded (rigid but clean). Data Lakes (HDFS, S3) use schema-on-read; Data Warehouses (Snowflake, BigQuery) enforce schema-on-write.
-
-</details>
+> [!note]- Answer
+> **B** — **Schema-on-read** means structure is defined when data is queried (flexible, but may be messy). **Schema-on-write** means structure is enforced when data is loaded (rigid but clean). Data Lakes (HDFS, S3) use schema-on-read; Data Warehouses (Snowflake, BigQuery) enforce schema-on-write.
 
 ---
 
@@ -79,12 +63,8 @@
 - C. Either `name` or `age` must appear (mutually exclusive)
 - D. `name` appears zero or more times; `age` appears exactly once
 
-<details>
-<summary>Answer</summary>
-
-**B** — In DTD syntax: `?` = zero or one (optional); `*` = zero or more; `+` = one or more; no symbol = exactly once. The comma means the elements must appear in sequence.
-
-</details>
+> [!note]- Answer
+> **B** — In DTD syntax: `?` = zero or one (optional); `*` = zero or more; `+` = one or more; no symbol = exactly once. The comma means the elements must appear in that sequence.
 
 ---
 
@@ -99,12 +79,8 @@ db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 - C. Inserts a record with `age > 20` including `name` and `address`
 - D. Updates `name` and `address` for students older than 20
 
-<details>
-<summary>Answer</summary>
-
-**B** — In MongoDB's `find()`, the first argument is the **filter** (`{ age: { $gt: 20 } }`) and the second is the **projection** (`{ name: 1, address: 1 }`), which specifies which fields to return. Setting a field to `1` includes it; `0` excludes it.
-
-</details>
+> [!note]- Answer
+> **B** — The first argument is the **filter** (`{ age: { $gt: 20 } }`); the second is the **projection** (`{ name: 1, address: 1 }`), which specifies which fields to return. Setting a field to `1` includes it.
 
 ---
 
@@ -115,28 +91,20 @@ db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 - C. Multi-hop relationship traversals (e.g., "friends of friends")
 - D. High-volume bulk INSERT operations
 
-<details>
-<summary>Answer</summary>
-
-**C** — Graph databases store relationships as first-class citizens (edges), making multi-hop traversals O(1) per hop regardless of dataset size. Relational databases must perform repeated, expensive JOIN operations for the same task, which degrades rapidly as hops increase.
-
-</details>
+> [!note]- Answer
+> **C** — Graph databases store relationships as first-class citizens (edges), making multi-hop traversals O(1) per hop. Relational databases must perform repeated, expensive JOIN operations for the same task, which degrades rapidly as hops increase.
 
 ---
 
-**Q8.** Which NoSQL database type is best suited for storing **social network relationships**?
+**Q8.** Which NoSQL type is best suited for storing **social network relationships**?
 
 - A. Document Store
 - B. Wide Column Store
 - C. Graph Database
 - D. Time Series Database
 
-<details>
-<summary>Answer</summary>
-
-**C** — Social networks are fundamentally about relationships between entities (users, posts, likes). Graph databases model nodes and edges natively, making friend recommendations, shortest-path queries, and influence analysis highly efficient.
-
-</details>
+> [!note]- Answer
+> **C** — Social networks are fundamentally about relationships between entities. Graph databases model nodes and edges natively, making friend recommendations and shortest-path queries highly efficient.
 
 ---
 
@@ -147,12 +115,8 @@ db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 - C. Correctly rendered by any modern browser
 - D. Semantically meaningful in its business context
 
-<details>
-<summary>Answer</summary>
-
-**B** — **Well-formed** = satisfies XML syntax rules (proper nesting, closed tags, quoted attributes). **Valid** = well-formed **plus** the structure and content conform to a declared DTD or XML Schema. A document can be well-formed but not valid.
-
-</details>
+> [!note]- Answer
+> **B** — **Well-formed** = satisfies XML syntax rules (proper nesting, closed tags, quoted attributes). **Valid** = well-formed **plus** the structure and content conform to a declared DTD or XML Schema. A document can be well-formed but not valid.
 
 ---
 
@@ -163,12 +127,8 @@ db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 - C. MongoDB stores documents in JSON format and supports nested structures
 - D. MongoDB uses SQL as its query language
 
-<details>
-<summary>Answer</summary>
-
-**C** — MongoDB is schema-late (no upfront schema required), documents within the same collection can have different structures, data is stored as BSON (binary JSON), and the query language is JavaScript-based — not SQL.
-
-</details>
+> [!note]- Answer
+> **C** — MongoDB is schema-late (no upfront schema required). Documents within the same collection can have different structures. Data is stored as BSON (binary JSON). The query language is JavaScript-based, not SQL.
 
 ---
 
@@ -176,91 +136,67 @@ db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 
 **Q11.** Compare OLTP and OLAP systems across three dimensions: **read/write patterns**, **query characteristics**, and **data volume**. Give one typical example of each. (8 marks)
 
-<details>
-<summary>Answer</summary>
-
-| Dimension | OLTP | OLAP |
-|-----------|------|------|
-| Read/write pattern | Frequent INSERT / UPDATE / DELETE on individual rows; point queries by primary key | Bulk ETL/ELT loads; large aggregation scans (COUNT, SUM, AVG across millions of rows) |
-| Query characteristics | Short, predefined, low-latency transactions | Complex, ad-hoc analytical queries by data analysts; may run for seconds or minutes |
-| Data volume | GB to TB (current operational data) | TB to PB (historical records spanning years) |
-
-*OLTP example*: A bank's transaction processing system — each ATM withdrawal is a discrete, immediate transaction.
-
-*OLAP example*: A retail data warehouse — analysts query year-on-year sales growth by product category across all regions.
-
-</details>
+> [!note]- Answer
+> | Dimension | OLTP | OLAP |
+> |-----------|------|------|
+> | Read/write pattern | Frequent INSERT/UPDATE/DELETE on individual rows; point queries by primary key | Bulk ETL/ELT loads; large aggregation scans (SUM, COUNT, AVG over millions of rows) |
+> | Query characteristics | Short, predefined, low-latency transactions | Complex, ad-hoc analytical queries; may run for seconds or minutes |
+> | Data volume | GB to TB (current operational data) | TB to PB (multi-year historical records) |
+> 
+> *OLTP example*: A bank's transaction processing system — each ATM withdrawal is a discrete, immediate transaction.
+> 
+> *OLAP example*: A retail data warehouse — analysts query year-on-year sales growth by product category across all regions.
 
 ---
 
-**Q12.** Describe the structure of a **Star Schema**. Explain what a Fact Table and a Dimension Table each store and how they relate to each other. Use a hypothetical e-commerce data warehouse as an example. (8 marks)
+**Q12.** Describe the structure of a **Star Schema**. Explain what a Fact Table and Dimension Tables store and how they relate. Use a hypothetical e-commerce data warehouse as an example. (8 marks)
 
-<details>
-<summary>Answer</summary>
-
-**Structure**:
-- A **Fact Table** sits at the centre. It stores measurable business events (facts) and holds foreign keys pointing to each surrounding Dimension Table. Facts are typically numeric and additive (e.g., revenue, quantity).
-- **Dimension Tables** surround the fact table. Each describes one aspect (dimension) of a fact — who, what, when, where. They contain descriptive, textual attributes.
-- The Fact Table links to Dimension Tables via foreign keys, forming a star-like shape.
-
-**E-commerce example**:
-
-```
-Fact Table:
-  Orders(order_id, customer_id, product_id, time_id, region_id, order_amount, quantity)
-
-Dimension Tables:
-  Customer(customer_id, name, age, membership_tier, email)
-  Product(product_id, name, category, brand, unit_price)
-  Time(time_id, date, week, month, quarter, year)
-  Region(region_id, city, state, country)
-```
-
-To answer "total revenue by product category in Q1 2025", you JOIN `Orders` with `Product` (for category) and `Time` (for Q1 2025), then SUM `order_amount`.
-
-</details>
+> [!note]- Answer
+> **Structure**:
+> - A **Fact Table** sits at the centre. It stores measurable business events (facts) and holds foreign keys pointing to each Dimension Table. Facts are typically numeric and additive (e.g., revenue, quantity).
+> - **Dimension Tables** surround the fact table, each describing one aspect of a fact — who, what, when, where.
+> - The Fact Table links to Dimension Tables via foreign keys, forming a star-like shape.
+> 
+> **E-commerce example**:
+> ```
+> Fact:    Orders(order_id, customer_id, product_id, time_id, region_id, order_amount)
+> Dims:    Customer(customer_id, name, age, email)
+>          Product(product_id, name, category, unit_price)
+>          Time(time_id, date, month, quarter, year)
+>          Region(region_id, city, state, country)
+> ```
+> To answer "total revenue by product category in Q1 2025", JOIN `Orders` with `Product` and `Time`, then SUM `order_amount`.
 
 ---
 
 **Q13.** Explain why a Data Lake can easily become a **"data swamp"**. How do organisations typically combine a Data Lake and a Data Warehouse in practice? (8 marks)
 
-<details>
-<summary>Answer</summary>
-
-**Why Data Lakes become swamps**:
-- Data is loaded with no enforced schema (schema-on-read), so raw files accumulate with inconsistent formats and no documentation
-- Without a metadata catalogue, users cannot discover what data exists, what it means, or whether it is trustworthy
-- No data quality checks at ingestion mean corrupted or duplicated records mix with valid data
-- Over time, the lake fills with data nobody maintains, understands, or uses — becoming effectively inaccessible
-
-**Practical combination**:
-1. **Raw ingestion layer (Data Lake — HDFS/S3)**: All raw data lands here first, in its original format. Nothing is discarded. This preserves full history and supports future re-processing.
-2. **ETL/ELT pipeline**: Data is cleaned, standardised, and modelled (e.g., into a Star Schema).
-3. **Curated layer (Data Warehouse — Snowflake/BigQuery)**: Refined, business-ready tables are stored here for BI tools and analysts.
-
-This split gives the flexibility of a lake (store everything cheaply) with the reliability and performance of a warehouse (query clean, structured data efficiently).
-
-</details>
+> [!note]- Answer
+> **Why Data Lakes become swamps**:
+> - Data is loaded with no enforced schema (schema-on-read), so raw files accumulate with inconsistent formats and no documentation.
+> - Without a metadata catalogue, users cannot discover what data exists or whether it is trustworthy.
+> - No data quality checks at ingestion mean corrupted or duplicated records mix with valid data.
+> - Over time, the lake fills with data nobody maintains or understands — effectively inaccessible.
+> 
+> **Practical combination**:
+> 1. **Data Lake (HDFS/S3)**: All raw data lands here first, in its original format. Nothing is discarded.
+> 2. **ETL/ELT pipeline**: Data is cleaned, standardised, and modelled.
+> 3. **Data Warehouse (Snowflake/BigQuery)**: Refined, business-ready tables are stored here for BI and analysts.
+> 
+> This gives the flexibility of a lake (store everything cheaply) with the reliability of a warehouse (query clean, structured data efficiently).
 
 ---
 
 **Q14.** Compare a **relational database (RDBMS)** and a **graph database** across three dimensions: data model, query language, and performance advantage. When should you prefer a graph database? (8 marks)
 
-<details>
-<summary>Answer</summary>
-
-| Dimension | RDBMS (e.g., PostgreSQL) | Graph DB (e.g., Neo4j) |
-|-----------|--------------------------|------------------------|
-| Data model | Tables with rows and columns; relationships expressed via foreign keys | Nodes (entities) + Edges (relationships) + Properties; relationships are stored explicitly |
-| Query language | SQL | Cypher (Neo4j), SPARQL, Gremlin |
-| Performance advantage | ACID transactions; efficient bulk aggregations; well-optimised for structured, tabular data | Multi-hop graph traversal in O(1) per hop; avoids costly repeated JOINs |
-
-**When to prefer a graph database**:
-- The core problem involves traversing **relationships** rather than aggregating values
-- Typical use cases: social network friend recommendations, fraud detection (transaction chains), knowledge graphs, network topology analysis, recommendation engines
-- Query pattern example: "Find all users who purchased the same product as users who follow User X" — trivial in a graph, exponentially expensive in SQL JOINs
-
-</details>
+> [!note]- Answer
+> | Dimension | RDBMS (e.g., PostgreSQL) | Graph DB (e.g., Neo4j) |
+> |-----------|--------------------------|------------------------|
+> | Data model | Tables with rows and columns; relationships via foreign keys | Nodes + Edges + Properties; relationships are stored explicitly |
+> | Query language | SQL | Cypher (Neo4j), SPARQL, Gremlin |
+> | Performance advantage | ACID transactions; efficient bulk aggregations | Multi-hop graph traversal in O(1) per hop; avoids costly repeated JOINs |
+> 
+> **Prefer a graph database when**: the core problem involves traversing **relationships** rather than aggregating values — e.g., social network friend recommendations, fraud detection (transaction chains), knowledge graphs, or network topology analysis.
 
 ---
 
@@ -287,45 +223,28 @@ print(df_sorted)
 conn.close()
 ```
 
-**(a)** What is the role of `%s` in the SQL string? Why is parameterised querying preferred over string concatenation? (2 marks)
+**(a)** What is the role of `%s`? Why is parameterised querying preferred over string concatenation? (2 marks)
 
-<details>
-<summary>Answer</summary>
-
-`%s` is a **parameter placeholder**. psycopg2 safely binds the value `'Sydney'` from the tuple `('Sydney',)` to the placeholder before sending the query to the database.
-
-Parameterised queries prevent **SQL injection attacks** — if the value came from user input and was concatenated directly into the string (e.g., `f"... WHERE region = '{user_input}'"`) an attacker could inject malicious SQL (e.g., `'; DROP TABLE sales; --`). Parameterisation escapes the value properly, treating it as data rather than executable SQL.
-
-</details>
+> [!note]- Answer
+> `%s` is a **parameter placeholder**. psycopg2 safely binds the value `'Sydney'` to the placeholder before sending the query to the database.
+> 
+> Parameterised queries prevent **SQL injection attacks** — if the value came from user input and was concatenated directly (e.g., `f"WHERE region = '{user_input}'"`) an attacker could inject malicious SQL. Parameterisation escapes the value properly, treating it as data, not executable SQL.
 
 **(b)** What type does `cursor.fetchall()` return? (1 mark)
 
-<details>
-<summary>Answer</summary>
+> [!note]- Answer
+> A **list of tuples** — each tuple represents one row of the result set, with column values as elements.
 
-A **list of tuples** — each tuple represents one row of the result set, with column values as elements.
+**(c)** Describe the full flow of this script from connection to final output. (3 marks)
 
-</details>
-
-**(c)** Describe the full flow of this script from database connection to final output. (3 marks)
-
-<details>
-<summary>Answer</summary>
-
-1. Opens a connection to the PostgreSQL database `sales`
-2. Executes a SQL query that filters records to the Sydney region, groups by `product_id`, and computes the total sales amount per product
-3. Retrieves all result rows with `fetchall()`
-4. Wraps the rows in a Pandas DataFrame with column names `product_id` and `total`
-5. Sorts the DataFrame by `total` in descending order and keeps the top 5 rows
-6. Prints those 5 rows, then closes the database connection
-
-</details>
+> [!note]- Answer
+> 1. Opens a connection to the PostgreSQL database `sales`
+> 2. Executes SQL that filters to Sydney, groups by `product_id`, and computes total sales per product
+> 3. Retrieves all result rows with `fetchall()`
+> 4. Wraps rows in a DataFrame with columns `product_id` and `total`
+> 5. Sorts by `total` descending, keeps the top 5, prints them, then closes the connection
 
 **(d)** Does this code demonstrate "push compute into the DBMS" or "pull all data into Python"? Explain. (2 marks)
 
-<details>
-<summary>Answer</summary>
-
-**Push compute into the DBMS.** The SQL performs both filtering (`WHERE region = 'Sydney'`) and aggregation (`GROUP BY product_id`, `SUM(sales_amt)`) inside the database. Python receives only the aggregated result (one row per product), not the entire `sales` table. This is efficient: the database uses its indexes and query optimiser, and minimal data crosses the network boundary.
-
-</details>
+> [!note]- Answer
+> **Push compute into the DBMS.** The SQL performs both filtering (`WHERE region = 'Sydney'`) and aggregation (`GROUP BY`, `SUM`) inside the database. Python receives only the aggregated result — one row per product — not the entire `sales` table. This is efficient: the database uses its indexes and query optimiser, and minimal data crosses the network boundary.
