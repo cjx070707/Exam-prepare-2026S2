@@ -16,7 +16,7 @@
 - D. Data that has no schema definition
 
 > [!note]- Answer
-> **B** — Unbounded data is a stream that keeps arriving indefinitely (e.g., IoT sensor feeds, live event logs). File size and schema are unrelated to the bounded/unbounded distinction.
+> **B** — Unbounded data 是没有终点的持续数据流（如 IoT 传感器、实时日志）。数据大小和 schema 与 bounded/unbounded 的划分无关。
 
 ---
 
@@ -28,7 +28,7 @@
 - D. MongoDB + Scrapy
 
 > [!note]- Answer
-> **C** — Kafka ingests and durably buffers high-throughput event streams; Flink performs low-latency stateful stream processing (pipelining, not micro-batching). PostgreSQL/Pandas cannot scale to millions of events/second in real time. MQTT is for lightweight IoT messaging. Scrapy is a web scraping tool.
+> **C** — Kafka 负责高吞吐量的事件流持久化缓冲；Flink 做低延迟有状态流处理（pipelining，非 micro-batching）。PostgreSQL/Pandas 无法扩展到每秒百万事件。MQTT 是轻量级 IoT 消息协议，不适合大规模欺诈检测。Scrapy 是爬虫工具。
 
 ---
 
@@ -40,7 +40,7 @@
 - D. Both can only move forward
 
 > [!note]- Answer
-> **C** — **Valid Time** represents when a fact was true in the real world and can be corrected retroactively. **Transaction Time** records when data was entered into the database and is append-only — you cannot alter the past audit trail.
+> **C** — **Valid Time** 表示事实在现实中成立的时间，可以向前或向后修改（如追溯调整工资）。**Transaction Time** 记录数据进入数据库的时间，只能向前（append-only），是不可篡改的审计轨迹。
 
 ---
 
@@ -52,7 +52,7 @@
 - D. Document Store
 
 > [!note]- Answer
-> **B** — Column Store reads only the columns involved in a query (avoiding unnecessary I/O), enables better compression (homogeneous data per column), and supports parallel reads. Row Store is optimised for OLTP point queries that read entire rows.
+> **B** — Column Store 只读取查询涉及的列，避免无关 I/O；同列数据类型相同，压缩率更高；不同列可并行读取。Row Store 适合 OLTP 点查询（需要读取整行）。
 
 ---
 
@@ -64,7 +64,7 @@
 - D. Best effort
 
 > [!note]- Answer
-> **C** — Kafka's default is **at least once** — messages are not lost, but a consumer may process the same message more than once if it crashes before committing its offset. MQTT QoS 0 is "at most once"; MQTT QoS 2 is "exactly once".
+> **C** — Kafka 默认语义是 **at least once**：消息不会丢失，但 consumer 崩溃后重启可能重复消费同一条消息。MQTT QoS 0 = at most once；MQTT QoS 2 = exactly once。
 
 ---
 
@@ -76,7 +76,7 @@
 - D. PA
 
 > [!note]- Answer
-> **C** — **CP** (Consistency + Partition Tolerance): the system stays consistent during a partition but may refuse to respond (sacrificing availability). Financial systems prefer CP because returning stale or conflicting data is unacceptable.
+> **C** — **CP**（Consistency + Partition Tolerance）：发生网络分区时，系统保持一致性，宁可拒绝请求也不返回可能过时的数据（牺牲 Availability）。金融系统不能接受错误余额，因此选 CP。
 
 ---
 
@@ -88,7 +88,7 @@
 - D. Converting timestamps from UTC to local time
 
 > [!note]- Answer
-> **C** — A windowed aggregation must maintain state (accumulate values) across multiple records. Filtering, projecting, and timestamp conversion are stateless — each record is processed independently with no memory of prior records.
+> **C** — 窗口聚合需要跨多条记录维护状态（累积值）。过滤、投影、时间转换都是 stateless——每条记录独立处理，不依赖历史记录。
 
 ---
 
@@ -100,7 +100,7 @@
 - D. To partition the stream across multiple worker nodes
 
 > [!note]- Answer
-> **B** — A watermark is the stream processor's assertion: "I have seen all events up to time T." It allows the system to close and emit results for event-time windows without waiting forever for late-arriving data. Events arriving after the watermark are treated as "late data".
+> **B** — Watermark 是流处理器的声明："截止时间 T，所有早于 T 的事件已到达。"它用于触发基于 event time 的窗口计算，避免无限等待迟到数据。晚于 watermark 的事件被视为 late data，可丢弃或走 side output。
 
 ---
 
@@ -112,7 +112,7 @@
 - D. Feature Store
 
 > [!note]- Answer
-> **B** — **Lambda Architecture** has a batch path (reprocesses all historical data for accurate results) and a speed/stream path (provides low-latency approximate results), combined at the serving layer. **Kappa Architecture** simplifies this to a single stream path.
+> **B** — **Lambda Architecture** 有 batch path（重处理全量历史，结果精确）和 speed/stream path（实时处理，结果近似），在 serving layer 合并。**Kappa Architecture** 简化为只用一条流处理路径。
 
 ---
 
@@ -124,7 +124,7 @@
 - D. To detect feature drift over time
 
 > [!note]- Answer
-> **B** — Online Storage holds pre-computed features in a low-latency key-value store so they can be retrieved in milliseconds during real-time inference. Offline Storage (e.g., S3, BigQuery) holds historical features for model training, where latency is less critical.
+> **B** — Online Storage（如 Redis、DynamoDB）以毫秒级延迟提供预计算好的 feature，用于实时推理（inference）。Offline Storage（如 S3、BigQuery）存储历史 feature，用于模型训练，对延迟要求不高。
 
 ---
 
@@ -133,20 +133,20 @@
 **Q11.** Compare **OLTP** and **OLAP** systems across four dimensions: read/write pattern, query type, typical users, and data volume. Give one real-world example for each. (8 marks)
 
 > [!note]- Answer
-> | Dimension | OLTP | OLAP |
-> |-----------|------|------|
-> | Read/write pattern | Frequent INSERT/UPDATE/DELETE on single rows; point queries by PK | Bulk ETL/ELT loads; large aggregation scans (SUM, COUNT, AVG) |
-> | Query type | Short, predefined, low-latency transactions | Complex, ad-hoc analytical queries; may run for seconds or minutes |
-> | Typical users | End users via web/mobile apps | Internal data analysts and BI tools |
-> | Data volume | GB to TB (current operational state) | TB to PB (multi-year historical records) |
+> | 维度 | OLTP | OLAP |
+> |------|------|------|
+> | Read/write pattern | 频繁的单行 INSERT/UPDATE/DELETE；按 PK 点查询 | 批量 ETL/ELT 导入；大范围聚合扫描（SUM、COUNT、AVG） |
+> | Query type | 短小、预定义、低延迟事务 | 复杂、临时性分析查询，可能运行数秒到数分钟 |
+> | Typical users | 通过 Web/移动 App 的终端用户 | 内部数据分析师和 BI 工具 |
+> | Data volume | GB 到 TB（当前运营数据） | TB 到 PB（多年历史记录） |
 > 
-> *OLTP example*: A bank's core system processing account transfers — each transfer is an immediate, atomic transaction.
+> *OLTP 例*：银行核心系统处理转账——每笔转账是一个立即完成的原子事务。
 > 
-> *OLAP example*: A retail data warehouse where analysts query year-over-year sales growth by product category across all regions.
+> *OLAP 例*：零售数仓——分析师查询各地区近三年各品类销售额同比增长。
 
 ---
 
-**Q12.** The following Python snippet cleans a dataset. Identify **three distinct data quality problems** present in the data and explain how each line addresses them. (8 marks)
+**Q12.** The following Python snippet cleans a dataset. Identify **three distinct data quality problems** and explain how each line addresses them. (8 marks)
 
 ```python
 df['weight'] = df['weight'].replace(0, pd.NA)
@@ -156,16 +156,16 @@ df['age'] = pd.to_numeric(df['age'], errors='coerce')
 ```
 
 > [!note]- Answer
-> | Line | Problem Type | Explanation |
-> |------|-------------|-------------|
-> | `replace(0, pd.NA)` | **Default** — 0 is a placeholder for missing weight, not a real value | Converts the sentinel 0 to a proper null so it is treated as missing |
-> | `dropna(subset=['patient_id'])` | **Missing** — some rows have no patient ID, making them unidentifiable | Removes rows where the primary identifier is absent |
-> | `.str.upper().replace(...)` | **Inconsistent** — gender encoded as `M`, `Male`, `MALE`, `F`, `Female`, etc. | Normalises all strings to uppercase, then maps variants to a single encoding |
-> | `pd.to_numeric(..., errors='coerce')` | **Incorrect / non-numeric** — age column contains strings like `"N/A"` or `"unknown"` | Converts valid strings to numbers; non-parseable values become NaN |
+> | 代码行 | 问题类型 | 说明 |
+> |--------|---------|------|
+> | `replace(0, pd.NA)` | **Default**（占位符）：0 代替了缺失的体重值 | 将哨兵值 0 转为真正的 null，便于后续按缺失值处理 |
+> | `dropna(subset=['patient_id'])` | **Missing**（缺失）：部分行缺少主键标识符 | 删除无法识别身份的行，同时不影响其他列有 NaN 的行 |
+> | `.str.upper().replace(...)` | **Inconsistent**（不一致）：`M`、`Male`、`MALE`、`F` 混用 | 先全部转大写，再统一映射为单一编码（`M`/`F`） |
+> | `pd.to_numeric(..., errors='coerce')` | **Incorrect / non-numeric**：age 列含 `"N/A"`、`"unknown"` 等字符串 | 可解析的转为数字，无法解析的转为 NaN 而不抛出异常 |
 
 ---
 
-**Q13.** The following HTML is returned by a web request. Write BeautifulSoup code to extract the text `"Sydney"` from it. Then explain what `pd.read_html()` does and when it is appropriate to use. (8 marks)
+**Q13.** The following HTML is returned by a web request. Write BeautifulSoup code to extract `"Sydney"`. Then explain what `pd.read_html()` does and when it is appropriate to use. (8 marks)
 
 ```html
 <div id="results">
@@ -178,57 +178,57 @@ df['age'] = pd.to_numeric(df['age'], errors='coerce')
 ```
 
 > [!note]- Answer
-> **Extracting "Sydney"**:
+> **提取 "Sydney"**：
 > ```python
 > from bs4 import BeautifulSoup
 > content = BeautifulSoup(html, 'html5lib')
 > 
-> # Option 1 — navigate by tag
+> # 方式一：按标签导航
 > table = content.find(id='results').find('table', 'data')
 > city = table.find_all('tr')[1].find('td').text   # → "Sydney"
 > 
-> # Option 2 — CSS selector
+> # 方式二：CSS selector
 > city = content.select('#results table.data tr:nth-child(2) td')[0].text
 > ```
 > 
-> **`pd.read_html()`**: Takes an HTML string, parses all `<table>` elements, and returns a list of DataFrames (one per table), using the header row as column names.
+> **`pd.read_html()`**：接收 HTML 字符串，解析其中所有 `<table>` 元素，返回 DataFrame 列表（每张表对应一个 DataFrame），用表头行作为列名。
 > 
-> **Appropriate when**: the target data is already in a well-structured `<table>` tag — avoids manual row/cell iteration.
+> **适合用的情况**：目标数据已经在结构良好的 `<table>` 标签里，可以避免手动遍历行和单元格。
 > 
-> **Not appropriate when**: the page has no `<table>` (data is in `<div>` or rendered by JavaScript), or when fine-grained cell-level cleaning is required before creating a DataFrame.
+> **不适合用的情况**：页面没有 `<table>`（数据在 `<div>` 里或由 JavaScript 渲染），或需要在构建 DataFrame 之前对单元格进行精细清洗。
 
 ---
 
 **Q14.** A company stores employee contract dates in a **bitemporal table**. Explain the difference between **Valid Time** and **Transaction Time**, why both are needed, and what `9999-12-31` represents in this context. (8 marks)
 
 > [!note]- Answer
-> **Valid Time**: the period during which a fact was true in the real world. It can be set to any past or future date — e.g., a salary increase agreed retroactively from three months ago would have a `valid_time_start` in the past.
+> **Valid Time**：事实在现实世界中成立的时间段。可以追溯修改——例如三个月前谈好的薪资调整，`valid_time_start` 可以设为过去的日期。
 > 
-> **Transaction Time**: the period during which the database record existed in the system. Set automatically at insert/update time; can never be changed retroactively — it is the audit trail of when the system "knew" something.
+> **Transaction Time**：数据库记录存在于系统中的时间段。由数据库自动设置，不可追溯修改——是系统"何时知道某件事"的审计轨迹。
 > 
-> **Why both are needed**:
-> - Valid Time alone cannot answer "what did we believe at a specific point in time?" (you can't reconstruct a past database state).
-> - Transaction Time alone cannot answer "when was this fact actually true in the real world?"
-> - Together (**bitemporal**) they support queries like: "What salary did we have on record for this employee as of last Tuesday, for the period January 2024?"
+> **为什么两者都需要**：
+> - 只有 Valid Time：无法回答"系统在某个历史时刻记录的是什么？"（无法重建过去某时刻的数据库状态）
+> - 只有 Transaction Time：无法回答"这个事实在现实中什么时候成立？"
+> - **Bitemporal** 结合两者，可以回答："截止上周二，我们系统记录的 2024 年 1 月该员工的薪资是多少？"
 > 
-> **`9999-12-31` / `infinity`**: Represents "currently valid with no known end date." Since SQL date columns cannot store true infinity, this sentinel means "this record is still open / currently active."
+> **`9999-12-31` / `infinity`**：表示"当前有效，无已知结束日期"。因为 SQL date 列无法存储真正的无穷大，用这个哨兵值表示记录仍然处于开放/激活状态，便于用 `WHERE valid_time_end = 'infinity'` 查询所有当前有效记录。
 
 ---
 
 **Q15.** A distributed database must choose between **CP** and **AP**. Explain the CAP theorem, describe what each configuration sacrifices, and give a concrete use case for each. (8 marks)
 
 > [!note]- Answer
-> **CAP Theorem**: A distributed system can guarantee at most **two** of the following three properties simultaneously:
-> - **C**onsistency: every node returns the most recent, correct data
-> - **A**vailability: every request receives a response (not necessarily the latest data)
-> - **P**artition Tolerance: the system continues operating despite network partitions
+> **CAP 定理**：分布式系统最多同时满足以下三个属性中的**两个**：
+> - **C**onsistency：所有节点返回最新、正确的数据
+> - **A**vailability：系统始终响应请求（不一定是最新数据）
+> - **P**artition Tolerance：网络分区时系统仍能继续运行
 > 
-> Since network partitions are unavoidable in distributed systems, P is effectively always required. The real trade-off is between C and A:
+> 由于网络分区在分布式系统中不可避免，P 实际上必须保留。真正的取舍在 C 和 A 之间：
 > 
 > | | CP | AP |
 > |--|----|----|
-> | Sacrifices | Availability — system may reject requests to avoid returning stale data | Consistency — system responds even if it might return outdated data |
-> | Use case | **Financial systems** (banking) — returning an incorrect balance is unacceptable | **Social media** (Twitter likes) — a slightly stale count is acceptable; uptime is critical |
+> | 牺牲 | Availability——分区期间宁可拒绝请求也不返回可能过时的数据 | Consistency——系统继续响应，但可能返回旧数据 |
+> | 适用场景 | **金融系统**（银行、股票交易）——返回错误余额不可接受 | **社交媒体**（Twitter 点赞数）——短暂的数据不一致可以接受，服务可用性更重要 |
 
 ---
 
@@ -237,29 +237,29 @@ df['age'] = pd.to_numeric(df['age'], errors='coerce')
 > [!note]- Answer
 > | | Spark Streaming | Apache Flink |
 > |--|-----------------|--------------|
-> | Processing model | **Micro-batching** — stream is chopped into small time-based batches | **Pipelining** — records flow directly operator-to-operator as they arrive |
-> | Stages | Separate sequential stages with synchronisation barriers | Overlapping — operators execute concurrently |
-> | Latency | Milliseconds to seconds (bounded by batch interval) | Sub-millisecond to milliseconds (true streaming) |
+> | 处理模型 | **Micro-batching**：流被切成小时间批次，每批作为 mini-batch 处理 | **Pipelining**：每条记录到达后立即在算子间传递，无批次边界 |
+> | Stage 结构 | 分离的 Stage，有同步屏障 | 算子重叠并发执行 |
+> | 延迟 | 毫秒到秒级（受 batch interval 限制） | 亚毫秒到毫秒级（真正的流处理） |
 > 
-> **Latency implication**: Flink achieves lower, more consistent latency because records are never held up waiting for a batch to fill. Spark's micro-batching introduces a minimum latency equal to the batch interval.
+> **延迟含义**：Flink 延迟更低且更稳定，因为记录不需要等待一个批次填满。Spark 的 micro-batching 引入了至少等于 batch interval 的最低延迟。
 > 
-> **Lazy Evaluation in Spark**: Transformations (`.filter()`, `.map()`, `.select()`) build up a logical plan but do not execute immediately. Computation is only triggered when an **Action** is called — operations that must return a result or write output: `collect()`, `count()`, `show()`, `take(n)`, `write()`. This allows Spark's Catalyst optimiser to inspect the full plan and apply optimisations before any data is read.
+> **Spark Lazy Evaluation**：Transformation（`.filter()`、`.map()`、`.select()`）只是构建逻辑执行计划，不触发计算。只有调用 **Action** 时才真正执行：`collect()`、`count()`、`show()`、`take(n)`、`write()`。这样 Catalyst 优化器可以在执行前看到完整计划，应用 predicate pushdown、列裁剪等优化。
 
 ---
 
 **Q17.** Explain the **Lambda Architecture** and the **Kappa Architecture**. What problem does each solve, and what is the main limitation of Lambda that Kappa addresses? (8 marks)
 
 > [!note]- Answer
-> **Lambda Architecture**:
-> - *Problem*: Combining high accuracy (historical batch reprocessing) with low latency (real-time stream results).
-> - *Structure*: **Batch layer** (reprocesses all history for accurate results) + **Speed layer** (processes live stream for low-latency approximate results) + **Serving layer** (merges both).
-> - *Main limitation*: The same business logic must be implemented **twice** — once in batch and once in stream. This duplication increases cost and risk of divergence between the two implementations.
+> **Lambda Architecture**：
+> - 解决的问题：同时需要高准确性（历史批处理重算）和低延迟（实时流结果）。
+> - 结构：**Batch layer**（重处理全量历史，结果精确）+ **Speed layer**（实时流处理，低延迟近似）+ **Serving layer**（合并两路结果）。
+> - 主要局限：同样的业务逻辑需要**实现两遍**——一套批处理代码，一套流处理代码。维护成本高，两套实现容易出现逻辑偏差。
 > 
-> **Kappa Architecture**:
-> - *Problem*: The dual-codebase maintenance burden of Lambda.
-> - *Structure*: A single stream processing pipeline handles both real-time and historical reprocessing. Historical reprocessing is done by **replaying the event log** (re-reading Kafka from offset 0) through the same stream code.
-> - *Trade-off*: Slightly less flexibility for complex batch analytics that are easier to express in a batch paradigm.
-> - *Key advantage*: One codebase, one processing model — simpler to develop, test, and maintain.
+> **Kappa Architecture**：
+> - 解决的问题：Lambda 的双重代码库维护负担。
+> - 结构：只用一条流处理 pipeline，历史重处理通过**回放事件日志**（从 Kafka offset 0 重读）复用同一套流处理代码实现。
+> - 取舍：对某些更适合批处理范式的复杂分析（如大规模 shuffle、迭代算法）灵活性略低。
+> - 核心优势：一套代码，一种处理模型——更易开发、测试和维护。
 
 ---
 
@@ -289,26 +289,26 @@ print(result)
 **(a)** What does `errors='coerce'` do? What would happen with `errors='raise'`? (2 marks)
 
 > [!note]- Answer
-> `errors='coerce'` silently converts any value that cannot be parsed as a number into `NaN`, allowing the rest of the column to be processed normally.
+> `errors='coerce'`：无法解析为数字的值静默转为 `NaN`，其余正常处理。
 > 
-> With `errors='raise'`, `pd.to_numeric()` would raise a `ValueError` and halt execution as soon as it encounters a non-numeric string (e.g., `"unknown"` or `"N/A"`) in the column.
+> `errors='raise'`：一旦遇到不能解析的字符串（如 `"unknown"`、`"N/A"`），立即抛出 `ValueError` 终止执行。
 
 **(b)** What does `pd.cut()` do here? What `age_group` would a patient aged 35 receive? (2 marks)
 
 > [!note]- Answer
-> `pd.cut()` divides a continuous numeric column into discrete bins and assigns a label to each value. The bins `[0, 18, 40, 60, 120]` create four intervals: (0–18], (18–40], (40–60], (60–120].
+> `pd.cut()` 将连续数值列切分为离散区间，并为每个值打上对应的标签。bins `[0, 18, 40, 60, 120]` 产生四个区间：(0–18]、(18–40]、(40–60]、(60–120]。
 > 
-> A patient aged 35 falls in the (18–40] bin, so their `age_group` would be `'young_adult'`.
+> 年龄 35 落在 (18–40] 区间，`age_group` 为 `'young_adult'`。
 
 **(c)** What do the final three lines produce? What does `reset_index()` do here? (2 marks)
 
 > [!note]- Answer
-> `groupby('age_group')['bmi'].mean()` computes mean BMI per age group, producing a Series with `age_group` as the index. `reset_index()` converts that index back into a regular column, turning the result into a proper DataFrame. The columns are renamed `age_group` and `avg_bmi`. The output is a table showing average BMI for each of the four age groups.
+> `groupby('age_group')['bmi'].mean()` 计算每个年龄组的平均 BMI，结果是以 `age_group` 为 index 的 Series。`reset_index()` 将 index 转回普通列，变成标准 DataFrame。最终输出是一张包含四个年龄组平均 BMI 的表格。
 
 **(d)** Why is `bmi` replaced with `np.nan` **before** the `groupby` instead of after? (2 marks)
 
 > [!note]- Answer
-> `groupby().mean()` automatically skips `NaN` values. If the placeholder `0` were left in place, it would be included in the average and artificially lower the mean BMI. Replacing it with `NaN` before aggregation ensures `0` is treated as missing (unknown) rather than a real BMI measurement.
+> `groupby().mean()` 自动跳过 `NaN`。如果占位符 `0` 没有被替换，它会被计入平均值，人为拉低每组的 BMI 均值。在聚合前替换为 `NaN`，确保 `0` 被当作"未知"而非真实体重数据处理。
 
 ---
 
@@ -331,12 +331,12 @@ db.orders.find(
 **(a)** Describe in plain English what this query retrieves. (2 marks)
 
 > [!note]- Answer
-> Retrieve the top 10 shipped orders with a total over $500, placed in either Sydney or Melbourne, ordered from highest to lowest total — returning only `customer_id`, `total`, and `region` (excluding the default `_id` field).
+> 查找 Sydney 或 Melbourne 地区、状态为 shipped、订单金额超过 500 的订单，按金额从高到低排序，返回前 10 条，只显示 `customer_id`、`total`、`region` 三个字段（不含 `_id`）。
 
 **(b)** What does `_id: 0` in the projection do? Why might you want this? (2 marks)
 
 > [!note]- Answer
-> `_id: 0` **excludes** the MongoDB document identifier from the results. By default MongoDB includes `_id` in every query result even when you specify a projection. Excluding it is useful when `_id` is an internal identifier with no meaning to the data consumer (e.g., the application only needs `customer_id`).
+> `_id: 0` **排除** MongoDB 文档的内部标识符字段。默认情况下 MongoDB 即使在 projection 中也会返回 `_id`。当 `_id` 只是数据库内部 ID，对数据消费方没有意义时（例如应用层只需要 `customer_id`），排除它可以使结果更整洁。
 
 **(c)** Rewrite the `$or` condition using the `$in` operator. (2 marks)
 
@@ -351,12 +351,12 @@ db.orders.find(
 >   { customer_id: 1, total: 1, region: 1, _id: 0 }
 > ).sort({ total: -1 }).limit(10)
 > ```
-> `$in` tests whether a field's value matches any element in the array — semantically equivalent to the `$or` over two equality checks.
+> `$in` 检查字段值是否属于数组中的任一元素，语义上等价于对两个等值条件做 `$or`，写法更简洁。
 
 **(d)** How does this query differ from an equivalent SQL query in terms of schema enforcement? (2 marks)
 
 > [!note]- Answer
-> In SQL, the schema is enforced at write time (schema-on-write) — every row must conform to defined columns and types. In MongoDB (schema-on-read), documents in the collection may not all have a `region` field; documents missing `region` simply do not match the filter and are excluded without any error. This flexibility allows heterogeneous documents but means data quality depends on application-level enforcement, not the database itself.
+> SQL 在写入时强制 schema（schema-on-write）——每行必须符合预定义的列和类型，不存在的列会报错。MongoDB 是 schema-on-read——`orders` 集合中的文档不一定都有 `region` 字段，缺少该字段的文档只是不匹配过滤条件，不会报错。灵活性更高，但数据质量依赖应用层保证，而非数据库本身。
 
 ---
 
@@ -387,19 +387,19 @@ result.show(20)
 **(a)** Why does Spark not execute any computation until `result.show(20)` is called? What is this behaviour called? (2 marks)
 
 > [!note]- Answer
-> Spark uses **lazy evaluation**. Calling `.filter()`, `.groupBy()`, `.agg()`, and `.orderBy()` only builds a logical execution plan — no data is read or processed. Computation is only triggered when an **action** is called (`show()`, `collect()`, `count()`, `write()`, etc.). This allows Spark's Catalyst optimiser to inspect the entire plan and apply optimisations (e.g., predicate pushdown to the Parquet reader, column pruning) before any work begins.
+> Spark 使用 **lazy evaluation（惰性求值）**。`.filter()`、`.groupBy()`、`.agg()`、`.orderBy()` 只构建逻辑执行计划，不读取或处理数据。只有调用 **Action**（如 `show()`、`collect()`、`count()`、`write()`）时才真正触发计算。这样 Catalyst 优化器可以在执行前看到完整计划，应用 predicate pushdown、列裁剪等优化。
 
 **(b)** What is the advantage of reading from **Parquet** format compared to CSV for this query? (2 marks)
 
 > [!note]- Answer
-> Parquet is a **columnar storage format**. This query only uses four columns (`region`, `product_category`, `revenue`, `order_id`). Parquet allows Spark to read only those columns from disk, skipping all others. CSV is row-oriented — reading any column requires reading the entire row. This results in significantly less I/O and faster execution. Parquet also stores type metadata and supports efficient per-column compression.
+> Parquet 是**列式存储格式**。这个查询只用到 `region`、`product_category`、`revenue`、`order_id` 四列，Parquet 允许 Spark 只读这四列，跳过其余所有列。CSV 是行式存储，读任意列都要读整行。因此 Parquet 大幅减少 I/O，查询速度更快。此外 Parquet 还存储类型元数据，支持高效的按列压缩。
 
 **(c)** The second `.filter()` (`order_count > 1000`) is applied after `.agg()`. Why can't this filter be applied before the `groupBy`? (2 marks)
 
 > [!note]- Answer
-> `order_count` is a **derived column** produced by the aggregation (`count("order_id").alias("order_count")`). It does not exist in the raw data — it is computed per group. It cannot be referenced before the `groupBy`/`agg` step. This is equivalent to SQL's `HAVING` clause (filter on aggregated values) versus `WHERE` (filter on raw rows before aggregation).
+> `order_count` 是由聚合（`count("order_id").alias("order_count")`）产生的**派生列**，在原始数据中不存在，必须先执行 `groupBy`/`agg` 才能得到。这等价于 SQL 中的 `HAVING` 子句（对聚合结果过滤），而非 `WHERE`（对原始行过滤）。
 
 **(d)** This code reads from S3. What storage layer does this represent, and what is one limitation for **real-time** analytics? (2 marks)
 
 > [!note]- Answer
-> S3 is an object store used as a **Data Lake** layer — storing raw or semi-processed data cheaply at scale without enforcing schema. The primary limitation for real-time analytics is **high latency**: S3 is optimised for batch reads of large files, not low-latency point queries. New data written to S3 is typically available only after a batch job completes (minutes, not milliseconds), making it unsuitable for sub-second real-time use cases that require a streaming system (Kafka + Flink) instead.
+> S3 是对象存储，作为 **Data Lake** 层使用——廉价地大规模存储原始或半处理数据，不强制 schema。对实时分析的主要局限是**高延迟**：S3 针对大文件的批量读取优化，不适合低延迟点查询。新写入 S3 的数据通常需要等批处理任务完成后才可用（分钟级），不满足亚秒级实时需求，后者需要 Kafka + Flink 这样的流处理系统。

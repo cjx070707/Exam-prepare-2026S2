@@ -16,7 +16,7 @@
 - D. A JSON response from a Web API
 
 > [!note]- Answer
-> **C** — IoT sensor readings are continuously generated with no fixed endpoint, making them unbounded. All other options produce a finite, fixed-size dataset at the time of retrieval.
+> **C** — IoT 传感器持续产生数据，没有固定终点，属于 unbounded。其余选项在获取时都是有限大小的数据集，属于 bounded。
 
 ---
 
@@ -28,7 +28,7 @@
 - D. `sort -n data.csv`
 
 > [!note]- Answer
-> **B** — `wc -l` counts lines. `-c` counts bytes, `-w` counts words. `grep -c` counts matching lines but requires a pattern argument.
+> **B** — `wc -l` 统计行数。`-c` 统计字节数，`-w` 统计词数。`grep -c` 需要提供匹配模式，不是统计总行数。
 
 ---
 
@@ -40,7 +40,7 @@
 - D. Inconsistent
 
 > [!note]- Answer
-> **C** — A **Default** value is a placeholder (like `99999`, `0`, or `-1`) substituted when the real value is unavailable, rather than leaving the field null. **Incorrect** refers to genuinely wrong values caused by sensor faults or input errors. **Missing** means the field is null/blank.
+> **C** — 这是 **Default（占位符）**问题：用一个极端数值（`99999`）来代替真正的缺失值，而不是留空。**Incorrect** 指传感器故障或输入错误导致的真实错误值；**Missing** 指字段为空。
 
 ---
 
@@ -56,7 +56,7 @@ df['age'].fillna(0).astype(int)
 - D. Converts `age` to integer; raises an error if NaN is present
 
 > [!note]- Answer
-> **B** — `fillna(0)` replaces NaN with 0 first (necessary because Python's `int` type cannot represent NaN), then `astype(int)` converts the whole column to integer. Without `fillna` first, `astype(int)` would raise a `ValueError`.
+> **B** — `fillna(0)` 先把 NaN 替换为 0（必须这一步，因为 Python 的 `int` 类型无法表示 NaN），然后 `astype(int)` 将整列转为整数类型。如果不先 `fillna`，直接 `astype(int)` 会抛出 `ValueError`。
 
 ---
 
@@ -68,7 +68,7 @@ df['age'].fillna(0).astype(int)
 - D. `content.find(class_='data')`
 
 > [!note]- Answer
-> **B** — `find_all` returns a list of all matching elements. `find` returns only the first match. Option C uses `#` which selects by **id**, not class. Option D finds any element with that class, not specifically `<table>`.
+> **B** — `find_all` 返回所有匹配元素的列表；`find` 只返回第一个。选项 C 用了 `#`，是按 **id** 选择而非 class。选项 D 匹配任意 class 为 `data` 的元素，不限于 `<table>`。
 
 ---
 
@@ -80,7 +80,7 @@ df['age'].fillna(0).astype(int)
 - D. A `<table>` containing a child element named `results`
 
 > [!note]- Answer
-> **C** — `tag.class` syntax selects elements of that tag type with that class. `#results` would select by id. `.results` alone (without the tag) would match any element with that class.
+> **C** — `tag.class` 格式匹配指定标签类型 + 指定 class 的元素。`#results` 才是按 id 选择；`.results`（不带标签名）匹配任意 class 为 `results` 的元素。
 
 ---
 
@@ -92,7 +92,7 @@ df['age'].fillna(0).astype(int)
 - D. Authentication required
 
 > [!note]- Answer
-> **C** — HTTP 404 = Not Found. 200 = OK (success). 500 = Internal Server Error. 401 = Unauthorized.
+> **C** — HTTP 404 = Not Found（资源不存在）。200 = 成功；500 = 服务器内部错误；401 = 未授权。
 
 ---
 
@@ -104,7 +104,7 @@ df['age'].fillna(0).astype(int)
 - D. APIs require no parsing whatsoever
 
 > [!note]- Answer
-> **B** — APIs expose a stable, structured interface (usually JSON). HTML scraping breaks whenever the website's layout changes. APIs still use HTTP and still require parsing, but the structure is far more predictable.
+> **B** — API 返回结构化数据（通常是 JSON），接口稳定，不会因为网页改版而失效。直接爬 HTML 的缺点是：一旦页面布局改变，爬虫就会失效。API 仍然使用 HTTP 协议，也需要解析数据，但结构更可预期。
 
 ---
 
@@ -116,7 +116,7 @@ df['age'].fillna(0).astype(int)
 - D. `pd.read_html()`
 
 > [!note]- Answer
-> **C** — Selenium drives a real browser that executes JavaScript. `requests` fetches only the raw HTML. `BeautifulSoup` and `Scrapy` also do not execute JavaScript. `pd.read_html()` only parses static HTML tables.
+> **C** — `Selenium` 驱动真实浏览器，可以执行 JavaScript。`requests` 只获取原始 HTML，不执行 JS；`BeautifulSoup` 和 `Scrapy` 同理。`pd.read_html()` 只解析静态 HTML 表格。
 
 ---
 
@@ -132,7 +132,7 @@ https://api.example.com/data?format=json&limit=100
 - D. Cannot be determined
 
 > [!note]- Answer
-> **B** — `format=json` and `limit=100` are two separate query parameters, separated by `&`. The `?` marks the start of the query string.
+> **B** — `format=json` 和 `limit=100` 是两个独立的查询参数，以 `&` 分隔。`?` 标识查询字符串的起始位置。
 
 ---
 
@@ -141,9 +141,9 @@ https://api.example.com/data?format=json&limit=100
 **Q11.** Explain the difference between **Bounded** and **Unbounded** data. Give one example of each. What transformation must be applied to unbounded data before it can be processed, and why? (8 marks)
 
 > [!note]- Answer
-> - **Bounded data**: A dataset with a fixed, finite size. The full dataset is available at the time of processing. *Example*: a CSV file downloaded from a government portal; the result of a SQL query.
-> - **Unbounded data**: A continuous, never-ending stream of data with no defined endpoint. *Example*: real-time IoT sensor readings; a live social media event stream.
-> - **Required transformation**: Unbounded data must be divided into **windows** or **batches** before processing. This is necessary because any aggregation (sum, count, average) requires a defined boundary — you cannot compute an average over an infinite sequence. A window imposes a finite scope (e.g., "last 5 minutes") so the computation can complete and produce a result.
+> - **Bounded data**：有固定大小、有终点的数据集，获取时全量可用。例：从政府网站下载的 CSV 文件、一次 SQL 查询的结果集。
+> - **Unbounded data**：持续产生、没有终点的数据流。例：IoT 传感器实时上报的温度数据、社交媒体的实时评论流。
+> - **必要转换**：处理 unbounded 数据前，必须划定 **window（窗口）** 或 **batch（批次）**，将其截断为有限范围。原因：任何聚合操作（SUM、COUNT、AVG）都需要一个明确的边界——不可能对无穷序列求平均值。窗口为计算提供了有限的范围（如"过去 5 分钟"），使结果能够被产出。
 
 ---
 
@@ -155,25 +155,25 @@ https://api.example.com/data?format=json&limit=100
 Identify the data quality problem type for each issue and describe how to handle it. (8 marks)
 
 > [!note]- Answer
-> | Issue | Problem Type | Handling |
-> |-------|-------------|---------|
-> | Blank `age` field | **Missing** — value never recorded or lost | `fillna()` with median age, or `dropna()` if the field is critical |
-> | `M` / `Male` / `男` in gender | **Inconsistent** — same concept in multiple formats | Standardise with `.replace({'Male': 'M', '男': 'M'})` |
-> | `weight` = 0 | **Default** — 0 is a placeholder, not a real measurement | Replace 0 with `NaN` via `.replace(0, np.nan)`, then treat as missing |
+> | 问题 | 类型 | 处理方式 |
+> |------|------|----------|
+> | `age` 字段为空 | **Missing**（缺失）：值从未被记录或在传输中丢失 | `fillna()` 用中位数填充，或若该字段关键则 `dropna()` 删除该行 |
+> | `gender` 写法不统一 | **Inconsistent**（不一致）：同一概念用多种格式表达 | `.replace({'Male': 'M', '男': 'M'})` 统一为单一编码 |
+> | `weight` = 0 | **Default**（占位符）：用 0 代替缺失值，并非真实体重 | `.replace(0, np.nan)` 转为真正的缺失值，再按 Missing 处理 |
 
 ---
 
 **Q13.** Compare `requests` + `BeautifulSoup` with `Scrapy` as web scraping tools. When should you choose `Scrapy`? (8 marks)
 
 > [!note]- Answer
-> | Dimension | `requests` + `BeautifulSoup` | `Scrapy` |
-> |-----------|------------------------------|----------|
-> | Setup | Low — minimal boilerplate | Higher — requires Spider class and project structure |
-> | Best for | Single pages or a small, known list of URLs | Multi-page crawls that follow links automatically |
-> | Concurrency | Single-threaded by default | Built-in async request engine |
-> | Features | Manual everything | Built-in: deduplication, rate limiting, pipelines |
+> | 维度 | `requests` + `BeautifulSoup` | `Scrapy` |
+> |------|------------------------------|----------|
+> | 上手难度 | 低，代码简单直接 | 较高，需要 Spider 类和项目结构 |
+> | 适合场景 | 单页或少量已知 URL 的抓取 | 需要自动跟链的多页大规模爬取 |
+> | 并发 | 默认单线程 | 内置异步请求引擎 |
+> | 内置功能 | 无，需手动处理 | 去重、速率限制、pipeline、重试 |
 > 
-> **Choose Scrapy when**: you need to follow pagination links, crawl an entire site structure, handle retries and rate limiting automatically, or run the crawl on a recurring schedule.
+> **选 `Scrapy` 的时机**：需要跟踪分页链接或爬取整站结构；需要自动处理 retry 和 rate limiting；需要将数据写入多个目标（数据库、JSON、CSV）；爬虫需要定期重复运行。
 
 ---
 
@@ -181,14 +181,14 @@ Identify the data quality problem type for each issue and describe how to handle
 
 > [!note]- Answer
 > **Push compute into the DBMS**
-> - *Approach*: Write SQL that performs filtering, aggregation, and joining inside the database. Python only receives the final, small result set.
-> - *Use case*: Large tables where only a fraction of data is needed; aggregations that benefit from indexes.
-> - *Limitation*: Complex statistical analysis or ML workflows are difficult to express in SQL alone.
+> - 思路：在数据库内用 SQL 完成过滤、聚合、JOIN，Python 只接收最终的少量结果集。
+> - 适用场景：大表中只需要少量数据；聚合查询能利用数据库索引和查询优化器。
+> - 局限：复杂的统计分析或 ML 工作流难以用 SQL 表达。
 > 
 > **Pull all data into Python**
-> - *Approach*: Fetch the entire table into a Pandas DataFrame and perform all processing in Python.
-> - *Use case*: Exploratory analysis needing flexible transformations; small-to-medium datasets that fit in memory.
-> - *Limitation*: The full dataset must fit in memory (OOM risk); high network transfer cost; loses database query optimisation.
+> - 思路：把整张表或大批数据拉入 Pandas DataFrame，在 Python 中处理。
+> - 适用场景：探索性分析，需要灵活变换；数据集较小，能放进内存。
+> - 局限：数据必须能放进内存（大数据集有 OOM 风险）；网络传输开销大；失去数据库查询优化的优势。
 
 ---
 
@@ -218,22 +218,22 @@ print(df_top.head(10))
 **(a)** Which table on the page does `find_all('table')[1]` select? (1 mark)
 
 > [!note]- Answer
-> The **second** table on the page. Python list indexing starts at 0, so index `[1]` is the second element.
+> 页面上的**第二张表**。Python 列表索引从 0 开始，`[1]` 是第二个元素。
 
 **(b)** What does `pd.read_html(str(table))[0]` do? Why is `[0]` needed? (2 marks)
 
 > [!note]- Answer
-> `pd.read_html()` parses all HTML `<table>` elements in the given string and returns a **list** of DataFrames. Since `str(table)` contains exactly one table, the list has one element. `[0]` retrieves that single DataFrame from the list.
+> `pd.read_html()` 解析 HTML 字符串中所有的 `<table>` 元素，返回一个 **DataFrame 列表**。因为 `str(table)` 只含一张表，列表里只有一个元素，`[0]` 取出这唯一的 DataFrame。
 
 **(c)** What is the difference between `dropna(subset=['Score'])` and `dropna()`? (2 marks)
 
 > [!note]- Answer
-> - `dropna(subset=['Score'])` drops only rows where the **`Score` column specifically** is NaN. Rows with NaN in other columns are kept.
-> - `dropna()` drops any row that has **at least one NaN in any column**, which can remove far more rows than intended.
+> - `dropna(subset=['Score'])`：只删除 `Score` 列为 NaN 的行，其他列有 NaN 的行保留。
+> - `dropna()`：删除**任意列**含有 NaN 的行，影响范围大得多，容易误删有效数据。
 
 **(d)** Describe what the last three lines do and summarise the overall goal of this script in one sentence. (3 marks)
 
 > [!note]- Answer
-> The last three lines: filter to rows where Score > 80, sort by Score descending, then print the top 10.
+> 最后三行：筛选出 Score > 80 的行 → 按 Score 降序排列 → 打印前 10 条。
 > 
-> **Overall goal**: Scrape a rankings table from a webpage, clean the data, and display the top 10 highest-scoring entries.
+> **整体目标**：从网页排行榜抓取表格，清洗数据后，输出得分最高的前 10 名记录。
