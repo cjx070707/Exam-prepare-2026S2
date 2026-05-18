@@ -101,50 +101,28 @@
 
 ---
 
-**Scenario 3:** You are given the following HTML snippet from a university course catalogue page. You need to extract the data into a structured format for a data warehouse.
+**Scenario 3:** A data engineering team is building a real-time clickstream pipeline. The pipeline processes user events as they arrive. Below are four steps in the pipeline:
 
-```html
-<div id="catalogue">
-  <div class="unit">
-    <h3 class="name">Data Engineering</h3>
-    <span class="code">COMP5339</span>
-    <span class="credit">6</span>
-    <span class="semester">S1</span>
-  </div>
-  <div class="unit">
-    <h3 class="name">Machine Learning</h3>
-    <span class="code">COMP5329</span>
-    <span class="credit">6</span>
-    <span class="semester">S1</span>
-  </div>
-</div>
-```
+1. Filter events where `event_type = 'purchase'`
+2. For each `user_id`, count the number of events within each non-overlapping 10-minute interval
+3. Add a new field `ingest_time` set to the current system clock at the moment of processing
+4. Compute the running total of `revenue` accumulated since the stream started (no fixed end point)
 
 **Question 4:**
-1. Identify the attributes you would extract and write out one complete record as it would appear in the destination table. **(1 Mark)**
-2. Write the BeautifulSoup `select()` call to retrieve all unit blocks, and name the attribute you would use to extract the unit code from each block. **(1 Mark)**
+1. Classify each of the four steps as **stateless** or **stateful**. **(1 Mark)**
+2. Identify the **window type** used in step 2 and step 4. **(1 Mark)**
 
 > [!note]- Answer
-> **1. 属性识别与示例记录：**
+> **1. Stateless vs Stateful 分类：**
 > 
-> 可提取的属性：`name`（课程名）、`code`（课程代码）、`credit`（学分）、`semester`（开课学期）
+> | Step | 分类 | 原因 |
+> |------|------|------|
+> | 1. Filter `event_type = 'purchase'` | **Stateless** | 每条记录独立判断，不依赖其他记录的历史 |
+> | 2. Count per user per 10-minute interval | **Stateful** | 需要在窗口内跨多条记录累积计数，必须维护状态 |
+> | 3. Add `ingest_time` (system clock) | **Stateless** | 每条记录独立添加字段，不依赖任何历史状态 |
+> | 4. Running total of revenue since stream start | **Stateful** | 需要从流开始就持续累积，跨越所有历史记录 |
 > 
-> 目标表记录示例：
-> ```
-> name="Data Engineering", code="COMP5339", credit=6, semester="S1"
-> ```
+> **2. 窗口类型：**
 > 
-> **2. BeautifulSoup 提取：**
-> 
-> ```python
-> # 获取所有 unit 块
-> units = content.select('#catalogue div.unit')
-> # 或等价写法：
-> units = content.find(id='catalogue').find_all('div', 'unit')
-> 
-> # 从每个 unit 块中提取课程代码
-> for unit in units:
->     code = unit.find('span', 'code').text   # 使用 class="code" 的 <span>
-> ```
-> 
-> 目标元素：`<span class="code">`，通过 `.find('span', 'code').text` 或 `.select_one('span.code').text` 获取文本值。
+> - **Step 2**：**Tumbling Window（滚动窗口）** — 固定大小（10 分钟），不重叠，每个事件只属于一个窗口
+> - **Step 4**：**Agglomerative Window（累积窗口）** — 从流的起点一直累积到当前时刻，没有固定结束点
