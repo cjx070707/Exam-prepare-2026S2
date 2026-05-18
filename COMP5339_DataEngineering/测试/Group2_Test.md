@@ -1,128 +1,272 @@
-# Group 2 测试题 — 存储系统
+# Group 2 Test — Storage Systems
 
-**覆盖范围：Week 3 (Databases, Warehouses, Lakes) + Week 5 (NoSQL & Semi-structured)**
+**Scope: Week 3 (Databases, Warehouses, Lakes) + Week 5 (NoSQL & Semi-structured)**
 
-**总分：60 分 | 建议用时：45 分钟**
-
----
-
-## Section A — MCQ（每题 2 分，共 20 分）
-
-**Q1.** 以下哪种场景最适合使用 OLAP 系统？
-
-- A. 用户在网上商城完成一笔订单
-- B. 银行 ATM 完成取款操作
-- C. 数据分析师统计过去三年各地区销售额趋势
-- D. 员工登录系统更新个人信息
+**Total: 60 marks | Suggested time: 45 minutes**
 
 ---
 
-**Q2.** 在 Star Schema 中，`Sales(Market_Id, Product_Id, Time_Id, Sales_Amt)` 是哪类表？
+## Section A — Multiple Choice (2 marks each, 20 marks total)
+
+**Q1.** Which of the following scenarios best fits an **OLAP** system?
+
+- A. A customer completes a purchase on an e-commerce site
+- B. An ATM processes a cash withdrawal
+- C. An analyst queries three years of regional sales trends
+- D. An employee updates their personal profile in an HR system
+
+<details>
+<summary>Answer</summary>
+
+**C** — OLAP (Online Analytical Processing) is designed for large-scale, historical, aggregation-heavy queries by analysts. Options A, B, and D are short, transactional operations on current data — typical OLTP workloads.
+
+</details>
+
+---
+
+**Q2.** In a Star Schema, the table `Sales(Market_Id, Product_Id, Time_Id, Sales_Amt)` is a:
 
 - A. Dimension Table
 - B. Fact Table
 - C. Bridge Table
 - D. Lookup Table
 
----
+<details>
+<summary>Answer</summary>
 
-**Q3.** ETL 和 ELT 的核心区别是：
+**B** — A **Fact Table** stores measurable business events (`Sales_Amt`) and holds foreign keys to each Dimension Table (`Market_Id`, `Product_Id`, `Time_Id`). Dimension Tables store descriptive attributes about those dimensions.
 
-- A. ETL 用于云环境，ELT 用于本地环境
-- B. ETL 先转换后载入，ELT 先载入后转换
-- C. ETL 支持非结构化数据，ELT 只支持结构化数据
-- D. ELT 需要额外的外部转换工具，ETL 不需要
+</details>
 
 ---
 
-**Q4.** Data Lake 与 Data Warehouse 的最主要区别是：
+**Q3.** What is the key difference between **ETL** and **ELT**?
 
-- A. Data Lake 只能存储结构化数据
-- B. Data Lake 使用 schema-on-read，Data Warehouse 使用 schema-on-write
-- C. Data Warehouse 存储原始数据，Data Lake 存储精炼数据
-- D. Data Lake 不支持 SQL 查询
+- A. ETL is used in cloud environments; ELT is used on-premises
+- B. ETL transforms data before loading; ELT loads raw data first, then transforms inside the warehouse
+- C. ETL supports unstructured data; ELT only handles structured data
+- D. ELT requires an external transformation tool; ETL does not
 
----
+<details>
+<summary>Answer</summary>
 
-**Q5.** 以下 XML DTD 中，`(name, age?)` 表示什么？
+**B** — ETL = Extract → Transform → Load (transformation happens outside the destination). ELT = Extract → Load → Transform (raw data is loaded first, transformation happens inside the data warehouse or lake using its own compute power). ELT is common in modern cloud data warehouses like BigQuery and Snowflake.
 
-- A. `name` 和 `age` 都必须出现，且顺序固定
-- B. `name` 必须出现，`age` 可选（零或一个）
-- C. `name` 或 `age` 二选一
-- D. `name` 出现零或多次，`age` 出现一次
+</details>
 
 ---
 
-**Q6.** 以下 MongoDB 查询的含义是什么？
+**Q4.** What is the most important distinction between a **Data Lake** and a **Data Warehouse**?
+
+- A. A Data Lake can only store structured data
+- B. A Data Lake uses schema-on-read; a Data Warehouse uses schema-on-write
+- C. A Data Warehouse stores raw data; a Data Lake stores refined data
+- D. A Data Lake does not support SQL queries
+
+<details>
+<summary>Answer</summary>
+
+**B** — **Schema-on-read** means structure is defined when data is queried (flexible, but may be messy). **Schema-on-write** means structure is enforced when data is loaded (rigid but clean). Data Lakes (HDFS, S3) use schema-on-read; Data Warehouses (Snowflake, BigQuery) enforce schema-on-write.
+
+</details>
+
+---
+
+**Q5.** In an XML DTD, what does `(name, age?)` mean?
+
+- A. Both `name` and `age` must appear, in that order
+- B. `name` must appear exactly once; `age` is optional (zero or one occurrence)
+- C. Either `name` or `age` must appear (mutually exclusive)
+- D. `name` appears zero or more times; `age` appears exactly once
+
+<details>
+<summary>Answer</summary>
+
+**B** — In DTD syntax: `?` = zero or one (optional); `*` = zero or more; `+` = one or more; no symbol = exactly once. The comma means the elements must appear in sequence.
+
+</details>
+
+---
+
+**Q6.** What does the following MongoDB query do?
 
 ```javascript
 db.students.find({ age: { $gt: 20 } }, { name: 1, address: 1 })
 ```
 
-- A. 查找年龄大于 20 的学生，返回所有字段
-- B. 查找年龄大于 20 的学生，只返回 name 和 address 字段
-- C. 插入年龄大于 20 的记录，包含 name 和 address
-- D. 更新年龄大于 20 的学生的 name 和 address
+- A. Finds students older than 20 and returns all fields
+- B. Finds students older than 20 and returns only `name` and `address`
+- C. Inserts a record with `age > 20` including `name` and `address`
+- D. Updates `name` and `address` for students older than 20
+
+<details>
+<summary>Answer</summary>
+
+**B** — In MongoDB's `find()`, the first argument is the **filter** (`{ age: { $gt: 20 } }`) and the second is the **projection** (`{ name: 1, address: 1 }`), which specifies which fields to return. Setting a field to `1` includes it; `0` excludes it.
+
+</details>
 
 ---
 
-**Q7.** 与关系型数据库相比，图数据库（如 Neo4j）最适合哪类查询？
+**Q7.** Compared to a relational database, a graph database (e.g., Neo4j) excels at:
 
-- A. 大量数值聚合（SUM / AVG）
-- B. 复杂的多表 JOIN 操作
-- C. 多跳关系遍历（如"朋友的朋友"查询）
-- D. 大批量数据的 INSERT 操作
+- A. Large-scale numerical aggregations (SUM / AVG)
+- B. Complex multi-table JOIN operations
+- C. Multi-hop relationship traversals (e.g., "friends of friends")
+- D. High-volume bulk INSERT operations
 
----
+<details>
+<summary>Answer</summary>
 
-**Q8.** 以下哪种 NoSQL 类型最适合存储**社交网络中的用户关系**？
+**C** — Graph databases store relationships as first-class citizens (edges), making multi-hop traversals O(1) per hop regardless of dataset size. Relational databases must perform repeated, expensive JOIN operations for the same task, which degrades rapidly as hops increase.
 
-- A. Document Store（文档型）
-- B. Wide Column Store（宽列型）
-- C. Graph Database（图数据库）
-- D. Time Series Database（时序数据库）
+</details>
 
 ---
 
-**Q9.** 关于 XML 的合规性，"Valid XML" 意味着：
+**Q8.** Which NoSQL database type is best suited for storing **social network relationships**?
 
-- A. 仅满足 XML 基本语法（标签匹配、属性引号）
-- B. Well-formed 且符合 DTD 或 XML Schema 定义的结构
-- C. 能被任意浏览器正确渲染
-- D. 数据内容在业务上合理
+- A. Document Store
+- B. Wide Column Store
+- C. Graph Database
+- D. Time Series Database
 
----
+<details>
+<summary>Answer</summary>
 
-**Q10.** 以下关于 MongoDB 的说法，哪个是正确的？
+**C** — Social networks are fundamentally about relationships between entities (users, posts, likes). Graph databases model nodes and edges natively, making friend recommendations, shortest-path queries, and influence analysis highly efficient.
 
-- A. MongoDB 需要在插入数据前定义固定的表结构
-- B. MongoDB 中一个 Collection 只能存储相同结构的 Document
-- C. MongoDB 的 Document 以 JSON 格式存储，支持嵌套结构
-- D. MongoDB 使用 SQL 作为查询语言
+</details>
 
 ---
 
-## Section B — 短答题（每题 8 分，共 32 分）
+**Q9.** A "Valid" XML document means it is:
 
-**Q11.** 从读写模式、查询特点、数据量三个维度，比较 OLTP 和 OLAP 系统的差异，并各举一个典型的使用场景。（8分）
+- A. Syntactically well-formed only (all tags match and are properly closed)
+- B. Well-formed AND conforms to a DTD or XML Schema definition
+- C. Correctly rendered by any modern browser
+- D. Semantically meaningful in its business context
 
----
+<details>
+<summary>Answer</summary>
 
-**Q12.** 请描述 Star Schema 的结构，说明 Fact Table 和 Dimension Table 分别存储什么内容，两者如何关联。以一个电商平台的销售数据仓库为例画出结构（用文字描述即可）。（8分）
+**B** — **Well-formed** = satisfies XML syntax rules (proper nesting, closed tags, quoted attributes). **Valid** = well-formed **plus** the structure and content conform to a declared DTD or XML Schema. A document can be well-formed but not valid.
 
----
-
-**Q13.** 解释 Data Lake 为什么容易变成"数据沼泽（Data Swamp）"，以及实践中如何将 Data Lake 与 Data Warehouse 结合使用。（8分）
-
----
-
-**Q14.** 比较关系型数据库（RDBMS）和图数据库（Graph DB）在数据模型、查询语言和性能优势三个维度上的差异。说明在什么业务场景下应优先选择图数据库。（8分）
+</details>
 
 ---
 
-## Section C — 代码阅读（共 8 分）
+**Q10.** Which of the following statements about MongoDB is correct?
 
-**Q15.** 阅读以下代码，回答问题：
+- A. MongoDB requires a fixed schema to be defined before inserting data
+- B. All documents in a collection must have the same structure
+- C. MongoDB stores documents in JSON format and supports nested structures
+- D. MongoDB uses SQL as its query language
+
+<details>
+<summary>Answer</summary>
+
+**C** — MongoDB is schema-late (no upfront schema required), documents within the same collection can have different structures, data is stored as BSON (binary JSON), and the query language is JavaScript-based — not SQL.
+
+</details>
+
+---
+
+## Section B — Short Answer (8 marks each, 32 marks total)
+
+**Q11.** Compare OLTP and OLAP systems across three dimensions: **read/write patterns**, **query characteristics**, and **data volume**. Give one typical example of each. (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+| Dimension | OLTP | OLAP |
+|-----------|------|------|
+| Read/write pattern | Frequent INSERT / UPDATE / DELETE on individual rows; point queries by primary key | Bulk ETL/ELT loads; large aggregation scans (COUNT, SUM, AVG across millions of rows) |
+| Query characteristics | Short, predefined, low-latency transactions | Complex, ad-hoc analytical queries by data analysts; may run for seconds or minutes |
+| Data volume | GB to TB (current operational data) | TB to PB (historical records spanning years) |
+
+*OLTP example*: A bank's transaction processing system — each ATM withdrawal is a discrete, immediate transaction.
+
+*OLAP example*: A retail data warehouse — analysts query year-on-year sales growth by product category across all regions.
+
+</details>
+
+---
+
+**Q12.** Describe the structure of a **Star Schema**. Explain what a Fact Table and a Dimension Table each store and how they relate to each other. Use a hypothetical e-commerce data warehouse as an example. (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+**Structure**:
+- A **Fact Table** sits at the centre. It stores measurable business events (facts) and holds foreign keys pointing to each surrounding Dimension Table. Facts are typically numeric and additive (e.g., revenue, quantity).
+- **Dimension Tables** surround the fact table. Each describes one aspect (dimension) of a fact — who, what, when, where. They contain descriptive, textual attributes.
+- The Fact Table links to Dimension Tables via foreign keys, forming a star-like shape.
+
+**E-commerce example**:
+
+```
+Fact Table:
+  Orders(order_id, customer_id, product_id, time_id, region_id, order_amount, quantity)
+
+Dimension Tables:
+  Customer(customer_id, name, age, membership_tier, email)
+  Product(product_id, name, category, brand, unit_price)
+  Time(time_id, date, week, month, quarter, year)
+  Region(region_id, city, state, country)
+```
+
+To answer "total revenue by product category in Q1 2025", you JOIN `Orders` with `Product` (for category) and `Time` (for Q1 2025), then SUM `order_amount`.
+
+</details>
+
+---
+
+**Q13.** Explain why a Data Lake can easily become a **"data swamp"**. How do organisations typically combine a Data Lake and a Data Warehouse in practice? (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+**Why Data Lakes become swamps**:
+- Data is loaded with no enforced schema (schema-on-read), so raw files accumulate with inconsistent formats and no documentation
+- Without a metadata catalogue, users cannot discover what data exists, what it means, or whether it is trustworthy
+- No data quality checks at ingestion mean corrupted or duplicated records mix with valid data
+- Over time, the lake fills with data nobody maintains, understands, or uses — becoming effectively inaccessible
+
+**Practical combination**:
+1. **Raw ingestion layer (Data Lake — HDFS/S3)**: All raw data lands here first, in its original format. Nothing is discarded. This preserves full history and supports future re-processing.
+2. **ETL/ELT pipeline**: Data is cleaned, standardised, and modelled (e.g., into a Star Schema).
+3. **Curated layer (Data Warehouse — Snowflake/BigQuery)**: Refined, business-ready tables are stored here for BI tools and analysts.
+
+This split gives the flexibility of a lake (store everything cheaply) with the reliability and performance of a warehouse (query clean, structured data efficiently).
+
+</details>
+
+---
+
+**Q14.** Compare a **relational database (RDBMS)** and a **graph database** across three dimensions: data model, query language, and performance advantage. When should you prefer a graph database? (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+| Dimension | RDBMS (e.g., PostgreSQL) | Graph DB (e.g., Neo4j) |
+|-----------|--------------------------|------------------------|
+| Data model | Tables with rows and columns; relationships expressed via foreign keys | Nodes (entities) + Edges (relationships) + Properties; relationships are stored explicitly |
+| Query language | SQL | Cypher (Neo4j), SPARQL, Gremlin |
+| Performance advantage | ACID transactions; efficient bulk aggregations; well-optimised for structured, tabular data | Multi-hop graph traversal in O(1) per hop; avoids costly repeated JOINs |
+
+**When to prefer a graph database**:
+- The core problem involves traversing **relationships** rather than aggregating values
+- Typical use cases: social network friend recommendations, fraud detection (transaction chains), knowledge graphs, network topology analysis, recommendation engines
+- Query pattern example: "Find all users who purchased the same product as users who follow User X" — trivial in a graph, exponentially expensive in SQL JOINs
+
+</details>
+
+---
+
+## Section C — Code Reading (8 marks)
+
+**Q15.** Read the following code and answer the questions below.
 
 ```python
 import psycopg2
@@ -143,99 +287,45 @@ print(df_sorted)
 conn.close()
 ```
 
-(a) `%s` 在 SQL 语句中起什么作用？为什么要使用参数化查询而不是直接字符串拼接？（2分）
-
-(b) `cursor.fetchall()` 返回的是什么类型的数据？（1分）
-
-(c) 这段代码整体做了什么？描述从连接数据库到最终输出的完整流程。（3分）
-
-(d) 这段代码体现了 "Push compute into DBMS" 还是 "Pull all data into Python"？请解释。（2分）
-
----
+**(a)** What is the role of `%s` in the SQL string? Why is parameterised querying preferred over string concatenation? (2 marks)
 
 <details>
-<summary>📋 参考答案（点击展开）</summary>
+<summary>Answer</summary>
 
-### Section A 答案
+`%s` is a **parameter placeholder**. psycopg2 safely binds the value `'Sydney'` from the tuple `('Sydney',)` to the placeholder before sending the query to the database.
 
-| 题号 | 答案 | 解析 |
-|------|------|------|
-| Q1 | **C** | 分析历史趋势 = OLAP；订单、取款、更新信息都是实时单条事务 = OLTP |
-| Q2 | **B** | Fact Table 存储可度量的业务事件（Sales_Amt）并持有各维度外键；Dimension Table 存描述信息 |
-| Q3 | **B** | ETL = Extract → Transform → Load（先转换再入库）；ELT = Extract → Load → Transform（先入库再转换） |
-| Q4 | **B** | Data Lake 读取时才定义结构（schema-on-read），灵活但可能混乱；Data Warehouse 写入时定义结构（schema-on-write） |
-| Q5 | **B** | `?` = 零或一个（可选）；`*` = 零或多个；`+` = 一或多个；`,` = 顺序必须 |
-| Q6 | **B** | 第一个参数 `{ age: { $gt: 20 } }` 是过滤条件；第二个参数 `{ name: 1, address: 1 }` 是投影（projection），只返回指定字段 |
-| Q7 | **C** | 图数据库的优势在于多跳关系遍历（图遍历），关系型数据库做多跳 JOIN 性能极差 |
-| Q8 | **C** | 社交网络 = 用户之间的关系 = 图结构 → Graph Database |
-| Q9 | **B** | Valid = Well-formed + 符合 DTD/Schema；Well-formed 只要求语法正确 |
-| Q10 | **C** | MongoDB 是 schema-late（灵活结构），同一 Collection 中 Document 结构可以不同，使用 JSON 嵌套文档 |
+Parameterised queries prevent **SQL injection attacks** — if the value came from user input and was concatenated directly into the string (e.g., `f"... WHERE region = '{user_input}'"`) an attacker could inject malicious SQL (e.g., `'; DROP TABLE sales; --`). Parameterisation escapes the value properly, treating it as data rather than executable SQL.
 
-### Section B 参考答案
+</details>
 
-**Q11.**
+**(b)** What type does `cursor.fetchall()` return? (1 mark)
 
-| 维度 | OLTP | OLAP |
-|------|------|------|
-| 读写模式 | Insert/Update/Delete 单条记录，点查询 | 批量 ETL 导入，大范围聚合扫描（COUNT/SUM） |
-| 查询特点 | 固定预定义查询，低延迟 | 分析师自由查询，复杂聚合 |
-| 数据量 | GB 到 TB | TB 到 PB |
+<details>
+<summary>Answer</summary>
 
-场景举例：OLTP = 银行转账系统（每笔转账是一条事务）；OLAP = 企业数据仓库（统计各地区季度销售额）。
+A **list of tuples** — each tuple represents one row of the result set, with column values as elements.
 
-**Q12.**
+</details>
 
-Star Schema 结构：
-- **Fact Table**：存储可度量的业务事件，包含各维度的外键 + 度量值。
-- **Dimension Table**：描述事实各维度的属性，通过主键与 Fact Table 关联。
+**(c)** Describe the full flow of this script from database connection to final output. (3 marks)
 
-电商示例：
-```
-Fact Table: Orders(order_id, customer_id, product_id, time_id, region_id, order_amount)
+<details>
+<summary>Answer</summary>
 
-Dimension Tables:
-- Customer(customer_id, name, age, email)
-- Product(product_id, name, category, brand, price)
-- Time(time_id, date, week, month, quarter, year)
-- Region(region_id, city, state, country)
-```
-Orders 通过外键（customer_id, product_id, time_id, region_id）指向各维度表，分析时 JOIN 得到完整描述信息。
+1. Opens a connection to the PostgreSQL database `sales`
+2. Executes a SQL query that filters records to the Sydney region, groups by `product_id`, and computes the total sales amount per product
+3. Retrieves all result rows with `fetchall()`
+4. Wraps the rows in a Pandas DataFrame with column names `product_id` and `total`
+5. Sorts the DataFrame by `total` in descending order and keeps the top 5 rows
+6. Prints those 5 rows, then closes the database connection
 
-**Q13.**
+</details>
 
-Data Lake 容易变成"数据沼泽"的原因：
-- schema-on-read 意味着数据存入时无需结构定义，导致数据质量参差不齐
-- 缺乏元数据管理，存入的数据无人知道格式、含义、来源
-- 随着数据量增大，找不到需要的数据，或读取时才发现数据不可用
+**(d)** Does this code demonstrate "push compute into the DBMS" or "pull all data into Python"? Explain. (2 marks)
 
-实践结合方式：
-- **Data Lake** 存储原始、未处理的数据（HDFS/S3），作为数据中间站，保留全量历史
-- **Data Warehouse**（如 BigQuery、Snowflake）存储经过清洗、建模、精炼的数据，供分析使用
-- 流程：原始数据 → Data Lake → ETL/ELT 清洗转换 → Data Warehouse → BI 报表
+<details>
+<summary>Answer</summary>
 
-**Q14.**
-
-| 维度 | RDBMS | Graph DB（如 Neo4j） |
-|------|-------|----------------------|
-| 数据模型 | 表（行和列），外键表示关系 | 节点（Node）+ 边（Edge）+ 属性，关系是一等公民 |
-| 查询语言 | SQL | Cypher（Neo4j）、SPARQL、Gremlin |
-| 性能优势 | ACID 事务、大批量数据聚合 | 多跳图遍历（O(1) per hop），避免昂贵 JOIN |
-
-优先选图数据库的场景：社交网络（好友推荐）、推荐系统（用户-商品关系）、欺诈检测（交易关系链）、知识图谱、网络拓扑分析。共同特征：核心问题是**关系的遍历**而非数据的聚合。
-
-**Q15.**
-
-(a) `%s` 是参数占位符，psycopg2 会安全地将 `('Sydney',)` 中的值绑定到 SQL 中。使用参数化查询可以防止 **SQL 注入攻击**——如果用字符串拼接，攻击者可以在输入中注入恶意 SQL 语句。
-
-(b) `cursor.fetchall()` 返回一个**列表（list）**，其中每个元素是一个**元组（tuple）**，对应查询结果的一行。
-
-(c) 完整流程：
-1. 连接到 PostgreSQL 数据库 `sales`
-2. 执行 SQL：筛选 Sydney 地区的销售记录，按 product_id 分组求销售总额
-3. 获取全部结果，构建 DataFrame
-4. 按总销售额降序排序，取前 5 名
-5. 打印结果后关闭连接
-
-(d) **Push compute into DBMS**。SQL 中的 `WHERE region = 'Sydney'` 和 `GROUP BY product_id / SUM(sales_amt)` 都在数据库内部执行，Python 只接收聚合后的少量结果（5行），而不是拉取全表数据再在 Python 中过滤聚合。
+**Push compute into the DBMS.** The SQL performs both filtering (`WHERE region = 'Sydney'`) and aggregation (`GROUP BY product_id`, `SUM(sales_amt)`) inside the database. Python receives only the aggregated result (one row per product), not the entire `sales` table. This is efficient: the database uses its indexes and query optimiser, and minimal data crosses the network boundary.
 
 </details>

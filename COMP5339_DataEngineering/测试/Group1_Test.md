@@ -1,133 +1,263 @@
-# Group 1 测试题 — 数据获取与清洗
+# Group 1 Test — Data Acquisition & Cleaning
 
-**覆盖范围：Week 1 (Intro + Unix) + Week 2 (Acquisition & Cleaning) + Week 4 (Web Scraping & APIs)**
+**Scope: Week 1 (Intro + Unix) + Week 2 (Acquisition & Cleaning) + Week 4 (Web Scraping & APIs)**
 
-**总分：60 分 | 建议用时：45 分钟**
-
----
-
-## Section A — MCQ（每题 2 分，共 20 分）
-
-**Q1.** 下列哪种数据源属于 Unbounded（无界）数据？
-
-- A. 从 data.gov.au 下载的 CSV 文件
-- B. 数据库中的一次 SQL 查询结果
-- C. IoT 传感器持续上报的温度读数
-- D. Web API 返回的 JSON 响应
+**Total: 60 marks | Suggested time: 45 minutes**
 
 ---
 
-**Q2.** 以下 Unix 命令中，哪个命令用于**统计文件行数**？
+## Section A — Multiple Choice (2 marks each, 20 marks total)
+
+**Q1.** Which of the following is an example of **unbounded** data?
+
+- A. A CSV file downloaded from data.gov.au
+- B. The result set of a SQL query
+- C. Continuous temperature readings from an IoT sensor
+- D. A JSON response from a Web API
+
+<details>
+<summary>Answer</summary>
+
+**C** — IoT sensor readings are continuously generated with no fixed endpoint, making them unbounded. All other options produce a finite, fixed-size dataset at the time of retrieval.
+
+</details>
+
+---
+
+**Q2.** Which Unix command counts the **number of lines** in a file?
 
 - A. `cut -l data.csv`
 - B. `wc -l data.csv`
 - C. `grep -c data.csv`
 - D. `sort -n data.csv`
 
----
+<details>
+<summary>Answer</summary>
 
-**Q3.** 某数据集中，气温字段出现了大量 `99999` 的值，但实际不可能达到这个温度。这属于哪类数据质量问题？
+**B** — `wc -l` counts lines. `-c` counts bytes, `-w` counts words. `grep -c` counts matching lines but requires a pattern argument.
 
-- A. Missing（缺失）
-- B. Incorrect（错误值）
-- C. Default（占位符）
-- D. Inconsistent（不一致）
+</details>
 
 ---
 
-**Q4.** 以下 Pandas 代码的作用是什么？
+**Q3.** A dataset contains many temperature records where the value is `99999`, which is physically impossible. What type of data quality issue is this?
+
+- A. Missing
+- B. Incorrect
+- C. Default
+- D. Inconsistent
+
+<details>
+<summary>Answer</summary>
+
+**C** — A **Default** value is a placeholder (like `99999`, `0`, or `-1`) substituted when the real value is unavailable, rather than leaving the field null. **Incorrect** refers to genuinely wrong values caused by sensor faults or input errors. **Missing** means the field is null/blank.
+
+</details>
+
+---
+
+**Q4.** What does the following Pandas code do?
 
 ```python
 df['age'].fillna(0).astype(int)
 ```
 
-- A. 删除 `age` 列中所有 NaN 行，然后转为整数
-- B. 将 `age` 列的 NaN 替换为 0，然后将整列转为整数类型
-- C. 将 `age` 列的 0 替换为 NaN，然后转为整数
-- D. 将 `age` 列转为整数，遇到 NaN 时报错
+- A. Drops all rows where `age` is NaN, then converts to integer
+- B. Replaces NaN in `age` with 0, then converts the column to integer type
+- C. Replaces 0s in `age` with NaN, then converts to integer
+- D. Converts `age` to integer; raises an error if NaN is present
+
+<details>
+<summary>Answer</summary>
+
+**B** — `fillna(0)` replaces NaN with 0 first (necessary because Python's `int` type cannot represent NaN), then `astype(int)` converts the whole column to integer. Without `fillna` first, `astype(int)` would raise a `ValueError`.
+
+</details>
 
 ---
 
-**Q5.** 以下 BeautifulSoup 调用中，哪个可以找到**所有** class 为 `data` 的 `table` 元素？
+**Q5.** Which BeautifulSoup call returns **all** `<table>` elements with class `data`?
 
 - A. `content.find('table', 'data')`
 - B. `content.find_all('table', 'data')`
 - C. `content.select('table#data')`
 - D. `content.find(class_='data')`
 
----
+<details>
+<summary>Answer</summary>
 
-**Q6.** CSS Selector `table.results` 的含义是：
+**B** — `find_all` returns a list of all matching elements. `find` returns only the first match. Option C uses `#` which selects by **id**, not class. Option D finds any element with that class, not specifically `<table>`.
 
-- A. id 为 `results` 的 `table`
-- B. class 为 `results` 的任意元素
-- C. class 为 `results` 的 `table`
-- D. 包含子元素 `results` 的 `table`
+</details>
 
 ---
 
-**Q7.** 使用 `requests.get()` 后，`response.status_code` 返回 `404` 表示：
+**Q6.** What does the CSS selector `table.results` match?
 
-- A. 服务器内部错误
-- B. 请求成功
-- C. 资源未找到
-- D. 需要身份验证
+- A. A `<table>` with id `results`
+- B. Any element with class `results`
+- C. A `<table>` with class `results`
+- D. A `<table>` containing a child element named `results`
 
----
+<details>
+<summary>Answer</summary>
 
-**Q8.** Web API 与直接爬取 HTML 网页相比，主要优势是：
+**C** — `tag.class` syntax selects elements of that tag type with that class. `#results` would select by id. `.results` alone (without the tag) would match any element with that class.
 
-- A. 不需要网络连接
-- B. 返回结构化数据（JSON/XML），更稳定，不受页面改版影响
-- C. 速度更快，因为不经过 HTTP 协议
-- D. 不需要解析任何格式
+</details>
 
 ---
 
-**Q9.** 以下哪个工具最适合爬取**需要 JavaScript 渲染**的动态网页？
+**Q7.** After calling `requests.get()`, a `response.status_code` of `404` means:
+
+- A. Internal server error
+- B. Request succeeded
+- C. Resource not found
+- D. Authentication required
+
+<details>
+<summary>Answer</summary>
+
+**C** — HTTP 404 = Not Found. 200 = OK (success). 500 = Internal Server Error. 401 = Unauthorized (authentication required).
+
+</details>
+
+---
+
+**Q8.** Compared to scraping HTML pages directly, what is the primary advantage of using a Web API?
+
+- A. APIs do not require a network connection
+- B. APIs return structured data (JSON/XML) that is stable and not affected by page redesigns
+- C. APIs are faster because they bypass the HTTP protocol
+- D. APIs require no parsing whatsoever
+
+<details>
+<summary>Answer</summary>
+
+**B** — APIs expose a stable, structured interface (usually JSON). HTML scraping breaks whenever the website's layout changes. APIs still use HTTP and still require parsing, but the structure is far more predictable.
+
+</details>
+
+---
+
+**Q9.** Which tool is best suited for scraping a website that **requires JavaScript to render** its content?
 
 - A. `requests` + `BeautifulSoup`
 - B. `Scrapy`
 - C. `Selenium`
 - D. `pd.read_html()`
 
+<details>
+<summary>Answer</summary>
+
+**C** — Selenium drives a real browser that executes JavaScript. `requests` fetches only the raw HTML; `BeautifulSoup` and `Scrapy` also do not execute JavaScript. `pd.read_html()` only parses static HTML tables.
+
+</details>
+
 ---
 
-**Q10.** URL `https://api.example.com/data?format=json&limit=100` 中，查询参数有几个？
+**Q10.** How many query parameters does the following URL contain?
+
+```
+https://api.example.com/data?format=json&limit=100
+```
 
 - A. 1
 - B. 2
 - C. 3
-- D. 无法判断
+- D. Cannot be determined
+
+<details>
+<summary>Answer</summary>
+
+**B** — `format=json` and `limit=100` are two separate query parameters, separated by `&`. The `?` marks the start of the query string.
+
+</details>
 
 ---
 
-## Section B — 短答题（每题 8 分，共 32 分）
+## Section B — Short Answer (8 marks each, 32 marks total)
 
-**Q11.** 请解释 Bounded 和 Unbounded 数据的区别，并各举一个例子。说明 Unbounded 数据在处理前需要做什么转换，以及为什么。（8分）
+**Q11.** Explain the difference between **Bounded** and **Unbounded** data. Give one example of each. What transformation must be applied to unbounded data before it can be processed, and why? (8 marks)
 
----
+<details>
+<summary>Answer</summary>
 
-**Q12.** 某数据工程师从某市卫生局获得了一份医院就诊记录 CSV，发现以下问题：
-- 部分行的"年龄"列为空
-- 性别列出现了 `M`、`Male`、`男` 三种写法
-- 有几行的体重值为 `0`，但医疗记录不可能为 0
+- **Bounded data**: A dataset with a fixed, finite size. The full dataset is available at the time of processing. *Example*: a CSV file downloaded from a government portal; the result of a SQL query.
+- **Unbounded data**: A continuous, never-ending stream of data with no defined endpoint. *Example*: real-time IoT sensor readings; a live social media event stream.
+- **Required transformation**: Unbounded data must be divided into **windows** or **batches** before processing. This is necessary because any aggregation (sum, count, average) requires a defined boundary — you cannot compute an average over an infinite sequence. A window imposes a finite scope (e.g., "last 5 minutes" or "1,000 records at a time") so the computation can complete and produce a result.
 
-请说明每个问题分别属于哪类数据质量问题，并说明处理方法。（8分）
-
----
-
-**Q13.** 解释 `requests` + `BeautifulSoup` 与 `Scrapy` 的适用场景差异。什么情况下应该选择 `Scrapy`？（8分）
+</details>
 
 ---
 
-**Q14.** 数据工程师有两种处理数据库查询结果的方式："Push compute into DBMS" 和 "Pull all data into Python"。分别解释这两种方式的思路，并说明各自的适用场景和局限。（8分）
+**Q12.** A data engineer receives a hospital patient record CSV and finds the following issues:
+- Several rows have a blank `age` field
+- The `gender` column contains `M`, `Male`, and `Male` entries
+- Some rows have a `weight` value of `0`, which is medically impossible
+
+Identify the data quality problem type for each issue and describe how to handle it. (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+| Issue | Problem Type | Handling |
+|-------|-------------|---------|
+| Blank `age` field | **Missing** — the value was never recorded or was lost in transmission | Use `fillna()` with a suitable imputation (e.g., median age) or `dropna()` to remove those rows if the field is critical |
+| `M` / `Male` / `男` in `gender` | **Inconsistent** — the same concept represented in multiple formats | Standardise with `.replace({'Male': 'M', '男': 'M'})` to unify all entries to a single encoding |
+| `weight` = 0 | **Default** — 0 is a placeholder substituted when the true value was unavailable, not a real measurement | Replace 0 with `NaN` (e.g., `df['weight'].replace(0, np.nan)`), then treat as missing |
+
+</details>
 
 ---
 
-## Section C — 代码阅读（共 8 分）
+**Q13.** Compare `requests` + `BeautifulSoup` with `Scrapy` as web scraping tools. When should you choose `Scrapy` over `requests`+`BeautifulSoup`? (8 marks)
 
-**Q15.** 阅读以下代码，回答问题：
+<details>
+<summary>Answer</summary>
+
+| Dimension | `requests` + `BeautifulSoup` | `Scrapy` |
+|-----------|------------------------------|----------|
+| Setup complexity | Low — minimal boilerplate | Higher — requires project structure and Spider class |
+| Best for | Single pages or a small, known list of URLs | Multi-page crawls that follow links automatically |
+| Concurrency | Single-threaded by default | Built-in asynchronous request engine |
+| Features | Manual everything | Built-in: deduplication, rate limiting, pipelines, middleware |
+| Use case | Quick one-off data extraction | Systematic, recurring, or large-scale crawls |
+
+**Choose Scrapy when**:
+- You need to follow pagination links or crawl an entire site structure
+- You need to handle retries, rate limiting, or robots.txt compliance automatically
+- You want to export data to multiple targets (database, JSON, CSV) through pipelines
+- The crawl needs to run repeatedly on a schedule
+
+</details>
+
+---
+
+**Q14.** A data engineer has two choices when querying a database from Python: **"push compute into the DBMS"** or **"pull all data into Python"**. Explain the approach for each, and describe the appropriate use case and limitation of each. (8 marks)
+
+<details>
+<summary>Answer</summary>
+
+**Push compute into the DBMS**
+- *Approach*: Write SQL that performs filtering, aggregation, and joining inside the database. Python only receives the final, small result set.
+- *Use case*: Large tables where only a fraction of data is needed; aggregations that benefit from indexes; queries the database engine can optimise.
+- *Limitation*: Complex statistical analysis or machine learning workflows are difficult to express in SQL alone.
+
+**Pull all data into Python**
+- *Approach*: Fetch the entire table (or large chunk) into a Pandas DataFrame and perform all processing in Python.
+- *Use case*: Exploratory analysis where you need flexible, ad-hoc transformations; small-to-medium datasets that fit in memory.
+- *Limitation*: The full dataset must fit in memory (risk of OOM errors on large tables); high network transfer cost; loses database query optimisation.
+
+**Rule of thumb**: prefer pushing compute to the DBMS for data reduction, and pull only the filtered/aggregated result for further Python processing.
+
+</details>
+
+---
+
+## Section C — Code Reading (8 marks)
+
+**Q15.** Read the following code and answer the questions below.
 
 ```python
 import requests
@@ -148,63 +278,46 @@ df_top = df[df['Score'] > 80].sort_values('Score', ascending=False)
 print(df_top.head(10))
 ```
 
-(a) `find_all('table')[1]` 取的是页面上哪一个 table？（1分）
-
-(b) `pd.read_html(str(table))[0]` 的作用是什么？为什么要加 `[0]`？（2分）
-
-(c) `dropna(subset=['Score'])` 和直接 `dropna()` 有什么区别？（2分）
-
-(d) 最后三行代码做了什么？用一句话描述整个数据处理流程的目标。（3分）
-
----
+**(a)** Which table on the page does `find_all('table')[1]` select? (1 mark)
 
 <details>
-<summary>📋 参考答案（点击展开）</summary>
+<summary>Answer</summary>
 
-### Section A 答案
+The **second** table on the page. Python list indexing starts at 0, so index `[1]` is the second element.
 
-| 题号 | 答案 | 解析 |
-|------|------|------|
-| Q1 | **C** | IoT 传感器持续上报，没有终点 → Unbounded；其余都是有固定大小的批次 |
-| Q2 | **B** | `wc -l` 统计行数；`-c` 统计字节数，`-w` 统计词数 |
-| Q3 | **C** | 用极端数值（99999）代替缺失值 → Default（占位符）；Incorrect 指真正的传感器故障数据 |
-| Q4 | **B** | `fillna(0)` 先将 NaN 替换为 0，再用 `astype(int)` 转为整数 |
-| Q5 | **B** | `find_all('table', 'data')` 返回所有匹配的元素列表；`find` 只返回第一个 |
-| Q6 | **C** | `tag.class` → class 为 `results` 的 `table` 标签；`#` 才是 id 选择器 |
-| Q7 | **C** | HTTP 404 = Not Found（资源未找到）；200 = 成功；500 = 服务器内部错误 |
-| Q8 | **B** | API 返回结构化数据，接口稳定；HTML 可能因页面改版而失效 |
-| Q9 | **C** | Selenium 可以驱动真实浏览器，执行 JavaScript；其他工具不能处理动态渲染 |
-| Q10 | **B** | `format=json` 和 `limit=100` 共 2 个查询参数 |
+</details>
 
-### Section B 参考答案
+**(b)** What does `pd.read_html(str(table))[0]` do? Why is `[0]` needed? (2 marks)
 
-**Q11.**
-- **Bounded**：有固定大小、有终点的数据集。例：下载的 CSV 文件、API 返回的 JSON 响应。
-- **Unbounded**：持续产生、没有终点的数据流。例：IoT 传感器实时上报的温度数据、社交媒体的实时评论流。
-- **转换**：处理 Unbounded 数据前必须划定窗口（Window）或批次（Batch），将其截断为 Bounded。原因：计算引擎无法对无穷序列执行聚合操作，必须定义一个时间或数量边界才能产出结果。
+<details>
+<summary>Answer</summary>
 
-**Q12.**
-- "年龄"列为空 → **Missing（缺失）**：处理方式：用 `fillna()` 填充均值/中位数，或 `dropna()` 删除该行（视下游分析需求）。
-- 性别列写法不统一 → **Inconsistent（不一致）**：处理方式：标准化映射，如 `replace({'Male': 'M', '男': 'M'})`，统一为单一编码。
-- 体重值为 0 → **Default（占位符）**：0 是系统默认填入值，并非真实体重。处理方式：将 0 替换为 `NaN`，再按缺失值处理。
+`pd.read_html()` parses all HTML `<table>` elements found in the given string and returns a **list** of DataFrames. Since `str(table)` contains exactly one table, the list has one element. `[0]` retrieves that first (and only) DataFrame from the list.
 
-**Q13.**
-- `requests` + `BeautifulSoup`：适合**单页或少量页面**爬取，代码简单直接，适合快速原型和一次性任务。
-- `Scrapy`：适合**多页面自动跟链**（spider）的大规模爬取，内置请求队列、去重、并发管理、管道处理，适合系统化、长期运行的爬虫项目。
-- 选择 `Scrapy` 的场景：需要跟踪分页链接、需要爬取整个站点结构、需要处理反爬（速率限制）、需要将数据导出到多个目标（数据库、文件）。
+</details>
 
-**Q14.**
-- **Push compute into DBMS**：在数据库内执行 SQL（聚合、过滤、JOIN），只把最终结果传回 Python。优势：利用数据库索引和查询优化器，传输量小，可扩展。局限：复杂的统计分析或 ML 在 SQL 中难以表达。
-- **Pull all data into Python**：将全表或大批数据拉入 Pandas DataFrame，在 Python 中处理。优势：灵活，可用任意 Python 库。局限：数据必须能放进内存，大数据集会 OOM；网络传输开销大。
+**(c)** What is the difference between `dropna(subset=['Score'])` and `dropna()`? (2 marks)
 
-**Q15.**
+<details>
+<summary>Answer</summary>
 
-(a) 页面上**第二个** table（索引从 0 开始，`[1]` = 第二个）。
+- `dropna(subset=['Score'])` drops only rows where the **`Score` column specifically** is NaN. Rows that have NaN in other columns are kept.
+- `dropna()` drops any row that has **at least one NaN in any column**, which can remove many more rows than intended and lose valid data.
 
-(b) `pd.read_html()` 将 HTML 字符串中所有 table 解析为 DataFrame 列表；`[0]` 取列表中第一个（也是唯一一个，因为 `str(table)` 只含一张表）。
+Using `subset` is safer when only one column is required to be non-null.
 
-(c) `dropna(subset=['Score'])` 只删除 `Score` 列为空的行，其他列有 NaN 的行保留；`dropna()` 会删除**任意列**含有 NaN 的行，影响范围更大，可能丢失过多数据。
+</details>
 
-(d) 最后三行：筛选出 Score > 80 的行，按 Score 降序排列，打印前 10 条。整体目标：从网页排行榜中提取表格，清洗数据后，找出得分最高的前 10 名记录。
+**(d)** Describe what the last three lines do and summarise the overall goal of this script in one sentence. (3 marks)
+
+<details>
+<summary>Answer</summary>
+
+The last three lines:
+1. `df[df['Score'] > 80]` — filters to keep only rows where Score exceeds 80
+2. `.sort_values('Score', ascending=False)` — sorts those rows from highest to lowest score
+3. `print(df_top.head(10))` — prints the top 10 rows
+
+**Overall goal**: Scrape a rankings table from a webpage, clean the data, and display the top 10 highest-scoring entries (those with a score above 80).
 
 </details>
