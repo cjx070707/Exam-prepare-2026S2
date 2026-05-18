@@ -18,7 +18,7 @@
 > 
 > **(a)**
 > 
-> $W_2(W_1 x + b_1) + b_2 = (W_2W_1)x + \text{const}$ — the composition of two linear transformations is still linear. No matter how many linear layers you stack, the network collapses to a single affine map. Non-linear activation functions are required to break this.
+> $W_2(W_1 x + b_1) + b_2 = (W_2W_1)x + \text{const}$，两个线性变换的复合仍然是线性的。不管叠多少个线性层，网络都等价于一个 affine map。必须引入 non-linear activation function 才能打破这个限制。
 
 ---
 
@@ -33,7 +33,7 @@
 > 
 > **(c) Sigmoid**
 > 
-> Sigmoid outputs values in $(0,1)$ — always positive, so not zero-centred. In saturated regions ($|x| \gg 0$), $f'(x) \approx 0$, causing severe gradient vanishing. Tanh is zero-centred but still saturates. ReLU and Leaky ReLU do not saturate in the positive region.
+> Sigmoid 输出范围 $(0,1)$，始终为正，因此不是 zero-centred。在饱和区（$|x| \gg 0$）时，$f'(x) \approx 0$，造成严重的 gradient vanishing。Tanh 是 zero-centred 但同样会饱和。ReLU 和 Leaky ReLU 在正区不会饱和。
 
 ---
 
@@ -48,9 +48,9 @@
 > 
 > **(b)**
 > 
-> By chain rule: $\delta_k = \frac{\partial J}{\partial \text{net}_k} = \frac{\partial J}{\partial z_k} \cdot f'(\text{net}_k) = (t_k - z_k) \cdot f'(\text{net}_k)$.
+> 由 chain rule 推导：$\delta_k = \frac{\partial J}{\partial \text{net}_k} = \frac{\partial J}{\partial z_k} \cdot f'(\text{net}_k) = (t_k - z_k) \cdot f'(\text{net}_k)$。
 > 
-> Option (a) is the hidden-layer formula, not the output-layer formula.
+> 选项 (a) 是 hidden layer 的公式，不是 output layer。
 
 ---
 
@@ -65,9 +65,9 @@
 > 
 > **(b)**
 > 
-> $\hat{v}_t$ estimates the typical squared magnitude of the gradient for each parameter. A parameter with consistently large gradients has large $\hat{v}_t$, so $\eta/\sqrt{\hat{v}_t}$ is small (conservative step). Sparse or small-gradient parameters get a relatively larger effective learning rate.
+> $\hat{v}_t$ 估计了每个参数历史梯度平方的典型幅度。对历史梯度大的参数，$\hat{v}_t$ 大，$\eta/\sqrt{\hat{v}_t}$ 小（步长保守）；梯度小或稀疏的参数则获得相对更大的有效 learning rate，实现 per-parameter adaptive scaling。
 > 
-> Option (c) describes bias correction (the $1-\beta^t$ division), not the $\sqrt{\hat{v}_t}$ term.
+> 选项 (c) 描述的是 bias correction（$1-\beta^t$ 那一项），不是 $\sqrt{\hat{v}_t}$ 的作用。
 
 ---
 
@@ -82,7 +82,7 @@
 > 
 > **(b)**
 > 
-> In 2D, the L1 ball $\|\theta\|_1 \leq r$ is a diamond with corners at $(\pm r, 0)$ and $(0, \pm r)$. As the loss function's contour lines shrink toward the optimum, they geometrically tend to first touch the diamond at one of its corners — which sit exactly on a coordinate axis, meaning one weight is zero. The L2 ball is a smooth sphere with no corners, so the intersection is generic and weights are typically both nonzero.
+> 在二维空间，L1 ball $\|\theta\|_1 \leq r$ 是菱形，角点在坐标轴上（$(\pm r, 0)$ 和 $(0, \pm r)$）。loss function 的等高线在向最优点收缩时，几何上更容易先碰到这些角点——而角点恰好在坐标轴上，即某个权重精确为零。L2 ball 是光滑球形，没有角点，交点处两个权重通常都非零。
 
 ---
 
@@ -94,15 +94,15 @@
 
 > [!success]- Answer
 > 
-> **(i) How a neuron dies:**
-> ReLU outputs 0 and has zero gradient whenever pre-activation $z \leq 0$. If a large gradient update pushes a neuron's bias very negative so that $z < 0$ for every training sample, the gradient through that neuron is permanently zero — weights never update again.
+> **(i) 神经元如何死亡：**
+> ReLU 在 pre-activation $z \leq 0$ 时输出为 0 且梯度为零。如果一次大的梯度更新把某个神经元的 bias 推得非常负，导致对所有训练样本都有 $z < 0$，则该神经元的梯度永远为零，权重不再更新。
 > 
-> **(ii) Effect on training:**
-> A dead neuron contributes nothing to the forward pass and receives no gradient in the backward pass. It effectively disappears from the network. In severe cases, large fractions of neurons die simultaneously and training stalls entirely.
+> **(ii) 对训练的影响：**
+> Dead neuron 在 forward pass 中贡献为零，backward pass 也收不到梯度，相当于从网络中消失。严重时大批神经元同时 die，训练完全停滞。
 > 
-> **(iii) Leaky ReLU fix:**
+> **(iii) Leaky ReLU 的修复：**
 > $$f(x) = \begin{cases} x & x > 0 \\ \alpha x & x \leq 0 \end{cases}, \quad \alpha \approx 0.01$$
-> The small slope $\alpha$ in the negative region ensures gradient $= \alpha \neq 0$ even when the neuron is "off". The neuron can always receive a gradient signal and recover.
+> 在负区保留斜率 $\alpha$，保证梯度 $= \alpha \neq 0$，即使神经元处于 "off" 状态也能持续收到梯度信号，随时可以恢复。
 
 ---
 
@@ -110,18 +110,17 @@
 
 > [!success]- Answer
 > 
-> **Complete steps:**
+> **完整步骤：**
 > $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$$
 > $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$
 > $$\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t}$$
 > $$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t}+\varepsilon}\,\hat{m}_t$$
 > 
-> **(i) Why bias correction:**
-> $m_0 = 0$, so at $t=1$: $m_1 = (1-0.9)g_1 = 0.1\,g_1$ — only 10% of the actual gradient. The moving average is initialised too low because there is no "warm-up" history. Bias correction rescales by $1/(1-\beta_1^t)$ to recover the correct estimate.
+> **(i) 为什么需要 bias correction：**
+> $m_0 = 0$，所以第 1 步 $m_1 = (1-0.9)g_1 = 0.1\,g_1$，只有真实梯度的 10%。moving average 因没有历史 "热身" 数据而被初始化过低。Bias correction 通过除以 $(1-\beta_1^t)$ 来恢复正确的估计值。
 > 
-> **(ii) Numerical example:**
-> $\hat{m}_1 = m_1 / (1 - 0.9^1) = 0.1\,g_1 / 0.1 = g_1$, so $\hat{m}_1/m_1 = 10$.
-> Without correction the first update uses a gradient estimate 10× too small.
+> **(ii) 数值例子：**
+> $\hat{m}_1 = m_1 / (1 - 0.9^1) = 0.1\,g_1 / 0.1 = g_1$，因此 $\hat{m}_1/m_1 = 10$。不做 correction 的话，第一步的梯度估计小了 10 倍。
 
 ---
 
@@ -129,15 +128,15 @@
 
 > [!success]- Answer
 > 
-> **(i) BN forward pass:**
+> **(i) BN forward pass：**
 > $$\mu_B = \frac{1}{N}\sum_i x_i, \quad \sigma_B^2 = \frac{1}{N}\sum_i(x_i-\mu_B)^2$$
 > $$\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2+\varepsilon}}, \quad y = \gamma\hat{x} + \beta$$
 > 
-> **(ii) Test time:**
-> At test time the batch may contain only one sample, making batch statistics meaningless. BN maintains exponential moving averages $\mu_\text{run}$, $\sigma^2_\text{run}$ during training and uses them as fixed values at test time.
+> **(ii) 测试时为何不能用 batch statistics：**
+> 测试时可能只有一个样本，batch statistics 没有意义。BN 在训练过程中维护 exponential moving averages $\mu_\text{run}$、$\sigma^2_\text{run}$，测试时用这些固定值替代。
 > 
-> **(iii) Role of $\gamma$ and $\beta$:**
-> Normalisation forces every layer's output to zero mean and unit variance, potentially harming expressiveness (e.g. sigmoid would always operate in its near-linear region). $\gamma$ (scale) and $\beta$ (shift) are learnable parameters that let the network undo the normalisation if needed. Without them the representational capacity of each layer is permanently constrained.
+> **(iii) $\gamma$ 和 $\beta$ 的作用：**
+> Normalization 强制每层输出均值为 0、方差为 1，可能损害表达能力（例如 sigmoid 会被迫工作在近线性区）。$\gamma$（scale）和 $\beta$（shift）是可学习参数，让网络在需要时撤销 normalization。没有它们，每层的 representational capacity 将被永久限制。
 
 ---
 
@@ -145,19 +144,19 @@
 
 > [!success]- Answer
 > 
-> **(i) Prior:**
-> L2 regularisation corresponds to an isotropic **Gaussian prior** $p(\theta) = \mathcal{N}(0,\frac{1}{2\lambda}I)$ — MAP estimation under this prior is equivalent to minimising the L2-regularised loss.
+> **(i) Prior：**
+> L2 regularization 对应各向同性的 **Gaussian prior** $p(\theta) = \mathcal{N}(0,\frac{1}{2\lambda}I)$——在该 prior 下做 MAP estimation 等价于最小化 L2 正则化的 loss。
 > 
-> **(ii) Loss and update:**
+> **(ii) Loss 和 update：**
 > $$\tilde{J}(\theta) = J(\theta) + \lambda\|\theta\|_2^2$$
 > $$\theta \leftarrow (1-2\eta\lambda)\theta - \eta\nabla_\theta J$$
-> The factor $(1-2\eta\lambda)<1$ decays weights toward zero at each step — hence "weight decay".
+> 系数 $(1-2\eta\lambda)<1$ 在每步将权重向零衰减，因此称为 "weight decay"。
 > 
-> **(iii) Hard vs soft equivalence:**
-> Hard: $\min J(\theta)$ s.t. $\|\theta\|^2 \leq r$
-> Soft: $\min J(\theta) + \lambda\|\theta\|^2$
+> **(iii) Hard vs soft 等价：**
+> Hard：$\min J(\theta)$ s.t. $\|\theta\|^2 \leq r$
+> Soft：$\min J(\theta) + \lambda\|\theta\|^2$
 > 
-> Via the Lagrangian $\mathcal{L} = J(\theta) + \lambda(\|\theta\|^2 - r)$, KKT conditions show that for every $r$ there exists a unique $\lambda \geq 0$ such that the solutions coincide. The two formulations parameterise the same family of solutions.
+> 通过 Lagrangian $\mathcal{L} = J(\theta) + \lambda(\|\theta\|^2 - r)$，KKT 条件表明对每个 $r$ 存在唯一的 $\lambda \geq 0$ 使两者解重合。两种形式参数化了同一族解。
 
 ---
 
@@ -216,7 +215,7 @@ class LinearLayer:
 >         return dx, dW, db
 > ```
 > 
-> **Key points:** He init uses `sqrt(2/n_in)`. Must cache both `x` (for `dW = x.T @ dz`) and `z` (for activation gradient). `dW` shape must match `W`.
+> **要点：** He init 用 `sqrt(2/n_in)`。必须同时缓存 `x`（用于 `dW = x.T @ dz`）和 `z`（用于计算 activation gradient）。`dW` 的 shape 必须和 `W` 一致。
 
 ---
 
@@ -256,7 +255,7 @@ class Adam:
 >         return param
 > ```
 > 
-> **Key points:** increment `t` before bias correction. Second moment uses `grad**2`. Lazy init avoids needing param shape at construction.
+> **要点：** 先递增 `t` 再做 bias correction。Second moment 用 `grad**2`。懒初始化避免了在构造时就需要知道参数 shape。
 
 ---
 
@@ -279,7 +278,7 @@ def batchnorm_forward(x, gamma, beta, eps=1e-5):
 >     return gamma * x_hat + beta
 > ```
 > 
-> **Key points:** `dim=(0,2,3)` averages over batch + spatial, leaving channel. `keepdim=True` preserves shape for broadcasting. `+eps` prevents divide-by-zero.
+> **要点：** `dim=(0,2,3)` 在 batch + spatial 维度上求均值，保留 channel 维度。`keepdim=True` 保持 shape 以便 broadcasting。`+eps` 防止除以零。
 
 ---
 
@@ -291,23 +290,23 @@ def batchnorm_forward(x, gamma, beta, eps=1e-5):
 
 > [!success]- Answer
 > 
-> **Update equations:**
+> **更新公式：**
 > 
-> SGD: $\theta \leftarrow \theta - \eta\nabla J(\theta)$
+> SGD：$\theta \leftarrow \theta - \eta\nabla J(\theta)$
 > 
-> SGD + Momentum: $v_t = \gamma v_{t-1} + \eta\nabla J(\theta)$, $\theta \leftarrow \theta - v_t$
+> SGD + Momentum：$v_t = \gamma v_{t-1} + \eta\nabla J(\theta)$，$\theta \leftarrow \theta - v_t$
 > 
-> Adam: see B2 above.
+> Adam：见 B2。
 > 
-> **Problems solved:**
-> - SGD: baseline, no extra mechanism. Oscillates on ill-conditioned surfaces, converges slowly.
-> - SGD + Momentum: accumulates velocity in consistent gradient directions (accelerates), cancels in oscillating directions (damps). Typical 10× speedup on valley-shaped loss surfaces.
-> - Adam: per-parameter adaptive learning rates via second moment + momentum. Near-zero tuning required; well-suited to sparse gradients and non-stationary loss surfaces.
+> **各自解决的问题：**
+> - SGD：基准方法，无额外机制。在 ill-conditioned 的 loss surface 上震荡，收敛慢。
+> - SGD + Momentum：在一致的梯度方向上累积 velocity（加速），在震荡方向上相互抵消（阻尼）。在 valley-shaped loss surface 上通常有约 10× 的加速。
+> - Adam：通过 second moment 实现 per-parameter adaptive learning rate，加上 momentum。几乎不需要调参；对 sparse gradient 和非平稳 loss surface 效果好。
 > 
-> **When to prefer SGD + Momentum:**
-> 1. **Final test accuracy**: on image classification (CIFAR, ImageNet), SGD + Momentum with cosine annealing often achieves lower final test error than Adam. Adam's adaptive scaling can slightly hurt generalisation.
-> 2. **When tuning budget exists**: Adam is a shortcut; given proper learning-rate sweeps, SGD + Momentum is often the better long-run choice.
-> 3. **Memory-constrained settings**: Adam requires storing two moment vectors per parameter. SGD + Momentum stores only one velocity vector.
+> **何时选 SGD + Momentum：**
+> 1. **最终 test accuracy**：在图像分类（CIFAR、ImageNet）上，搭配 cosine annealing 的 SGD + Momentum 通常比 Adam 达到更低的 test error。Adam 的 adaptive scaling 可能轻微损害 generalization。
+> 2. **有调参余量时**：Adam 是捷径；如果能做充分的 learning rate sweep，SGD + Momentum 往往是长期更好的选择。
+> 3. **内存受限场景**：Adam 需要为每个参数存储两个 moment 向量，SGD + Momentum 只需一个 velocity 向量。
 
 ---
 
@@ -315,16 +314,16 @@ def batchnorm_forward(x, gamma, beta, eps=1e-5):
 
 > [!success]- Answer
 > 
-> **Why overfitting occurs:**
-> When model capacity is large relative to the training set, the model memorises idiosyncratic noise in the training data rather than the underlying distribution. Training loss is low; generalisation is poor.
+> **为什么会 overfitting：**
+> 当模型 capacity 相对于训练集过大时，模型会记住训练数据中特有的噪声，而不是学习底层分布。Training loss 低，generalization 差。
 > 
-> **(i) Ensemble learning perspective:**
-> Each training step, Dropout samples a different sub-network by randomly zeroing neurons with probability $p$. Over all steps, the network is effectively training $2^n$ different sub-networks (one per binary mask). At test time, all neurons are on (scaled by $1-p$) — this approximates the geometric mean of all sub-network predictions. Ensembles generalise better than single models because their errors are partly uncorrelated and cancel.
+> **(i) Ensemble learning 视角：**
+> 每次训练步，Dropout 通过以概率 $p$ 随机将神经元置零来采样不同的 sub-network。训练过程中相当于同时训练 $2^n$ 个不同的 sub-network（每种 binary mask 对应一个）。测试时所有神经元都开启（scaled by $1-p$），近似所有 sub-network 预测的几何均值。Ensemble 之所以 generalize 更好，是因为各 sub-network 的错误部分不相关，会相互抵消。
 > 
-> **(ii) Co-adaptation perspective:**
-> Without Dropout, neurons can learn to work in tightly coordinated groups — neuron A only functions correctly because neuron B is always present to compensate. This co-adaptation produces brittle representations that work on training data but fail on unseen data.
+> **(ii) Co-adaptation 视角：**
+> 不加 Dropout 时，神经元之间可能形成紧密协作的组——神经元 A 只在神经元 B 永远存在时才能正常工作。这种 co-adaptation 产生对训练数据有效、但对新数据脆弱的表示。
 > 
-> Dropout randomly removes neurons during training, so each neuron cannot rely on any specific other neuron being present. Each neuron is forced to learn independently useful features — producing a more redundant, robust representation that generalises better.
+> Dropout 随机去除神经元，迫使每个神经元独立学习有用特征，产生更冗余、更鲁棒的表示，从而更好地 generalize。
 
 ---
 
@@ -332,21 +331,21 @@ def batchnorm_forward(x, gamma, beta, eps=1e-5):
 
 > [!success]- Answer
 > 
-> **(i) What the theorem does NOT guarantee:**
-> The theorem guarantees the *existence* of a sufficiently wide single-hidden-layer network that approximates any continuous function on a compact domain. It does not guarantee:
-> - How to find that network (gradient descent may not converge to it)
-> - How wide the network must be (may require exponential width)
-> - Sample efficiency (the required training data may be enormous)
-> - Generalisation (fitting training points ≠ correct behaviour on unseen inputs)
+> **(i) 定理没有保证什么：**
+> 定理保证了存在一个足够宽的 single-hidden-layer 网络可以逼近 compact domain 上的任意连续函数，但不保证：
+> - 如何找到这个网络（gradient descent 不一定收敛到它）
+> - 网络必须有多宽（可能需要指数级宽度）
+> - Sample efficiency（可能需要海量训练数据）
+> - Generalization（拟合训练点 ≠ 在新输入上正确）
 > 
-> **(ii) Problems with high-dimensional image inputs:**
-> A $256\times256\times3$ image has 196,608 features. A first MLP layer with 1,000 neurons needs ~200M parameters — far exceeding typical dataset sizes, causing catastrophic overfitting. More fundamentally, the MLP flattens the image into a 1D vector, discarding all spatial structure. Adjacent pixels have no special relationship to distant ones. A cat at position $(i,j)$ and at $(i',j')$ are treated as entirely different inputs; the MLP must learn the cat detector separately for every possible position.
+> **(ii) 高维图像输入的问题：**
+> 一张 $256\times256\times3$ 的图像有 196,608 个特征。第一层 MLP 有 1000 个神经元就需要约 2 亿个参数，远超典型数据集规模，导致灾难性 overfitting。更根本的是，MLP 将图像展平为一维向量，丢弃了所有空间结构。位置 $(i,j)$ 的猫和位置 $(i',j')$ 的猫被视为完全不同的输入，MLP 必须对每个可能位置分别学习猫的检测器。
 > 
-> **(iii) How these motivate CNNs via inductive bias:**
-> An *inductive bias* is a prior assumption built into the model architecture that constrains the hypothesis space without requiring data to learn it.
+> **(iii) CNN 通过 inductive bias 的动机：**
+> Inductive bias 是内嵌在模型架构中的先验假设，无需从数据中学习即可约束假设空间。
 > 
-> CNNs encode two correct priors for natural images:
-> 1. **Locality**: nearby pixels are more informative than distant ones → local receptive fields
-> 2. **Translation equivariance**: the same pattern anywhere should give the same response → weight sharing
+> CNN 为自然图像编码了两个正确的先验：
+> 1. **Locality**：相邻像素比远处像素更具信息量 → local receptive fields
+> 2. **Translation equivariance**：同一 pattern 出现在任何位置都应给出相同响应 → weight sharing
 > 
-> These reduce first-layer parameters from ~200M to ~7,000, and are almost always correct for natural images. The result: the model generalises well from small datasets because the hypothesis space is already constrained to plausible solutions. The MLP, with no inductive bias, must discover these regularities from scratch — requiring orders of magnitude more data.
+> 这使第一层参数从约 2 亿减少到约 7000，而这对自然图像几乎总是正确的。结果：模型从小数据集也能良好 generalize，因为假设空间已被约束在合理解的附近。MLP 没有 inductive bias，必须从头发现这些规律，需要数量级更多的数据。

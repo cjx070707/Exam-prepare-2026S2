@@ -20,7 +20,7 @@
 > 
 > **(b)**
 > 
-> $W_2(W_1 x+b_1)+b_2=(W_2W_1)x+\text{const}$ — composition of linear maps is linear. Depth alone adds no expressive power without nonlinear activations.
+> $W_2(W_1 x+b_1)+b_2=(W_2W_1)x+\text{const}$，线性映射的复合仍然是线性的。只增加深度而不加 nonlinear activation 不增加任何表达能力。
 
 ---
 
@@ -35,7 +35,7 @@
 > 
 > **(c)**
 > 
-> For $x>0$, $f'(x)=1$ — gradient is constant and never vanishes. Sigmoid saturates at both ends ($f'(x)\to0$ for $|x|\gg0$). Note: ReLU is *not* zero-centred (outputs $\geq0$), so (a) is wrong.
+> 对 $x>0$，$f'(x)=1$——梯度恒定，不会 vanish。Sigmoid 在两端都会饱和（$f'(x)\to0$，当 $|x|\gg0$）。注意 ReLU 并非 zero-centred（输出 $\geq0$），所以选项 (a) 是错的。
 
 ---
 
@@ -50,7 +50,7 @@
 > 
 > **(b)**
 > 
-> With $m_0=0$ and $\beta_1=0.9$, at step 1: $m_1=0.1\,g_1$ — only 10% of the true gradient. Correction: $\hat{m}_1=m_1/(1-0.9)=g_1$. Without this, early steps are far too conservative.
+> $m_0=0$，$\beta_1=0.9$ 时，第 1 步：$m_1=0.1\,g_1$，只有真实梯度的 10%。Correction 后：$\hat{m}_1=m_1/(1-0.9)=g_1$。不做 correction 的话，早期步骤过于保守。
 
 ---
 
@@ -80,7 +80,7 @@
 > 
 > **(b)**
 > 
-> Without self-loops, $AH$ aggregates only neighbours. Adding $I$ sets $\hat{A}_{ii}=1$, so each node includes its own features in its updated representation.
+> 不加 self-loop 时，$AH$ 只聚合邻居。加上 $I$ 后 $\hat{A}_{ii}=1$，每个节点在更新时也包含自己的 feature。
 
 ---
 
@@ -95,7 +95,7 @@
 > 
 > **(b)**
 > 
-> BPTT requires the gradient to travel from step $k$ to step 1 via $\prod_{t=2}^k\tanh'(\cdot)W_{hh}$. Since $\tanh'\in[0,1]$ (usually $\ll1$), this product decays exponentially. Option (c) is the consequence, not the mechanism.
+> BPTT 要求梯度从第 $k$ 步传回第 1 步，经过 $\prod_{t=2}^k\tanh'(\cdot)W_{hh}$。由于 $\tanh'\in[0,1]$（通常 $\ll1$），这个连乘积指数级衰减。选项 (c) 是结果，不是机制。
 
 ---
 
@@ -110,7 +110,7 @@
 > 
 > **(b)**
 > 
-> For $q,k\sim\mathcal{N}(0,1)$ with dimension $d_k$, the dot product has variance $d_k$. Without scaling, large $d_k$ → near one-hot softmax → near-zero gradients. Dividing by $\sqrt{d_k}$ restores unit variance. (Softmax already sums to one — that is not why we scale.)
+> 当 $q,k\sim\mathcal{N}(0,1)$，维度为 $d_k$ 时，dot product 的方差为 $d_k$。不 scale 时，$d_k$ 大 → softmax 接近 one-hot → 梯度接近零。除以 $\sqrt{d_k}$ 恢复单位方差。（softmax 本来就归一化到和为 1，这不是 scale 的原因。）
 
 ---
 
@@ -125,7 +125,7 @@
 > 
 > **(b)**
 > 
-> Autoregressive generation requires $p(x_t|x_{<t})$ — predictions must use only past tokens. BERT's full attention lets every position attend to every other position including future ones, creating a circular dependency when generating token by token.
+> Autoregressive generation 要求 $p(x_t|x_{<t})$——预测只能使用过去的 token。BERT 的 full attention 让每个位置都能关注包括未来在内的所有位置，逐 token 生成时会产生循环依赖。
 
 ---
 
@@ -140,7 +140,7 @@
 > 
 > **(b)**
 > 
-> At init $\Delta W=B\cdot A=0\cdot A=0$, so the model is identical to the original pretrained checkpoint. Fine-tuning starts from this exact state.
+> 初始化时 $\Delta W=B\cdot A=0\cdot A=0$，模型与原始 pretrained checkpoint 完全相同。Fine-tuning 从这个精确状态出发，不引入任何扰动。
 
 ---
 
@@ -155,7 +155,7 @@
 > 
 > **(c) BYOL**
 > 
-> BYOL uses a teacher-student architecture with stop-gradient on the teacher. The asymmetry (stop-gradient + predictor head on student only) prevents representational collapse without negatives. SimCLR uses in-batch negatives; MoCo uses a queue; CLIP uses cross-modal negatives.
+> BYOL 使用 teacher-student 架构，对 teacher 做 stop-gradient。这种不对称设计（stop-gradient + 只有 student 有 predictor head）在不需要 negative sample 的情况下防止了 representational collapse。SimCLR 用 in-batch negatives；MoCo 用 queue；CLIP 用跨模态 negatives。
 
 ---
 
@@ -167,16 +167,16 @@
 
 > [!success]- Answer
 > 
-> **(i) Dimensions:**
-> - **BN**: normalises over $(N,H,W)$ independently per channel $C$. Statistics are shared across all samples in the batch.
-> - **LN**: normalises over $(C,H,W)$ independently per sample $N$. Each sample uses only its own statistics.
+> **(i) 归一化的维度：**
+> - **BN**：在 $(N,H,W)$ 上归一化，每个 channel $C$ 独立。Statistics 在 batch 内所有样本间共享。
+> - **LN**：在 $(C,H,W)$ 上归一化，每个样本 $N$ 独立。每个样本只用自己的 statistics。
 > 
-> **(ii) Batch size dependence:**
-> - BN: yes. Small batches → noisy, unreliable statistics. Also requires different behaviour (batch vs running stats) at train vs test time.
-> - LN: no. Per-sample normalisation; identical behaviour at train and test time.
+> **(ii) 对 batch size 的依赖：**
+> - BN：有依赖。Batch 小 → statistics 噪声大、不可靠。训练和测试时行为不同（batch stats vs running stats）。
+> - LN：无依赖。Per-sample 归一化，训练和测试时行为完全一致。
 > 
-> **(iii) Why Transformers use LN:**
-> NLP tasks have variable sequence lengths and small effective batch sizes per device. BN statistics over variable-length sequences are poorly defined. LN normalises per token, handling variable lengths naturally and with no train/test discrepancy.
+> **(iii) 为什么 Transformer 用 LN：**
+> NLP 任务序列长度可变，每个设备上的有效 batch size 较小。对长度不同的序列计算 BN statistics 定义不清。LN 对每个 token 单独归一化，天然处理可变长度，且无 train/test 差异。
 
 ---
 
@@ -184,11 +184,11 @@
 
 > [!success]- Answer
 > 
-> | Component | Role | Example |
-> |-----------|------|---------|
-> | **Vision Encoder** | Converts image into sequence of visual feature vectors (one per patch) | CLIP-ViT: pretrained on 400M image-text pairs; patch embeddings aligned with language |
-> | **Connector Module** | Bridges visual features and LLM token space | Q-Former (BLIP-2): 32 learnable queries compress visual features via cross-attention; MLP projection (LLaVA) is a simpler linear alternative |
-> | **Language Model** | Frozen or LoRA fine-tuned decoder-only Transformer processing visual + text tokens | LLaMA, Vicuna — handles both modalities jointly |
+> | 组件 | 作用 | 具体例子 |
+> |------|------|----------|
+> | **Vision Encoder** | 将图像转为视觉 feature vector 序列（每个 patch 一个） | CLIP-ViT：在 4 亿图文对上预训练，patch embedding 与语言对齐 |
+> | **Connector Module** | 桥接视觉 feature 和 LLM token 空间 | Q-Former（BLIP-2）：32 个可学习 query 通过 cross-attention 压缩视觉 feature；MLP projection（LLaVA）是更简单的线性替代 |
+> | **Language Model** | 冻结或 LoRA fine-tuned 的 decoder-only Transformer，联合处理视觉和文本 token | LLaMA、Vicuna |
 
 ---
 
@@ -198,15 +198,15 @@
 > 
 > $$\mathcal{L}=-\log\frac{\exp(q\cdot k^+/\tau)}{\sum_j\exp(q\cdot k_j/\tau)}$$
 > 
-> **(i) Role of $\tau$:**
-> Controls sharpness of the softmax distribution over negatives. Low $\tau$ → concentrates on hardest negatives (strong signal, instability risk). High $\tau$ → uniform treatment of all negatives.
+> **(i) $\tau$ 的作用：**
+> 控制 softmax 分布在 negatives 上的锐利程度。$\tau$ 小 → 集中关注最难的 negatives（梯度信号强，但训练不稳定）。$\tau$ 大 → 对所有 negatives 一视同仁。
 > 
-> **(ii) Hard negatives in the gradient:**
+> **(ii) Hard negatives 在梯度中的体现：**
 > $$\frac{\partial\mathcal{L}}{\partial q}=-\frac{k^+}{\tau}+\frac{1}{\tau}\sum_j p_j k_j,\quad p_j=\frac{\exp(q\cdot k_j/\tau)}{\sum_{j'}\exp(q\cdot k_{j'}/\tau)}$$
-> Hard negatives (high $q\cdot k_j$) receive high softmax weight $p_j$. They contribute more force to push $q$ away from wrong representations. Easy negatives get $p_j\approx0$ and barely affect training.
+> Hard negatives（$q\cdot k_j$ 大）有更高的 softmax 权重 $p_j$，对推开 $q$ 与错误表示的力度更大。Easy negatives 的 $p_j\approx0$，几乎不影响训练。
 > 
-> **(iii) SimCLR vs MoCo:**
-> SimCLR uses all other samples in the current mini-batch as negatives — requires large batch (4096+). MoCo maintains a FIFO queue of encoded keys from past batches; key encoder updated via EMA ($m\approx0.999$), so negatives are consistent without a large batch.
+> **(iii) SimCLR vs MoCo 的区别：**
+> SimCLR 用当前 mini-batch 内的其他样本作为 negatives——需要极大的 batch（4096+）。MoCo 维护一个存储过去 batch 编码 key 的 FIFO queue；key encoder 通过 EMA（$m\approx0.999$）更新，使得无需大 batch 也能保持 negatives 的一致性。
 
 ---
 
@@ -214,17 +214,17 @@
 
 > [!success]- Answer
 > 
-> **(a):**
+> **(a)：**
 > $$c_t=c_{t-1}\otimes f_t+\tilde{c}_t\otimes i_t$$
-> where $f_t=\sigma(W_f[h_{t-1};x_t])$, $i_t=\sigma(W_i[h_{t-1};x_t])$, $\tilde{c}_t=\tanh(W_c[h_{t-1};x_t])$.
+> 其中 $f_t=\sigma(W_f[h_{t-1};x_t])$，$i_t=\sigma(W_i[h_{t-1};x_t])$，$\tilde{c}_t=\tanh(W_c[h_{t-1};x_t])$。
 > 
-> **(b):** The dominant term of the gradient is:
+> **(b)：** 梯度的主项为：
 > $$\frac{\partial c_t}{\partial c_{t-1}}\approx f_t$$
-> The gradient is multiplied by $f_t$ at each step. But $f_t$ is a **learnable gate** — the network can train $f_t\approx1$ for long-term memory tasks, keeping $\prod_t f_t\approx1$ so gradients flow without decay.
+> 梯度每步乘以 $f_t$。但 $f_t$ 是**可学习的 gate**——网络可以训练 $f_t\approx1$ 来维持长期记忆，使得 $\prod_t f_t\approx1$，梯度不会衰减。
 > 
-> In vanilla RNN the factor is $\tanh'(\text{net}_t)\cdot W_{hh}$ — $\tanh'\leq1$ (typically $\ll1$) and not learnable, so the product decays exponentially. The key distinction: LSTM's gradient factor is *learned*; RNN's is not.
+> 相比之下，vanilla RNN 的因子是 $\tanh'(\text{net}_t)\cdot W_{hh}$——$\tanh'\leq1$（通常 $\ll1$）且不可学习，连乘积指数级衰减。关键区别：LSTM 的梯度因子是*可学习的*，RNN 的不是。
 > 
-> **(c):** When $f_t\approx0$, $c_t\approx\tilde{c}_t\otimes i_t$ — the previous cell state is completely erased every step. The network has no long-term memory; each step processes only the current input. Catastrophic for tasks requiring long-range dependencies.
+> **(c)：** 当 $f_t\approx0$ 时，$c_t\approx\tilde{c}_t\otimes i_t$——上一步的 cell state 被完全清除。网络没有任何长期记忆，每步只处理当前输入。对需要长距离依赖的任务来说是灾难性的。
 
 ---
 
@@ -257,7 +257,7 @@ def scaled_dot_product_attention(Q, K, V, mask=None):
 >     return output, weights
 > ```
 > 
-> **Key points:** `K.transpose(-2,-1)` not `.T` — `.T` reverses all dims, breaks batched tensors. `masked_fill` with `-inf` → exactly 0 after softmax.
+> **要点：** 用 `K.transpose(-2,-1)` 而非 `.T`——`.T` 会反转所有维度，破坏 batched tensor。`masked_fill` 填 `-inf` → softmax 后对应位置精确为 0。
 
 ---
 
@@ -285,7 +285,7 @@ def lstm_step(x_t, h_prev, c_prev, W_f, W_i, W_o, W_c, b_f, b_i, b_o, b_c):
 >     return h_t, c_t
 > ```
 > 
-> **Key points:** Three gates use sigmoid; candidate uses tanh. Cell state updated additively: `c_prev * f_t + c_tilde * i_t`.
+> **要点：** 三个 gate 用 sigmoid，candidate 用 tanh。Cell state 以加法方式更新：`c_prev * f_t + c_tilde * i_t`。
 
 ---
 
@@ -311,7 +311,7 @@ def kl_loss(mu, log_var):
 >     return 0.5 * torch.sum(torch.exp(log_var) + mu**2 - 1 - log_var)
 > ```
 > 
-> **Why reparameterisation:** Sampling $z\sim\mathcal{N}(\mu,\sigma^2)$ directly is non-differentiable. Writing $z=\mu+\sigma\cdot\epsilon$ with $\epsilon\sim\mathcal{N}(0,I)$ isolates randomness in $\epsilon$ (no parameters), so gradients flow through $\mu$ and $\sigma$.
+> **为什么需要 reparameterization：** 直接采样 $z\sim\mathcal{N}(\mu,\sigma^2)$ 是不可微的。将其改写为 $z=\mu+\sigma\cdot\epsilon$，$\epsilon\sim\mathcal{N}(0,I)$，把随机性隔离在 $\epsilon$ 中（无参数），梯度就能正常地流过 $\mu$ 和 $\sigma$。
 
 ---
 
@@ -323,24 +323,23 @@ def kl_loss(mu, log_var):
 
 > [!success]- Answer
 > 
-> **Inductive biases:**
-> CNNs hard-code two priors: *locality* (local receptive fields) and *translation equivariance* (weight sharing). ViT encodes no spatial inductive bias — all spatial relationships must be learned from data.
+> **Inductive biases：**
+> CNN 硬编码了两个先验：*locality*（local receptive fields）和 *translation equivariance*（weight sharing）。ViT 没有任何空间 inductive bias——所有空间关系都必须从数据中学习。
 > 
-> **Small vs large dataset:**
-> On small datasets, CNNs outperform ViT. CNN's built-in biases act as strong regularisers; fewer examples needed to generalise. ViT overfits more easily without locality priors.
-> On large datasets (JFT-300M, ImageNet-21k), ViT matches or surpasses CNNs. With sufficient data it learns powerful global relationships between distant patches. ViT also scales better with compute.
+> **小数据集 vs 大数据集：**
+> 小数据集上，CNN 优于 ViT。CNN 的内置 bias 相当于强正则化，泛化所需样本更少，ViT 在缺乏 locality prior 时更容易 overfit。大数据集（JFT-300M、ImageNet-21k）上，ViT 能与或超越 CNN，学习到 patch 间的强全局关系，且 scale 能力更好。
 > 
-> **Computational complexity:**
+> **计算复杂度：**
 > 
 > | | CNN | ViT |
 > |---|---|---|
-> | Per layer | $O(N\cdot F^2\cdot C^2)$, linear in image size | $O(T^2\cdot D)$, quadratic in patch count $T$ |
-> | Resolution scaling | Linear | Quadratic |
+> | 每层 | $O(N\cdot F^2\cdot C^2)$，与图像大小线性相关 | $O(T^2\cdot D)$，与 patch 数 $T$ 的平方相关 |
+> | 分辨率 scaling | 线性 | 二次 |
 > 
-> For high-resolution inputs, ViT's $O(T^2)$ attention is expensive. Efficient variants (Swin Transformer) reduce this to linear.
+> 高分辨率输入时，ViT 的 $O(T^2)$ attention 代价很高。Swin Transformer 等高效变体将其降为线性。
 > 
-> **Compensating design choice — Learned Positional Embeddings:**
-> Without positional encoding, self-attention is permutation-invariant and cannot distinguish patch location. ViT prepends a learnable $p_i\in\mathbb{R}^D$ to each patch token before the encoder. The network learns from data that positional embeddings correlate with spatial structure. Less constrained than CNN's hard-wired locality, hence the larger data requirement — but more flexible for non-local and non-Euclidean spatial relationships.
+> **补偿设计——Learned Positional Embeddings：**
+> 没有 positional encoding 时，self-attention 对输入顺序不敏感（permutation invariant），无法区分 patch 的位置。ViT 在每个 patch token 输入 encoder 前加上可学习的 $p_i\in\mathbb{R}^D$，让网络从数据中学习位置嵌入与空间结构的对应关系。比 CNN 硬编码的 locality 更灵活，但因此需要更多数据。
 
 ---
 
@@ -348,24 +347,23 @@ def kl_loss(mu, log_var):
 
 > [!success]- Answer
 > 
-> **GAN minimax objective:**
+> **GAN minimax objective：**
 > $$\min_G\max_D\;\mathbb{E}_{x\sim p_r}[\log D(x)]+\mathbb{E}_{z\sim p_z}[\log(1-D(G(z)))]$$
 > 
-> **Optimal discriminator:**
-> For fixed $G$, maximise the integrand at each $x$:
+> **Optimal discriminator：**
+> 对固定的 $G$，在每个 $x$ 处最大化被积项：
 > $$D^*(x)=\frac{p_r(x)}{p_r(x)+p_g(x)}$$
 > 
-> **Generator gradient with disjoint supports:**
-> Substituting $D^*$ gives $\mathcal{L}(G,D^*)=2\,\text{JS}(p_r\|p_g)-2\log2$.
-> In high dimensions, $p_r$ and $p_g$ lie on low-dimensional manifolds that are almost always disjoint. JS divergence then equals $\log2$ regardless of how close the distributions are — the loss surface is flat and $\nabla_G\mathcal{L}\approx0$. A well-trained discriminator kills the generator's learning signal.
+> **Disjoint support 下的 generator 梯度：**
+> 代入 $D^*$ 得 $\mathcal{L}(G,D^*)=2\,\text{JS}(p_r\|p_g)-2\log2$。在高维空间中，$p_r$ 和 $p_g$ 分布在低维流形上，几乎总是不相交。此时 JS divergence 恒等于 $\log2$，与两个分布有多近无关——loss 面是平的，$\nabla_G\mathcal{L}\approx0$。训练良好的 discriminator 反而扼杀了 generator 的学习信号。
 > 
-> **Wasserstein-1 distance:**
+> **Wasserstein-1 distance：**
 > $$W(p_r,p_g)=\sup_{\|f\|_L\leq1}\;\mathbb{E}_{p_r}[f(x)]-\mathbb{E}_{p_g}[f(x)]$$
-> Unlike JS divergence, $W$ is well-defined and provides a smooth, non-zero gradient even when distributions have disjoint support — it measures minimum "work" to transport $p_g$ onto $p_r$, which always varies continuously with generator parameters.
+> 与 JS divergence 不同，$W$ 在分布 support 不相交时仍然有明确定义且提供平滑、非零的梯度——它衡量将 $p_g$ 传输到 $p_r$ 所需的最小"代价"，随 generator 参数连续变化。
 > 
-> **Lipschitz enforcement:**
-> The supremum is over 1-Lipschitz functions ($\|\nabla f\|_2\leq1$). Enforced via:
-> 1. **Weight clipping** (original WGAN): clip critic weights to $[-c,c]$. Simple but limits capacity.
-> 2. **Gradient penalty** (WGAN-GP, preferred): add $\lambda\,\mathbb{E}_{\hat{x}}[(\|\nabla_{\hat{x}}f_w(\hat{x})\|_2-1)^2]$ where $\hat{x}$ are interpolations between real and fake data. Differentiable and more stable.
+> **Lipschitz 约束的实现：**
+> supremum 是在 1-Lipschitz 函数（$\|\nabla f\|_2\leq1$）上取的。实现方式：
+> 1. **Weight clipping**（原始 WGAN）：将 critic 权重裁剪到 $[-c,c]$。简单但限制了模型容量。
+> 2. **Gradient penalty**（WGAN-GP，更常用）：在 loss 中加 $\lambda\,\mathbb{E}_{\hat{x}}[(\|\nabla_{\hat{x}}f_w(\hat{x})\|_2-1)^2]$，其中 $\hat{x}$ 是真实数据和生成数据的插值点。可微且训练更稳定。
 > 
-> The WGAN critic always provides a meaningful, non-vanishing gradient signal to the generator — resolving the original instability.
+> WGAN 的 critic 始终给 generator 提供有意义的、不会消失的梯度信号，从根本上解决了原始 GAN 的训练不稳定问题。
