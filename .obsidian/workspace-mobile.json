@@ -165,9 +165,19 @@
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "bases:新建数据库": false
+      "bases:新建数据库": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "861ff8fddf3ae211",
-  "lastOpenFiles": []
+  "active": "d8026d772cf72af3",
+  "lastOpenFiles": [
+    "COMP5339_DataEngineering/测试/Group2_Test.md",
+    "COMP5339_DataEngineering/测试/Group1_Test.md",
+    "COMP5339_DataEngineering/测试/Final_Mock_Exam.md",
+    "COMP5339_DataEngineering/测试",
+    "COMP5329_DeepLearning/测试/Test_Group2_Structured_Data.md",
+    "COMP5329_DeepLearning/测试/Test_Group1_Foundations.md",
+    "COMP5329_DeepLearning/测试/Mock_Exam_Final.md",
+    "COMP5329_DeepLearning/测试"
+  ]
 }
