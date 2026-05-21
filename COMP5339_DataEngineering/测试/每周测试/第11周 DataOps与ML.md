@@ -1,204 +1,143 @@
-# 第11周测试 — DataOps、数据架构与 ML
+# 第11周测试 — DataOps & ML Systems
 
 ---
 
-## 选择题
+**Question 1.** A streaming analytics company processes 10TB of event data daily. Their data science team complains that monthly model retraining (requiring a full 90-day historical replay) takes 3 days when run through the streaming pipeline. A senior engineer proposes switching from **Lambda Architecture** to **Kappa Architecture** to simplify the codebase. A tech lead objects. Who is correct?
 
-**1.** Lambda Architecture 和 Kappa Architecture 的核心区别是？
+- [ ] A. The senior engineer is correct — Kappa is always simpler and should replace Lambda in all cases
+- [ ] B. The tech lead is correct — when large-scale historical batch reprocessing is a core requirement, Lambda's dedicated Batch Layer is more cost-effective than replaying 90 days through a stream processor
+- [ ] C. Lambda Architecture does not support real-time processing, so Kappa is the only viable option
+- [ ] D. Both architectures are equivalent in this scenario — the choice only affects operational complexity, not performance
 
-- A. Lambda 只用流处理，Kappa 用批处理和流处理双通道
-- B. Lambda 用批处理（冷路径）+ 流处理（热路径）双通道；Kappa 统一用流处理单通道
-- C. Kappa 性能更差，只适合小规模数据
-- D. 两者没有本质区别，叫法不同而已
-
-> [!tip]- 答案
+> [!note]- Answer
+> **B. Lambda vs Kappa Architecture 的选型权衡。**
 >
-> **答案：B**
+> - **Kappa Architecture**：统一用流处理，通过从 Kafka **重放（Replay）**历史数据来处理批量需求。优点：单一代码路径，维护简单。缺点：大规模历史重放（90天 × 10TB/天 = 900TB）在流处理引擎中效率极低；Kafka 需存储90天数据，存储成本极高。
 >
-> 解析：**Lambda Architecture**（Nathan Marz 提出）：双通道——**Batch Layer（冷路径）** 处理全量历史数据（准确但高延迟）+ **Speed Layer（热路径）** 实时处理最新数据（低延迟但近似）+ **Serving Layer** 合并两路结果。**Kappa Architecture**（Jay Krebs 提出）：单通道，全部走流处理，通过重放历史数据来处理批量需求。Kappa 更简单，Lambda 更灵活（适合批流需求差异大的场景）。
+> - **Lambda Architecture**：**Batch Layer**（Spark / MapReduce）专门处理全量历史数据，效率极高；**Speed Layer**（流处理）处理实时数据；**Serving Layer** 合并两路结果。
 >
+> 当批量历史重处理是核心需求时，Lambda 的 Batch Layer 远比 Kappa 的流式重放高效。Kappa 适合历史重算需求轻量的场景。
 
 ---
 
-**2.** DataOps 是什么？它与 DevOps 的关系是？
+**Question 2.** A data team's production dashboard shows customer churn metrics that haven't updated for 36 hours, even though the source database is actively receiving new records. The data observability monitoring system fires an alert. Which of the five Data Observability pillars is this alert detecting?
 
-- A. DataOps 是 DevOps 的另一个名称，完全相同
-- B. DataOps 是借鉴 DevOps 理念（自动化、持续集成）应用于数据管理的实践，专注于数据管道的质量、协作和自动化
-- C. DataOps 只适用于机器学习项目，不适用于传统数据仓库
-- D. DataOps 取代了 DevOps，是更先进的开发方法
+- [ ] A. Freshness — the data has not been updated within the expected time window
+- [ ] B. Volume — the number of records in the table has dropped unexpectedly
+- [ ] C. Schema — a column has been added or removed from the source table
+- [ ] D. Lineage — the upstream data source has changed its transformation logic
 
-> [!tip]- 答案
+> [!note]- Answer
+> **A. Data Observability — Freshness（时效性）异常。**
 >
-> **答案：B**
+> 五个 Data Observability 支柱：
+> - **Freshness（时效性）**：数据是否在预期时间窗口内更新 ← **本题触发的告警**
+> - **Volume（数量）**：数据量是否在正常范围（缺失或异常增多）
+> - **Distribution（分布）**：字段值是否在预期范围内（如 age 出现负数）
+> - **Schema（结构）**：字段是否新增、删除或类型变更
+> - **Lineage（血缘）**：数据在系统中的流转路径和变换链路
 >
-> 解析：**DataOps** 将 DevOps 的核心理念（CI/CD、自动化测试、协作、持续监控）应用于数据工程领域，目标是：加速数据交付、保证数据质量、打通数据生产者（工程师）和消费者（分析师/数据科学家）之间的协作壁垒。关键实践：Pipeline Orchestration、Data Quality Monitoring、Data Governance、Self-Service Access。
->
+> 36小时未更新是典型的 **Freshness** 问题——pipeline 可能卡住、ETL job 失败、或上游数据源停止写入。解决思路：检查 pipeline orchestration（如 Airflow）中是否有 task 失败。
 
 ---
 
-**3.** Data Observability（数据可观测性）的五个支柱是？
+**Question 3.** A machine learning team trains a fraud detection model. The feature *"number of transactions by this user in the last 24 hours"* is computed in Python/Pandas during training (using UTC midnight as the 24-hour boundary). Six months later, the model is deployed and the same feature is recomputed in Java (using a rolling 86,400-second window from the current timestamp). Model performance drops 15% in production. What is the root cause?
 
-- A. Freshness、Distribution、Volume、Schema、Lineage
-- B. Accuracy、Completeness、Consistency、Timeliness、Uniqueness
-- C. Ingestion、Storage、Transformation、Serving、Monitoring
-- D. CI、CD、Testing、Deployment、Rollback
+- [ ] A. Model drift — the distribution of fraud patterns has changed over 6 months
+- [ ] B. The Java implementation is less accurate than Python for floating-point computations
+- [ ] C. Training-Serving Skew — the feature computation logic differs between training (Python) and serving (Java), so the model receives different feature values in production than it was trained on
+- [ ] D. The model was overfitted to training data and cannot generalise to production
 
-> [!tip]- 答案
+> [!note]- Answer
+> **C. Training-Serving Skew（训练-服务偏差）。**
 >
-> **答案：A**
+> 这是 ML 生产部署中最隐蔽的问题之一：训练时 feature 用 Python 计算（以 UTC 午夜为24小时边界），推理时用 Java 重实现（以当前时间戳减86400秒为边界）——看似相同的 feature，实际数值在时间边界处可能相差数小时的交易量，导致模型收到的 feature 与训练分布不同，性能下降。
 >
-> 解析：Data Observability 五支柱：
-> - **Freshness（时效性）**：数据是否及时更新
-> - **Distribution（分布）**：数据值是否在预期范围内
-> - **Volume（数量）**：数据量是否正常（缺失或异常增多）
-> - **Schema（结构）**：数据结构是否发生变化（新增/删除字段）
-> - **Lineage（血缘）**：数据在系统中如何流转和变换的完整链路
->
+> **根本解决方案：Feature Store**
+> - 统一 feature 定义（一份代码，一个计算逻辑）
+> - 训练时从 **Offline Store** 读取 point-in-time 准确的历史 feature
+> - 推理时从 **Online Store** 读取同一 feature 定义计算的最新值
+> - 从根本上消除"两套实现导致的偏差"
 
 ---
 
-**4.** Feature Store 中，"Training-Serving Skew"（训练-服务偏差）是指什么问题？
+**Question 4.** An e-commerce recommendation system needs a feature: *"total amount spent by this user in the last 7 days."* The feature is used in two contexts:
+- **Training**: Offline batch job processes 2 years of historical orders
+- **Serving**: Real-time recommendation API must return results within 30ms
 
-- A. 训练数据量太小，模型欠拟合
-- B. 训练时和推理（serving）时使用的 feature 计算逻辑不一致，导致模型在生产中表现下降
-- C. 模型训练速度和推理速度差距过大
-- D. 训练数据和测试数据来自不同分布
+Which Feature Store storage strategy is correct?
 
-> [!tip]- 答案
+- [ ] A. Use Online Storage (Redis) for both — it's fast enough for training too
+- [ ] B. Use Offline Storage (S3/BigQuery) for both — consistency is more important than latency
+- [ ] C. Offline Storage for training (historical batch reads, high throughput); Online Storage for serving (millisecond key-value lookup at inference time)
+- [ ] D. No Feature Store needed — compute the feature on-the-fly with SQL at serving time
+
+> [!note]- Answer
+> **C. Feature Store: Offline vs Online Storage 的职责分工。**
 >
-> **答案：B**
+> | | Offline Storage | Online Storage |
+> |--|--|--|
+> | **典型实现** | S3, BigQuery, Snowflake | Redis, DynamoDB, Cassandra |
+> | **优化目标** | 高吞吐批量读取 | 低延迟键值查询（毫秒级） |
+> | **用途** | 模型训练：扫描2年历史数据生成 training examples | 实时推理：30ms 内查出某 user 的最新 feature 值 |
 >
-> 解析：Training-Serving Skew 是 ML 生产部署中常见的隐蔽问题：训练时 feature 用 Python/Pandas 计算，推理时用 Java/SQL 重新实现，两者逻辑细节不同（如时间窗口定义、NULL 处理方式），导致模型收到的实际 feature 与训练时不同，性能下降。**Feature Store** 通过统一 feature 定义和服务，从根本上消除这个问题。
->
+> D 的方案（serving 时实时跑 SQL 计算7天聚合）对复杂特征延迟不可接受（SQL 查询通常 100ms+），且每次推理都重复计算，资源浪费。Feature Store 预计算并存储特征，serving 只需 key-value lookup。
 
 ---
 
-**5.** Feature Store 中，Online Storage 和 Offline Storage 的区别是？
+**Scenario 1:** A media streaming company runs the following data stack:
+- Raw clickstream events → Kafka → **Flink** (real-time processing) → live dashboard
+- Raw clickstream events → **Spark** batch job (runs nightly) → content recommendation model training
 
-- A. Online 用于历史训练；Offline 用于实时推理
-- B. Online 优化低延迟实时推理（如 Redis/DynamoDB）；Offline 存储大量历史数据用于模型训练（如 S3/BigQuery）
-- C. 两者存储完全相同的数据，只是地理位置不同
-- D. Online Storage 只支持 SQL 查询
+A new VP of Engineering wants to eliminate the Spark batch job and "just use Flink for everything."
 
-> [!tip]- 答案
+**Question 5:** **(4 Marks)**
+
+**(a)** What architecture does the current system represent, and what would the VP's proposed change result in? **(2 Marks)**
+
+**(b)** The recommendation model requires retraining every week using 1 year of historical clickstream data. Evaluate whether the VP's proposal is technically sound. **(2 Marks)**
+
+> [!note]- Answer
+> **(a) 架构识别**
 >
-> **答案：B**
+> 当前系统是 **Lambda Architecture**：
+> - **Speed Layer**：Kafka → Flink（实时流处理，低延迟 live dashboard）
+> - **Batch Layer**：Spark 批处理（全量历史数据，模型训练）
+> - **Serving Layer**（隐含）：Dashboard + Recommendation Model
 >
-> 解析：**Online Storage（在线存储）**：Key-Value 存储（如 Redis、DynamoDB），面向低延迟（毫秒级）实时推理，存储最新 feature 值。**Offline Storage（离线存储）**：数据湖/仓库（如 S3、BigQuery、Snowflake），存储历史 feature 数据，用于模型训练和回测（Point-in-time accuracy：可以查询"历史上某时刻的 feature 值是什么"）。
+> VP 的提案是将系统改为 **Kappa Architecture**：单一 Flink 流处理通道，通过 Kafka 消息回放来处理历史数据需求，消除 Batch Layer。
 >
-
----
-
-**6.** 现代数据栈（Modern Data Stack）中，dbt 的主要职责是？
-
-- A. 数据摄取（从数据源拉取原始数据）
-- B. 数据仓库存储（替代 Snowflake/BigQuery）
-- C. 数据转换（在数据仓库内做 SQL 转换，管理模型依赖）
-- D. 数据可视化（生成报表和 Dashboard）
-
-> [!tip]- 答案
+> **(b) 技术评估**
 >
-> **答案：C**
+> VP 的提案**存在重大风险**：
+> - 1年历史 clickstream 数据量通常达 TB 级；用 Flink 流式回放处理1年数据的效率远低于 Spark 批处理——Spark 的 DAG 优化器和列式 Parquet 读取专为大规模历史数据设计。
+> - Kafka 默认保留7天数据，保存1年数据需额外配置大容量存储（成本高）。
+> - 流处理引擎对超大规模历史 backfill 的吞吐量和资源效率不如专用批处理。
 >
-> 解析：现代数据栈（Modern Data Stack）的典型工具链：**Fivetran/Airbyte**（数据摄取 Ingestion）→ **Snowflake/BigQuery**（云数据仓库 Storage）→ **dbt**（数据转换 Transformation，在仓库内用 SQL 定义 data models，管理依赖和测试）→ **Tableau/Power BI**（可视化）。dbt 让 SQL 转换也能像代码一样版本控制和测试。
->
-
----
-
-**7.** CI/CD 在 ML 工程中的意义是？
-
-- A. CI/CD 只用于软件开发，与 ML 无关
-- B. CI（持续集成）自动测试新代码/模型；CD（持续部署）自动将通过测试的模型部署到生产环境，实现频繁安全的模型更新
-- C. CI/CD 是一种数据存储技术
-- D. CI/CD 只适用于大型企业，小团队不需要
-
-> [!tip]- 答案
->
-> **答案：B**
->
-> 解析：ML 场景下的 CI/CD：**CI（Continuous Integration）**：每次数据更新或代码变更时，自动重新训练模型并运行评估测试（验证精度没有下降）。**CD（Continuous Deployment）**：测试通过后，自动将新模型部署到 Serving 服务。意义：ML 模型需要频繁更新（应对数据 drift、业务变化），CI/CD 让这一过程安全、可靠、自动化。
->
+> 结论：历史批量重训是核心需求时，保留 Lambda（Spark Batch Layer）比迁移到 Kappa 更合理。
 
 ---
 
-**8.** MADlib 的核心设计思路是？它解决了什么问题？
+**Scenario 2:** A bank is building an ML system to approve or reject loan applications in real time. Each decision must be fully auditable — regulators can ask: *"Why was this application rejected on 15 March 2024, based on the data available at that time?"*
 
-- A. 将数据导出到外部 Python 环境做 ML，避免数据库成为瓶颈
-- B. 在数据库（PostgreSQL）内部直接执行 ML 算法（ML to Data），数据不需要移出数据库
-- C. 将 ML 模型的预测结果存储回数据库
-- D. 用 GPU 加速 PostgreSQL 内的查询
+**Question 6:** **(4 Marks)**
 
-> [!tip]- 答案
->
-> **答案：B**
->
-> 解析：传统方法：将数据从数据库导出到 Python/R → 在外部做 ML → 结果导回。问题：数据传输开销大，数据量超出内存时困难。**MADlib** 的思路：**将计算带到数据（ML to Data）**，直接在 PostgreSQL 内运行 ML 函数（通过 C++ UDF），数据不离开数据库，支持描述统计、分类、回归、聚类、时序预测（ARIMA）等，在大数据场景下避免了传输开销。
->
+**(a)** Why does a standard Feature Store (without Point-in-Time correctness) fail to satisfy this regulatory audit requirement? **(2 Marks)**
 
----
+**(b)** The bank's data team uses **dbt** in their transformation pipeline. Explain dbt's role in the Modern Data Stack and how it supports data quality in this regulated environment. **(2 Marks)**
 
-## 简答题
-
-**9.** 解释 Lambda Architecture 的三层结构（Batch Layer、Speed Layer、Serving Layer），以及它的主要缺点。
-
-> [!tip]- 答案
+> [!note]- Answer
+> **(a) Point-in-Time Correctness（时间点准确性）的必要性**
 >
-> **三层结构**：
-> - **Batch Layer（冷路径）**：接收所有数据，定期（如每小时/每天）对全量历史数据做精确批处理，结果准确但有延迟（Batch Views）
-> - **Speed Layer（热路径）**：实时处理最新到达的数据，结果低延迟但可能是近似值（Realtime Views）；当 Batch Layer 结果到来后被覆盖
-> - **Serving Layer**：合并 Batch Views 和 Realtime Views 响应查询
+> 假设 Feature Store 只存储每个申请人的**最新** feature 值（如"当前信用评分 = 780"）。审计人员在2025年查询"2024年3月15日该申请人的信用评分"——如果 Feature Store 已用新值覆盖旧值，系统无法重建历史时刻的特征，无法解释当时的决策依据。
 >
-> **主要缺点**：
-> 1. **代码重复**：同一业务逻辑需要在 Batch（MapReduce/Spark）和 Speed（Flink/Spark Streaming）两套系统中分别实现，维护成本高
-> 2. **一致性风险**：两套实现细节可能出现不一致
-> 3. **系统复杂度高**：需要维护和运维两套独立的数据处理系统
+> **Point-in-Time Correct Feature Store** 的解决方案：在 Offline Store 中保存每个 feature 值的完整历史（带时间戳），支持查询"某时间点该实体的 feature 值是什么"。同时防止**目标泄露（Label Leakage）**——避免训练时使用了决策时刻之后才产生的数据。
 >
-> Kappa Architecture 通过统一用流处理解决了这个问题（代价：大规模历史重算成本较高）。
+> **(b) dbt 在 Modern Data Stack 中的角色**
 >
-
----
-
-**10.** 你的公司有以下两个 ML 需求：
-- **系统A**：每天批量预测次日商品需求量（基于过去90天历史数据）
-- **系统B**：用户浏览商品时实时推荐（需要 50ms 内返回）
-
-说明两个系统在 Feature Store 中应分别使用哪种 Storage 和哪种 Feature Transform，并解释共用同一个 Feature Store 的好处。
-
-> [!tip]- 答案
+> **dbt（data build tool）** 的职责：在数据仓库（如 BigQuery / Snowflake）**内部**用 SQL 定义数据转换模型，管理模型间的依赖关系（DAG），并对转换结果进行自动化测试。
 >
-> **系统A（批量预测）**：
-> - Storage：**Offline Storage**（如 BigQuery/S3），存储90天历史 feature 数据，支持大批量读取
-> - Transform：**Batch Transform**（提前计算好历史特征，如"过去90天每个商品的平均销量"）
->
-> **系统B（实时推荐）**：
-> - Storage：**Online Storage**（如 Redis），低延迟键值查询，50ms 内必须返回
-> - Transform：**Streaming Transform**（实时计算，如"用户过去10分钟的点击类目"）或 **On-Demand Transform**（推理时动态计算，如"当前时间是否是促销时段"）
->
-> **共用 Feature Store 的好处**：
-> 1. **消除 Training-Serving Skew**：System B 的 online serving 使用的 feature 与训练时完全一致（同一 feature 定义）
-> 2. **Feature 复用**：系统A和B可共享基础 feature（如商品历史销量），避免重复开发
-> 3. **统一版本管理**：feature 变更有版本记录，方便回溯和审计
-> 4. **统一监控**：一个地方监控所有 feature 的质量和 drift
->
-
----
-
-**11.** 对比 Kappa Architecture 和 Lambda Architecture，在以下金融风控场景中哪个更合适？
-
-**场景**：需要①实时检测可疑交易（毫秒级）；②每月重新训练风控模型（需回溯5年历史数据做批量特征计算）。
-
-> [!tip]- 答案
->
-> **Lambda Architecture 更合适**。
->
-> 原因：
->
-> | 需求 | Lambda 处理方式 | 适合性 |
-> |------|----------------|--------|
-> | 实时检测（毫秒级） | Speed Layer（流处理）实时处理交易流 | ✅ 低延迟满足 |
-> | 月度模型重训（5年历史） | Batch Layer（Spark/MapReduce）批量处理5年数据 | ✅ 批处理更适合大规模历史数据 |
->
-> 若用 **Kappa**：需要将5年历史数据从消息队列重放（Replay），这在时间和存储成本上极其昂贵；且流处理对超大规模历史数据的吞吐和效率不如专用批处理（Spark）。
->
-> **另外**：金融场景对准确性要求极高，Lambda 的 Batch Layer 可以定期"修正"流处理的近似结果，确保最终一致性。
->
+> 在受监管的金融环境中，dbt 提供：
+> - **版本控制**：所有 SQL 转换通过 Git 管理，每次变更有记录，支持审计追溯
+> - **数据测试**：内置测试（`not_null`、`unique`、`accepted_values`）在每次 pipeline 运行时自动验证数据质量，防止错误数据流入贷款决策模型
+> - **Lineage（血缘）**：自动生成数据血缘图，审计人员可追溯"贷款决策 feature 来自哪些原始数据源，经过了哪些转换"
