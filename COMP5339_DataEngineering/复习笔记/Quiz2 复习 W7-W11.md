@@ -6,11 +6,14 @@
 
 ## Week 7 — Temporal Data Engineering
 
-**叙事链**：普通数据库只存"当前状态" → 现实世界的数据有时间维度 → 需要追踪历史/未来状态 → 引入时态数据库和时间序列存储
+> [!info] 问题链
+> 普通数据库只存"最新状态"，历史版本永久丢失 → Valid Time 记录事实在现实中的时间区间 → Transaction Time 记录数据操作时间，不可修改（审计用）→ 删除不能用 DELETE，用逻辑删除关闭区间 → 查询分三类：当前 / 某时刻 / 全历史
 
 ---
 
 ### 核心概念：时态数据类型
+
+> [!tip] 员工工资更新了——怎么既记录新工资，又能查出三年前的工资是多少？
 
 | 类型 | 含义 | 例子 |
 |------|------|------|
@@ -20,9 +23,15 @@
 
 SQL 对应类型：`DATE`, `TIME`, `TIMESTAMP`, `INTERVAL`
 
+<span style="color: #9b59b6">💡 **白话理解**：Instant 是"某一时刻发生的事"，Interval 是"持续了多久"，Period 是"从某时刻到某时刻"——时态数据库用这三种类型追踪现实中事实的时间维度。</span>
+
 ---
 
+<span style="color: #e67e22">*知道了时态数据类型，怎么区分"事实在现实中成立的时间"和"数据存入数据库的时间"？*</span>
+
 ### 两种时间语义（重点考点）
+
+> [!tip] 发现员工 2022 年的工资录错了，改了之后能查到"当时数据库里存的是什么"吗？
 
 | 时间类型 | 含义 | 特点 |
 |----------|------|------|
@@ -32,9 +41,15 @@ SQL 对应类型：`DATE`, `TIME`, `TIMESTAMP`, `INTERVAL`
 
 **Bitemporal table** = 同时有 Valid time + Transaction time 两列
 
+<span style="color: #9b59b6">💡 **白话理解**：Valid Time 是"事实在现实中的有效期"，Transaction Time 是"这条记录什么时候存进数据库的"。Transaction Time 只能向前、不可修改——所以它能完整还原"数据库在任意历史时刻存的是什么"。</span>
+
 ---
 
+<span style="color: #e67e22">*有了两种时间语义，查询时怎么区分"现在有效的"、"某时刻有效的"、"不管什么时候只要出现过的"？*</span>
+
 ### 时态查询语句类型
+
+> [!tip] "现在的库存"、"2022 年的工资"、"有没有出现过高薪"——对应哪三类查询？
 
 | 类型 | 含义 | 例子 |
 |------|------|------|
@@ -42,9 +57,15 @@ SQL 对应类型：`DATE`, `TIME`, `TIMESTAMP`, `INTERVAL`
 | **Sequenced** | 查某时刻/某时段成立的事实 | "2022年的工资是多少？" |
 | **Nonsequenced** | 忽略时间，查历史中任意时刻 | "某员工有没有被记录过高薪？" |
 
+<span style="color: #9b59b6">💡 **白话理解**：Current 查当前有效记录；Sequenced 查某时间点有效的记录（左闭右开区间）；Nonsequenced 不管时间，全历史都算。</span>
+
 > 📌 **新增**
 
+<span style="color: #e67e22">*知道了怎么查，但"删除"时怎么做？物理删除会让历史永久消失。*</span>
+
 ### 逻辑删除 vs 物理删除
+
+> [!tip] 保险合同到期了，用 DELETE 删掉会有什么问题？
 
 时态数据库**不做物理删除（DELETE）**，而是"关闭"区间：
 
@@ -60,9 +81,15 @@ WHERE policy_id = 42;
 
 关闭后该记录不再出现在当前查询中，但完整历史保留。
 
+<span style="color: #9b59b6">💡 **白话理解**：不用 DELETE，而是把 valid_end 设成今天——记录还在数据库里，只是"关闭"了，历史查询还能查到。</span>
+
 > 📌 **新增**
 
+<span style="color: #e67e22">*逻辑删除保住了历史，接下来是具体怎么写 SQL——三类查询各有不同的 WHERE 写法。*</span>
+
 ### 时态 SQL 查询模板
+
+> [!tip] 怎么用 SQL 查"2024 年 1 月 1 日这天这位员工的工资"？
 
 ```sql
 -- (a) Current Query：查当前有效记录
@@ -83,9 +110,15 @@ FROM emp_salary
 WHERE salary > 85000;
 ```
 
+<span style="color: #9b59b6">💡 **白话理解**：Current 查 valid_end = 9999-12-31；Sequenced 用左闭右开区间（valid_start ≤ T < valid_end）；Nonsequenced 无视时间，当普通表查全历史。</span>
+
 ---
 
+<span style="color: #e67e22">*SQL 写法解决了，但"现在"这个概念在数据库里怎么表示？直接用 now() 有隐患。*</span>
+
 ### 表示"现在"（NOW/UC）的策略
+
+> [!tip] 存"至今有效"的记录，valid_end 填什么？
 
 传统数据库没有内置时态支持，常见做法：
 
@@ -94,9 +127,15 @@ WHERE salary > 85000;
 - Min-timestamp：反直觉
 - PostgreSQL 用 `'infinity'` 表示无穷大（不要用 `now` 关键字，它表示事务开始时间）
 
+<span style="color: #9b59b6">💡 **白话理解**：最常用 9999-12-31 表示"至今有效"——这样比较 valid_end > '某日期' 不会出 NULL 问题，标准 SQL 都能处理。</span>
+
 ---
 
+<span style="color: #e67e22">*时态查询全套解决了，最后一个问题：高频时序数据（传感器每秒一条）怎么存才高效？*</span>
+
 ### 时序数据的三种存储方案（重点对比）
+
+> [!tip] 传感器每秒一条读数，存一年就是 3000 万行——三种存法各有什么取舍？
 
 | 方案 | 结构 | 优点 | 缺点 |
 |------|------|------|------|
@@ -107,15 +146,20 @@ WHERE salary > 85000;
 PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 常用谓词：`&&`（重叠），`@>`（包含），`upper_inf()`（无上界）
 
+<span style="color: #9b59b6">💡 **白话理解**：Point-based 每时刻一行（灵活，标准 SQL）；Sequence-based 一行存整个数组（紧凑，但查询难）；TSDB 专门为时序优化（高性能，但要额外维护）。</span>
+
 ---
 
 ## Week 8 — Unstructured Data
 
-**叙事链**：80-90% 的业务数据是非结构化的（图片/视频/文本） → 无法直接存入关系表 → 需要预处理 + 特征提取 → 转换成数值向量才能用于 ML
+> [!info] 问题链
+> 文本/图像无法直接用 SQL 查询 → 需要特征提取转成数值向量 → 关键词搜索用倒排索引（稀疏向量）→ 遇到词汇表外的新词（OOV）用 Subword 分词解决 → 语义相似搜索用稠密向量（BERT）+ 向量数据库 ANN
 
 ---
 
 ### 文本数据处理流程
+
+> [!tip] 一篇文章怎么让计算机"读懂"并检索它？
 
 ```
 原始文本 → Tokenisation → Normalisation（小写/词根化） → Stop-word removal → Feature vector
@@ -138,9 +182,15 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 
 **文档相似度**：Cosine Similarity（向量夹角越小越相似）
 
+<span style="color: #9b59b6">💡 **白话理解**：文本要先变数字向量——TF-IDF 做稀疏词袋向量（只管词频），BERT 做稠密语义向量（有上下文语义）。向量之间用 Cosine Similarity 判断相似度。</span>
+
 ---
 
+<span style="color: #e67e22">*文本处理有了，图像数据怎么理解和处理？*</span>
+
 ### 图像数据类型
+
+> [!tip] 医学 CT 图和彩色照片有什么区别？各自适合哪种图像类型？
 
 | 类型 | 特点 |
 |------|------|
@@ -171,9 +221,15 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
   ```
 - "一个用户的元数据就是另一个用户的数据"——元数据可用于情报分析
 
+<span style="color: #9b59b6">💡 **白话理解**：图像按通道存（RGB = 3 通道，Grayscale = 1 通道，Binary = 0/1），特征提取分白盒（手工设计）和黑盒（神经网络自动学）两种路径。</span>
+
 > 📌 **新增**
 
+<span style="color: #e67e22">*有了向量，搜索时怎么快速找到包含某关键词的文档？全文扫描太慢——倒排索引解决这个问题。*</span>
+
 ### Inverted Index（倒排索引）
+
+> [!tip] 搜索"data pipeline"，为什么不用挨个扫描所有文档？
 
 **结构**：`词 → [文档列表（含位置/频率）]`
 
@@ -184,9 +240,15 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 
 **查询加速**：查 "data pipeline" 时 → 分别查索引取集合 → 求交集，无需扫描文档内容。O(1) 索引查找 + O(k) 集合运算（Elasticsearch、PostgreSQL `tsvector` 均基于此）。
 
+<span style="color: #9b59b6">💡 **白话理解**：倒排索引就像书的"索引页"——查"data"在哪些文档，再查"pipeline"在哪些文档，取交集，不用翻任何文档内容。</span>
+
 > 📌 **新增**
 
+<span style="color: #e67e22">*倒排索引解决了搜索效率，但"词"本身怎么切？遇到词汇表里没有的新词（OOV）怎么办？*</span>
+
 ### Subword Tokenization（BPE / WordPiece）
+
+> [!tip] GPT 遇到"ChatGPT"这个训练时没见过的词，怎么处理？
 
 **词级分词的问题**：词汇表固定，未见过的词（OOV）只能替换为 `[UNK]`，信息全丢。
 
@@ -199,9 +261,15 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 
 **NLP 管道顺序**：`文本 → Tokens → Token IDs → Embeddings → Model`
 
+<span style="color: #9b59b6">💡 **白话理解**：词级分词遇到新词直接变 [UNK]，什么都不知道。BPE / WordPiece 把词拆成高频子词，遇到新词也能拼出大概含义。</span>
+
 > 📌 **新增**
 
+<span style="color: #e67e22">*分词解决了，TF-IDF 和 BERT 产生了完全不同的向量——该用哪种取决于你要做什么搜索。*</span>
+
 ### Sparse Vector vs Dense Vector
+
+> [!tip] 搜索"语义相似的新闻" vs 搜索"包含某个词的新闻"——哪个需要语义向量？
 
 | | Sparse（TF-IDF） | Dense（BERT） |
 |-|-----------------|--------------|
@@ -212,15 +280,20 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 
 关键词精确匹配 → Sparse；语义相似搜索 → Dense。
 
+<span style="color: #9b59b6">💡 **白话理解**：稀疏向量（TF-IDF）= 高维、大部分为零、只管词频，适合关键词精确匹配（用倒排索引）；稠密向量（BERT）= 低维全非零、有语义，适合"找相似内容"（向量数据库 ANN 搜索）。</span>
+
 ---
 
 ## Week 9 — Stream Data Processing
 
-**叙事链**：传统 DBMS 处理"静止的数据" → 很多数据是实时产生的流 → 需要"在运动中"处理 → 引入 Pub/Sub 消息系统 + 流处理引擎
+> [!info] 问题链
+> 批处理每天跑一次，数据有界、延迟高 → 流数据无界持续到来，需要持续查询 → 需要消息系统解耦生产者和消费者（MQTT / Kafka）→ 流查询分有 / 无状态 → 按时间窗口聚合 → 事件乱序到达，Event Time + Watermark 解决 → Spark 微批 vs Flink 管道（延迟取舍）
 
 ---
 
 ### DBMS vs DSMS（重要对比）
+
+> [!tip] 每天一次批处理，怎么在 2 秒内检测刚刚下单的欺诈？
 
 | 维度 | DBMS（传统数据库） | DSMS（流数据系统） |
 |------|-------------------|-------------------|
@@ -230,17 +303,29 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 | 查询 | 一次性查询 | **持续查询** |
 | 答案 | 精确 | 可能近似 |
 
+<span style="color: #9b59b6">💡 **白话理解**：DBMS 是"照片"（存静止数据，查一次返回结果）；DSMS 是"摄像机"（持续处理流数据，查询一直运行，数据不断刷新结果）。</span>
+
 ---
 
+<span style="color: #e67e22">*流数据持续到来，需要一个消息传递层——让生产者和消费者解耦，多方可以独立消费。*</span>
+
 ### Pub/Sub 模式
+
+> [!tip] 传感器数据怎么同时送给监控系统和分析系统，又互不干扰？
 
 - **Publisher** 发布消息到 **Broker** 的某个 **Topic**
 - **Subscriber** 订阅感兴趣的 Topic，Broker 推送消息
 - 同一消息可被多个 Subscriber 同时消费
 
+<span style="color: #9b59b6">💡 **白话理解**：发布者不需要知道谁在听，订阅者随时可以加入，Broker 负责分发——像广播电台，任意多人收听不互相影响。</span>
+
 ---
 
+<span style="color: #e67e22">*Pub/Sub 是模式，具体用哪套实现？IoT 传感器和高吞吐业务事件的需求完全不同。*</span>
+
 ### MQTT vs Kafka（重点对比）
+
+> [!tip] 电池供电的传感器 vs 每秒百万订单事件——同一套消息系统能搞定吗？
 
 | 维度 | MQTT | Kafka |
 |------|------|-------|
@@ -284,18 +369,30 @@ PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 
 Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引入额外延迟。
 
+<span style="color: #9b59b6">💡 **白话理解**：MQTT 轻量（省电省流量，适合传感器）；Kafka 重量级但持久化存储、可回放、高吞吐，适合业务事件流。</span>
+
 ---
 
+<span style="color: #e67e22">*消息系统选好了，流查询本身分两类——有些只看当前这条，有些需要跨事件记住历史状态。*</span>
+
 ### 流查询：Stateless vs Stateful
+
+> [!tip] 统计"过去 5 分钟的总交易额"，只看当前这条记录够吗？
 
 | 类型 | 含义 | 例子 |
 |------|------|------|
 | **Stateless** | 每条记录独立处理 | `SELECT` + `WHERE`（过滤/投影） |
 | **Stateful** | 需要跨多条记录维护状态 | 聚合、Join、窗口 |
 
+<span style="color: #9b59b6">💡 **白话理解**：Stateless 是"门卫"（每次看当前这张脸决定放不放）；Stateful 是"收银员"（要记住你之前买了什么才能算总价）。</span>
+
 ---
 
+<span style="color: #e67e22">*需要跨时间聚合时，怎么定义"这段时间"的边界？*</span>
+
 ### 窗口类型（Window）
+
+> [!tip] "每 5 分钟统计一次" vs "最近 5 分钟随时可查"——对应哪两种窗口？
 
 窗口 = 从无界流中截取有界片段的机制
 
@@ -306,9 +403,15 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 | **Tumbling** | 固定大小，**不重叠** | 每 1 分钟的点赞数 |
 | **Session** | 由数据中的事件标记（如 auction_start/end）定义 | 一次竞价会话 |
 
+<span style="color: #9b59b6">💡 **白话理解**：Tumbling = 不重叠的固定格子（每 5 分钟一个）；Sliding = 滑动移动窗口（同一事件可在多个窗口）；Session = 用户活跃就开着，超过 N 分钟没动就关闭。</span>
+
 ---
 
+<span style="color: #e67e22">*窗口按时间划分，但"时间"用哪个？网络延迟会让事件真正发生的时间和处理器看到的时间不一样。*</span>
+
 ### 三种时间概念
+
+> [!tip] GPS ping 延迟 3 分钟才到达，用处理时间会出什么问题？
 
 | 时间 | 含义 |
 |------|------|
@@ -318,9 +421,15 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 **Watermark**：流处理器用来声明"到目前为止，所有早于时间 T 的事件都已到达"，用于触发基于 Event Time 的窗口计算
 
+<span style="color: #9b59b6">💡 **白话理解**：Event Time 是"事件真正发生的时间"，Processing Time 是"处理器看到它的时间"——网络延迟让两者不同，Watermark 容忍一定范围的延迟到达。</span>
+
 ---
 
+<span style="color: #e67e22">*时间语义解决了，处理引擎怎么选？Spark 和 Flink 在流处理延迟上有本质区别。*</span>
+
 ### Spark Streaming vs Apache Flink（重点对比）
+
+> [!tip] 都能处理流数据——为什么还需要 Flink？
 
 | 维度 | Apache Spark Streaming | Apache Flink |
 |------|------------------------|--------------|
@@ -331,6 +440,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 | 流处理延迟 | 较高（毫秒~秒级） | 更低（毫秒级） |
 
 > **Kafka/MQTT = 消息存储系统；Spark/Flink = 流处理计算引擎**，两者角色不同，不要混淆
+
+<span style="color: #9b59b6">💡 **白话理解**：Spark Streaming 把流切成一小批处理（秒级延迟）；Flink 每条事件立刻处理（毫秒级），算子之间直接传递，没有"攒一批"的过程。</span>
 
 ---
 
