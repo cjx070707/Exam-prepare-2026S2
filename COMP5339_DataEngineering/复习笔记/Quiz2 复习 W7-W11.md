@@ -354,7 +354,7 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 | 上限 | 有硬件天花板 | 理论上无限 |
 | 架构 | 单机 | Shared-nothing（各节点独立） |
 
-*选了 Scale-Out，数据分散到多台机器——但分析查询只用少数几列，每次读整行太浪费 I/O。*
+<span style="color: #e67e22">*选了 Scale-Out，数据分散到多台机器——但分析查询只用少数几列，每次读整行太浪费 I/O。*</span>
 
 ---
 
@@ -376,7 +376,7 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 **Wide Column Store**（如 HBase, BigTable）≠ Column Store：按 column family 分组，按行存储每个 family，适合稀疏数据
 
-*存储结构优化了，但数据具体切到哪台机器？需要一套分区规则。*
+<span style="color: #e67e22">*存储结构优化了，但数据具体切到哪台机器？需要一套分区规则。*</span>
 
 ---
 
@@ -397,7 +397,7 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 **核心矛盾**：Hash 破坏数据顺序性 → 范围查询必须扫全表；Range 保留顺序 → 点查也要扫全表。两者不可兼得，根据查询模式选择。
 
-*数据分散到多台机器了，如果某台宕机，那台机器上的数据就丢了——需要多副本备份。*
+<span style="color: #e67e22">*数据分散到多台机器了，如果某台宕机，那台机器上的数据就丢了——需要多副本备份。*</span>
 
 ---
 
@@ -422,7 +422,7 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 | 冲突 | 无 | 需要冲突解决 |
 | 实践 | **更常用**（如 MongoDB） | 分布式写场景 |
 
-*有了多副本，但网络一断，各副本的数据可能已经不一致。这时系统要怎么应对？*
+<span style="color: #e67e22">*有了多副本，但网络一断，各副本的数据可能已经不一致。这时系统要怎么应对？*</span>
 
 ---
 
@@ -444,7 +444,7 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 | CP | Availability | 金融系统（一致性优先） |
 | AP | Consistency | 社交媒体（可用性优先，允许短暂不一致） |
 
-*存储、分区、复制都解决了。接下来：数据分散在多台机器上，计算怎么做？把数据都传到一台机器上太慢——让计算去找数据。*
+<span style="color: #e67e22">*存储、分区、复制都解决了。接下来：数据分散在多台机器上，计算怎么做？把数据都传到一台机器上太慢——让计算去找数据。*</span>
 
 ---
 
@@ -476,7 +476,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 **Apache Spark**
 
-*MapReduce 每次算完都把结果写回磁盘，下次再从磁盘读。Spark 把中间结果留在内存，下一步直接用——迭代计算（如 ML 训练要跑几百轮）因此快 10-15 倍。*
+> [!example] 💡 白话理解
+> MapReduce 每次算完都把结果写回磁盘，下次再从磁盘读。Spark 把中间结果留在内存，下一步直接用——迭代计算（如 ML 训练要跑几百轮）因此快 10-15 倍。
 
 - 核心抽象：**RDD**（Resilient Distributed Dataset）——不可变、分布式、可容错
 - **Lazy Evaluation**：只有遇到 Action（如 `collect()`, `show()`）才真正执行
@@ -506,7 +507,7 @@ rdd.cache()   # 将计算结果存入内存
 
 没有 Shuffle & Sort，各 Mapper 的 `("data", 1)` 就无法汇集到一起求和。
 
-*Spark 用微批（Micro-batching）模拟流处理，延迟在秒级。如果需要毫秒级实时处理、算子间零延迟传递呢？这就是 Flink 的场景——它是真正的流处理引擎。*
+<span style="color: #e67e22">*Spark 用微批（Micro-batching）模拟流处理，延迟在秒级。如果需要毫秒级实时处理、算子间零延迟传递呢？这就是 Flink 的场景——它是真正的流处理引擎。*</span>
 
 **Apache Flink**
 
