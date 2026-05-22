@@ -345,6 +345,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 > [!tip] 单机撑不住了，换更强的机器，还是加更多机器？
 
+*Scale-Up 就是换台更好的电脑；Scale-Out 是买更多台普通电脑组成集群。前者简单但有上限，后者复杂但理论上无限扩。*
+
 | | Scale-Up（纵向扩展） | Scale-Out（横向扩展） |
 |--|---------------------|----------------------|
 | 方式 | 换更强的单机硬件 | 增加更多节点组成集群 |
@@ -358,6 +360,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 ### 存储优化
 
 > [!tip] 多机存储后，怎么让分析查询少读点数据？
+
+*Row Store 把一行数据存在一起，取任何数据都要读整行。Column Store 把同一列存在一起，分析查询只读用到的列——50 列只用 3 列，I/O 减少 94%。*
 
 **Column Store vs Row Store**
 
@@ -378,6 +382,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 > [!tip] 大表放不进一台机器，按什么规则切分到不同节点？
 
+*分区就是把一张大表按规则切开，每台机器只存一部分。查询时只扫相关的那几块，不用扫全表。*
+
 | 策略 | 方式 | 适用 | 代价 |
 |------|------|------|------|
 | **Horizontal Partitioning** | 按行切分 | 大表扩展，并行查询 | — |
@@ -395,6 +401,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 ### 数据复制（Replication）
 
 > [!tip] 机器宕机数据就丢，怎么保证数据安全和读性能？
+
+*把数据同时存到多台机器上。一台挂了还有别的副本可用，同时读请求可以分散到多台，提升性能。*
 
 **目的**：提高可用性（一个节点故障仍可读）和读性能
 
@@ -418,6 +426,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 
 > [!tip] 多副本网络断了，保数据一致还是保系统可用？
 
+*P（网络分区）是无法避免的现实。断网时各副本数据不同步，系统只能选：等所有副本同步好再响应（保 C），还是先响应但可能给旧数据（保 A）。*
+
 分布式系统只能同时满足三个中的**两个**：
 
 - **C**onsistency（一致性）：所有节点看到相同数据
@@ -438,6 +448,8 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 > [!tip] 数据在 HDFS 上分散存好了，计算怎么也跟着分散到各台机器？
 
 **HDFS（Hadoop Distributed File System）**
+
+*一个"目录"（NameNode）记录所有文件在哪，多个"仓库"（DataNode）实际存数据。文件切成 64MB 的块，每块存 3 份在不同机器上，某台挂了数据还在。*
 - 1 个 NameNode（元数据管理）+ 多个 DataNode（实际存储）
 - 文件切成 **64 MB** 的块（PPT 默认值），每块默认复制 3 份
 
@@ -457,6 +469,9 @@ Flink / Kafka Streams 通过两阶段提交（2PC）支持 Exactly-once，但引
 - **HA 方案**：Active NameNode + Standby NameNode，通过 **JournalNode 集群**同步 edit log，**ZooKeeper** 监控心跳，宕机后秒级自动 Failover
 
 **Apache Spark**
+
+*MapReduce 每次算完都把结果写回磁盘，下次再从磁盘读。Spark 把中间结果留在内存，下一步直接用——迭代计算（如 ML 训练要跑几百轮）因此快 10-15 倍。*
+
 - 核心抽象：**RDD**（Resilient Distributed Dataset）——不可变、分布式、可容错
 - **Lazy Evaluation**：只有遇到 Action（如 `collect()`, `show()`）才真正执行
 - DataFrame API 更高级，支持 SQL 风格查询
@@ -474,6 +489,8 @@ rdd.cache()   # 将计算结果存入内存
 
 **MapReduce 三阶段（Shuffle & Sort）**：
 
+*思路：把大任务切成小任务分给多台机器各自处理（Map），然后把各台机器的结果汇总合并（Reduce）。数据在哪台机器，计算就在哪台机器跑——避免把数据传来传去。*
+
 | 阶段 | 说明 |
 |------|------|
 | **Map** | 输入一行，输出 `(key, value)` 键值对（如 `("data", 1)`） |
@@ -485,6 +502,9 @@ rdd.cache()   # 将计算结果存入内存
 *Spark 用微批（Micro-batching）模拟流处理，延迟在秒级。如果需要毫秒级实时处理、算子间零延迟传递呢？这就是 Flink 的场景——它是真正的流处理引擎。*
 
 **Apache Flink**
+
+*Spark 把流数据切成一小批一小批处理（微批），每批有延迟。Flink 每条数据到来立刻处理，算子之间直接传递，没有"攒一批"的过程——所以延迟更低，适合对实时性要求极高的场景。*
+
 - 核心：Pipelined 执行（算子之间立即传递数据，无 Stage 分离）
 - DataSet API（批处理）+ DataStream API（流处理）
 - 同样是 Lazy Evaluation：调用 `env.execute()` 才开始
