@@ -5,7 +5,7 @@
 **Question 1.** A streaming analytics company processes 10TB of event data daily. Their data science team complains that monthly model retraining (requiring a full 90-day historical replay) takes 3 days when run through the streaming pipeline. A senior engineer proposes switching from **Lambda Architecture** to **Kappa Architecture** to simplify the codebase. A tech lead objects. Who is correct?
 
 - [ ] A. The senior engineer is correct — Kappa is always simpler and should replace Lambda in all cases
-- [ ] B. The tech lead is correct — when large-scale historical batch reprocessing is a core requirement, Lambda's dedicated Batch Layer is more cost-effective than replaying 90 days through a stream processor
+- [x] B. The tech lead is correct — when large-scale historical batch reprocessing is a core requirement, Lambda's dedicated Batch Layer is more cost-effective than replaying 90 days through a stream processor
 - [ ] C. Lambda Architecture does not support real-time processing, so Kappa is the only viable option
 - [ ] D. Both architectures are equivalent in this scenario — the choice only affects operational complexity, not performance
 
@@ -22,7 +22,7 @@
 
 **Question 2.** A data team's production dashboard shows customer churn metrics that haven't updated for 36 hours, even though the source database is actively receiving new records. The data observability monitoring system fires an alert. Which of the five Data Observability pillars is this alert detecting?
 
-- [ ] A. Freshness — the data has not been updated within the expected time window
+- [x] A. Freshness — the data has not been updated within the expected time window
 - [ ] B. Volume — the number of records in the table has dropped unexpectedly
 - [ ] C. Schema — a column has been added or removed from the source table
 - [ ] D. Lineage — the upstream data source has changed its transformation logic
@@ -45,7 +45,7 @@
 
 - [ ] A. Model drift — the distribution of fraud patterns has changed over 6 months
 - [ ] B. The Java implementation is less accurate than Python for floating-point computations
-- [ ] C. Training-Serving Skew — the feature computation logic differs between training (Python) and serving (Java), so the model receives different feature values in production than it was trained on
+- [x] C. Training-Serving Skew — the feature computation logic differs between training (Python) and serving (Java), so the model receives different feature values in production than it was trained on
 - [ ] D. The model was overfitted to training data and cannot generalise to production
 
 > [!note]- Answer
@@ -69,7 +69,7 @@ Which Feature Store storage strategy is correct?
 
 - [ ] A. Use Online Storage (Redis) for both — it's fast enough for training too
 - [ ] B. Use Offline Storage (S3/BigQuery) for both — consistency is more important than latency
-- [ ] C. Offline Storage for training (historical batch reads, high throughput); Online Storage for serving (millisecond key-value lookup at inference time)
+- [x] C. Offline Storage for training (historical batch reads, high throughput); Online Storage for serving (millisecond key-value lookup at inference time)
 - [ ] D. No Feature Store needed — compute the feature on-the-fly with SQL at serving time
 
 > [!note]- Answer
