@@ -140,5 +140,5 @@ Wait for confirmation before writing anything.
 After confirmation:
 
 1. Write or modify the notes file with full narrative structure
-2. Commit with a descriptive message (e.g., `build: W9 stream processing notes for COMP5339`)
+2. Commit with a descriptive message (e.g., `build: W9 notes — Transformer and BERT`)
 3. Push: `git stash && git pull --rebase && git stash pop && git push`
