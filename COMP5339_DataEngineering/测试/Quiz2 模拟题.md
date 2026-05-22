@@ -17,7 +17,7 @@
 - [ ] Valid Time only — records when facts were true in the real world
 - [ ] Transaction Time only — records when data was entered into the system
 - [ ] A single `updated_at` timestamp column
-- [ ] A bitemporal table with both Valid Time and Transaction Time columns
+- [x] A bitemporal table with both Valid Time and Transaction Time columns
 
 > [!note]- Answer
 > **Bitemporal table（双时态表）。**
@@ -48,7 +48,7 @@
 
 - [ ] Row store (e.g., PostgreSQL heap files)
 - [ ] Document store (e.g., MongoDB)
-- [ ] Column store (e.g., Parquet / BigQuery)
+- [x] Column store (e.g., Parquet / BigQuery)
 - [ ] Wide Column store (e.g., HBase)
 
 > [!note]- Answer

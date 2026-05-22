@@ -85,13 +85,43 @@ Which Feature Store storage strategy is correct?
 
 ---
 
+> 📌 **新增题目**
+
+**Question 5.** A healthcare analytics team has a 3TB patient records dataset stored in **PostgreSQL**. They need to train a **K-Nearest Neighbours (KNN) classifier** to predict readmission risk. A junior engineer proposes: *"Export the data to a Pandas DataFrame, then use scikit-learn's KNeighborsClassifier."* A senior engineer objects and recommends **Apache MADlib** instead. Who is correct and why?
+
+- [ ] A. The junior engineer is correct — scikit-learn's KNN implementation is always faster than database-based ML
+- [ ] B. Neither; the team should migrate to Apache Spark MLlib for scalable machine learning
+- [ ] C. The senior engineer is correct — MADlib runs ML algorithms inside PostgreSQL using SQL (`SELECT * FROM madlib.knn(...)`), avoiding data export; it leverages the database's parallelism and keeps the 3TB dataset in-place, which Pandas cannot handle in memory
+- [ ] D. The senior engineer is correct — MADlib should be used because it provides a Feature Store with Point-in-Time correctness, which scikit-learn lacks
+
+> [!note]- Answer
+> **C. MADlib — "Bring the Algorithm to the Data"。**
+>
+> - **A 错误**：scikit-learn 需要将数据加载进内存（RAM）；3TB 数据远超普通服务器内存，Pandas 会 OOM（Out of Memory）崩溃，根本无法运行。
+> - **B 错误**：Spark MLlib 是可行方案，但需要搭建独立的 Spark 集群——这是重量级基础设施迁移，成本高。当数据已在 PostgreSQL 中时，MADlib 是更轻量的选择。
+> - **C 正确**：MADlib 的核心思想是 **"Bring the Algorithm to the Data"**——ML 算法在数据库内部执行，数据不需要导出：
+>   ```sql
+>   SELECT * FROM madlib.knn(
+>       'patients',        -- 训练集表名
+>       'features',        -- 特征列
+>       'label',           -- 标签列
+>       'new_patients',    -- 预测集
+>       'result_table',    -- 输出表
+>       5                  -- K 值
+>   );
+>   ```
+>   利用 PostgreSQL 的并行查询引擎处理 3TB 数据，无需数据移动。
+> - **D 错误**：MADlib 是数据库内 ML 框架，不提供 Feature Store 或 Point-in-Time 功能，这是对 MADlib 的错误描述。
+
+---
+
 **Scenario 1:** A media streaming company runs the following data stack:
 - Raw clickstream events → Kafka → **Flink** (real-time processing) → live dashboard
 - Raw clickstream events → **Spark** batch job (runs nightly) → content recommendation model training
 
 A new VP of Engineering wants to eliminate the Spark batch job and "just use Flink for everything."
 
-**Question 5:** **(4 Marks)**
+**Question 6:** **(4 Marks)**
 
 **(a)** What architecture does the current system represent, and what would the VP's proposed change result in? **(2 Marks)**
 
@@ -120,7 +150,7 @@ A new VP of Engineering wants to eliminate the Spark batch job and "just use Fli
 
 **Scenario 2:** A bank is building an ML system to approve or reject loan applications in real time. Each decision must be fully auditable — regulators can ask: *"Why was this application rejected on 15 March 2024, based on the data available at that time?"*
 
-**Question 6:** **(4 Marks)**
+**Question 7:** **(4 Marks)**
 
 **(a)** Why does a standard Feature Store (without Point-in-Time correctness) fail to satisfy this regulatory audit requirement? **(2 Marks)**
 
