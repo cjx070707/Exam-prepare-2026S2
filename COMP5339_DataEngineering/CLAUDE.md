@@ -9,7 +9,10 @@ Course slides are in `课件/`.
 
 - **Short-answer questions** — explain a concept, compare two systems, or describe a tradeoff in 2–5 sentences
 - **MCQ** — key facts, system comparisons, scenario-based tool selection
-- **Code reading** — given a snippet (Python/SQL/HTML), explain what it does or identify a problem; no hand-writing code from scratch
+- **Code reading** — given a snippet, explain what it does or identify a problem; no hand-writing code from scratch
+  - ✅ HTML（W4 Web Scraping — CSS selector, XPath, HTML 结构）— 已考过
+  - ❌ Python — 老师明确说不考
+  - ❌ SQL — 老师明确说不考
 
 ## Study Structure: Four Narrative Groups
 
