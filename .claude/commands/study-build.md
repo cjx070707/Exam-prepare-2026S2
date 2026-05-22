@@ -30,7 +30,9 @@ If no arguments are provided, ask the user which week or section they want to bu
 
 ## Step 2 — Locate sources
 
-**Primary source (required):** Lecture slides / 讲义. Look in subdirectories like `课件/`, `slides/`, `讲义/`, `Lectures/`.
+**Primary source (required):** Lecture slides / 讲义. Look in subdirectories like `课件/`, `slides/`, `讲义/`, `Lectures/`, `Materials*/`.
+- Prefer `.txt` extracted versions of slides over PDFs — they are directly readable without conversion.
+- If both exist, use the `.txt`; fall back to PDF only if no `.txt` is available.
 - If slides are not found, tell the user and ask for the path before continuing.
 - The slides define what content exists — they are the source of truth.
 

@@ -77,10 +77,24 @@ and what limitation it still leaves (which motivates the next topic).
 ## Key Files
 
 ```
-claude 复习/
-├── CLAUDE.md                    ← this file (framework + instructions)
-├── Group1_Foundations.md        ← Week 2 + 3 study notes
-├── Materials2026/
-│   ├── Lecture/                 ← PDF slides + Notes PDFs (primary reading)
-│   └── Tutorial/                ← Jupyter notebooks (Part B: coding, Part C: exam Qs)
+Exam-prepare-2026S2/COMP5329_DeepLearning/复习笔记/
+├── 第一组 基础知识.md            ← Week 2 + 3 study notes
+├── 第二组 结构化数据.md           ← Week 4 + 5 study notes
+├── 第三组 序列数据.md             ← Week 7 + 8 study notes
+└── 第四组 超越监督学习.md          ← Week 9–12 study notes
+
+Lecture materials (primary reading — prefer .txt over PDF):
+/Users/jessechen/USYD 2026 S1/5329/claude 复习/Materials2026/
+├── Lecture/
+│   ├── Week2 - Foundations of Deep Neural Networks/
+│   ├── Week3 - Regularization for Deep Models/    ← includes Scripts.txt
+│   ├── Week4 - Convolutional Neural Networks/     ← includes Scripts.txt
+│   ├── Week5 - Graph Neural Networks/             ← includes Scripts.txt
+│   ├── Week7 - Sequence Modeling Architectures-I/
+│   ├── Week8 - Sequence Modeling Architectures-II/
+│   ├── Week9 - Multi-Modal Foundation Models/
+│   ├── Week10 - Deep Reinforcement Learning/
+│   ├── Week11 - Self-Supervised Representation Learning/
+│   └── Week12 - Deep Generative Models/
+└── Tutorial/                    ← Jupyter notebooks (Part B: coding, Part C: exam Qs)
 ```

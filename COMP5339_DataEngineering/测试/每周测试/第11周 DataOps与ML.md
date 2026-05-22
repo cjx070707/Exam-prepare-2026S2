@@ -5,7 +5,7 @@
 **Question 1.** A streaming analytics company processes 10TB of event data daily. Their data science team complains that monthly model retraining (requiring a full 90-day historical replay) takes 3 days when run through the streaming pipeline. A senior engineer proposes switching from **Lambda Architecture** to **Kappa Architecture** to simplify the codebase. A tech lead objects. Who is correct?
 
 - [ ] A. The senior engineer is correct — Kappa is always simpler and should replace Lambda in all cases
-- [ ] B. The tech lead is correct — when large-scale historical batch reprocessing is a core requirement, Lambda's dedicated Batch Layer is more cost-effective than replaying 90 days through a stream processor
+- [x] B. The tech lead is correct — when large-scale historical batch reprocessing is a core requirement, Lambda's dedicated Batch Layer is more cost-effective than replaying 90 days through a stream processor
 - [ ] C. Lambda Architecture does not support real-time processing, so Kappa is the only viable option
 - [ ] D. Both architectures are equivalent in this scenario — the choice only affects operational complexity, not performance
 
