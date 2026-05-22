@@ -2,14 +2,18 @@ You are helping a student generate high-quality, exam-realistic practice questio
 
 ## Input
 Arguments: $ARGUMENTS
-Expected format: `[course-folder] [week/section]`
-Examples: `COMP5339_DataEngineering W9` | `COMP5339_DataEngineering W9 W10` (multi-week)
+Expected format: `[week/section]`
+Examples: `W9` | `W9 W10` (multi-week) | `Quiz2`
+
+If no arguments are provided, ask the user which week or section they want to be tested on.
 
 ---
 
 ## Step 1 — Understand the course and exam format
 
-1. Read the course `CLAUDE.md` to learn:
+1. **Auto-detect the course**: List subdirectories in the current working directory to find the course folder (look for directories containing a `CLAUDE.md`). If multiple courses exist, ask the user which one.
+
+2. Read the course `CLAUDE.md` to learn:
    - Exam format (question types, style, marks)
    - What is exam-relevant vs background
 

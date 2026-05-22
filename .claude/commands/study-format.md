@@ -2,14 +2,18 @@ You are helping a student structure their study notes with a consistent narrativ
 
 ## Input
 Arguments: $ARGUMENTS
-Expected format: `[course-folder] [week/section]`
-Examples: `COMP5339_DataEngineering W9` | `COMP5339_DataEngineering Quiz2 W9`
+Expected format: `[week/section]`
+Examples: `W9` | `W7 W8` | `Quiz2`
+
+If no arguments are provided, ask the user which week or section they want to work on.
 
 ---
 
 ## Step 1 — Understand the course
 
-1. Find and read the course `CLAUDE.md` (usually at `[course-folder]/CLAUDE.md`) to understand:
+1. **Auto-detect the course**: List subdirectories in the current working directory to find the course folder (look for directories containing a `CLAUDE.md`). If multiple courses exist, ask the user which one.
+
+2. Find and read the course `CLAUDE.md` to understand:
    - Course structure and file layout
    - What is exam-relevant vs background knowledge
    - Any special instructions
