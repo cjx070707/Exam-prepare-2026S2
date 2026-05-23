@@ -39,6 +39,8 @@ If no arguments are provided, ask the user which week or section they want to bu
 
 **Secondary sources:** Only include if the user explicitly mentions them (e.g., tutorial sheets, readings). Do not add secondary sources on your own.
 
+**Note PDFs and supplementary materials**: Files like `W2 - Notes.pdf`, `W3 - Notes.pdf`, etc. are supplementary reading material — they are **NOT** part of the lecture. Do NOT use Notes PDFs as a source unless the user explicitly asks. The rule is simple: **one course week = one lecture PDF**. Only content that appears in the lecture PDF slides counts as lecture content.
+
 ---
 
 ## ⚠️ CRITICAL RULE — No Knowledge Injection
