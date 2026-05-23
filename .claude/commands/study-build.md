@@ -30,13 +30,12 @@ If no arguments are provided, ask the user which week or section they want to bu
 
 ## Step 2 — Locate sources
 
-**Primary source (required):** Lecture slides / 讲义. Look in subdirectories like `课件/`, `slides/`, `讲义/`, `Lectures/`, `Materials*/`.
-- Prefer `.txt` extracted versions of slides over PDFs — they are directly readable without conversion.
-- If both exist, use the `.txt`; fall back to PDF only if no `.txt` is available.
-- Some courses also have a `Scripts.txt` (informal transcript) alongside the slide `.txt` — read both if present, as the script often contains more detail.
-- **If the `.txt` file appears truncated** (ends mid-slide, covers only a few pages, or the outline lists more topics than the file contains): stop, tell the user exactly which topics are missing from the file, and ask them to provide the full source before continuing.
-- If slides are not found at all, tell the user and ask for the path before continuing.
-- The slides define what content exists — they are the source of truth.
+**Primary source (required): the lecture PDF files.** These are the complete, authoritative lecture slides. Look in subdirectories like `课件/`, `slides/`, `讲义/`, `Lectures/`, `Materials*/`. The PDF is the source of truth — it defines exactly what the lecturer covered.
+
+- **Always use the PDF as the primary source.** Read every page.
+- `.txt` files are extracted summaries of the PDF and are often incomplete or truncated — they may only cover the first few pages. Do NOT treat a `.txt` file as a complete substitute for the PDF.
+- A `.txt` or `Scripts.txt` file may be used as a **supplement** (to catch additional detail or phrasing) only after the PDF has already been read.
+- If no PDF is found, tell the user and ask for the path before continuing.
 
 **Secondary sources:** Only include if the user explicitly mentions them (e.g., tutorial sheets, readings). Do not add secondary sources on your own.
 
