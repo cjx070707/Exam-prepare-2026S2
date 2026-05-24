@@ -128,6 +128,20 @@
 
 ---
 
+> 📌 **新增题目**
+
+**Q10-A.** A fraud detection platform receives a stream of payment events at 80,000 events/second. Each event must be enriched with the account holder's risk tier (low / medium / high), stored in a reference table that is updated once per day. Which approach best balances latency and throughput?
+
+- A. Query the risk-tier database synchronously for each event — ensures data is always current
+- B. Use a Stream-Stream Join with a 24-hour window — captures all risk-tier updates in real time
+- C. Pre-load the risk-tier table into in-memory storage (e.g., Redis); refresh nightly; look up per event
+- D. Buffer events into 10-minute Tumbling Windows, then batch-enrich against the risk-tier table
+
+> [!note]- Answer
+> **C** — **Enrichment（Stream-Table Join）**：静态/低频更新的参考数据（每日一次）最适合预加载到 in-memory 存储（Redis）做毫秒级 lookup。80,000 events/sec 下直接查数据库（A）会造成严重性能瓶颈；Stream-Stream Join（B）适合两条都实时变化的流，不适合每日更新的参考表；Tumbling Window 批量处理（D）引入分钟级延迟，不适合欺诈检测。
+
+---
+
 ## Section B — Short Answer (8 marks each, 32 marks total)
 
 **Q11.** A ride-sharing company processes GPS pings from drivers in real time. They need to: (1) count the number of active drivers in each city zone **every 5 minutes** (non-overlapping), and (2) compute a **running total** of trips completed since the start of the day. For each requirement, identify the window type, classify the operation as stateless or stateful, and explain whether event time or processing time is more appropriate. (8 marks)
