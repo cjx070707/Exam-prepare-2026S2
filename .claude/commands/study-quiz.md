@@ -86,6 +86,13 @@ Wait for confirmation or adjustment before generating.
 - **No absolute language in any option** ("always", "never", "only", "cannot", "all", "none") — these are instant elimination tells. Rephrase to sound equally hedged across all options.
 - **Do not make the correct answer the most thorough-sounding one** — wrong options should also sound specific and reasoned, not vague or circular. The difference between options should be *what* they claim, not *how confidently* they claim it.
 - If past exam questions exist, match their difficulty and style exactly
+- MCQ options **must use checkbox format** for Obsidian interactivity:
+  ```
+  - [ ] A. Option text
+  - [ ] B. Option text
+  - [ ] C. Option text
+  - [ ] D. Option text
+  ```
 
 ### Short-answer / scenario question rules
 - Ask for **comparison + tradeoff**, not just definition
@@ -93,10 +100,15 @@ Wait for confirmation or adjustment before generating.
 - Multi-part questions (a/b/c) should build: (a) identify/classify → (b) explain mechanism → (c) evaluate tradeoff or edge case
 - Mark allocation must be visible: **(X Marks)**
 
-### Coverage check
-Before finalising, verify:
-- Every ★★★ topic appears in at least one question
-- No question tests pure memorisation — each requires applying or reasoning about a concept
+### Coverage rules (non-negotiable)
+- **Coverage is verified against the actual lecture PDF, not notes or memory.** Before finalising questions, cross-check each ★★★ topic against what was read from the PDF.
+- Every ★★★ topic must appear in at least one question. If a gap is found, **fill it immediately without asking** — generate the missing question and add it.
+- No question tests pure memorisation — each requires applying or reasoning about a concept.
+- **Gap-filling is automatic**: if the coverage audit reveals an uncovered ★★★ topic, add the question directly to the file. Do not ask for confirmation first.
+
+### Numbering rules
+- Questions are numbered **globally and sequentially** across all question types: Q1, Q2, Q3 ... regardless of section (MCQ / SA / Coding / Essay).
+- Never reuse a number within the same file. MCQ Q6 and SA Q6 in the same file is a bug — SA must continue from where MCQ left off.
 
 ---
 
@@ -105,6 +117,8 @@ Before finalising, verify:
 Output all questions in final format, including answers. Then ask:
 
 > "以上题目确认？(Y 写入文件 / N 取消 / 具体修改意见)"
+
+**Exception**: If filling a coverage gap (Step 5 coverage rules), write directly to file without preview — the gap is clear, the user has already approved the overall plan.
 
 ---
 
