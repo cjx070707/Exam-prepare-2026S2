@@ -29,7 +29,12 @@ If no arguments are provided, ask the user which week or section they want to be
    > - 多周测试（W___ 到 W___）
    > - 全范围（Quiz / 期末）"
 
-4. Read the study notes for the given week(s). Identify all topics by importance:
+4. **Source hierarchy (non-negotiable):**
+   - **复习笔记** is the authoritative source for question content — all question stems, answer explanations, and concept descriptions must be traceable to what the notes actually say.
+   - 复习笔记 is itself derived from lecture PDFs. If a topic is not in the notes, do not generate questions on it using training knowledge — flag the gap instead.
+   - **Never inject content from training knowledge.** Every fact in a question must appear in the notes you have read.
+
+5. Read the study notes for the given week(s). Identify all topics by importance:
    - ★★★ Must cover — almost certain to appear
    - ★★ Should cover — high-frequency
    - ★ Skip unless multi-week or full-range mock exam
@@ -101,7 +106,8 @@ Wait for confirmation or adjustment before generating.
 - Mark allocation must be visible: **(X Marks)**
 
 ### Coverage rules (non-negotiable)
-- **Coverage is verified against the actual lecture PDF, not notes or memory.** Before finalising questions, cross-check each ★★★ topic against what was read from the PDF.
+- **The pipeline is: Lecture PDF → 复习笔记 → 测试题.** Questions are generated from the notes; the notes are generated from PDFs. Never shortcut from PDF directly to questions, and never use training knowledge to fill either layer.
+- Before finalising questions, cross-check each ★★★ topic in the notes to confirm it has at least one question.
 - Every ★★★ topic must appear in at least one question. If a gap is found, **fill it immediately without asking** — generate the missing question and add it.
 - No question tests pure memorisation — each requires applying or reasoning about a concept.
 - **Gap-filling is automatic**: if the coverage audit reveals an uncovered ★★★ topic, add the question directly to the file. Do not ask for confirmation first.
