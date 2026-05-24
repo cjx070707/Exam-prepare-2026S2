@@ -77,11 +77,14 @@ Wait for confirmation or adjustment before generating.
 ## Step 5 — Generate questions
 
 ### MCQ rules (non-negotiable)
-- **Always scenario-based**: open with a concrete situation ("A fintech startup processes 2M transactions/day...", "A hospital's IoT sensors transmit every 30s...")
-- **All 4 options similar length** — the correct answer must not stand out by being longer or more comprehensive
-- **Distractors reflect real misconceptions** — each wrong option should be something a student who half-understands the topic would genuinely consider
-- **No absolute language** in wrong options ("always", "never", "only", "cannot") — these are instant tells
-- **Do not make the correct answer the "most complete" sounding one** — correctness comes from matching the scenario, not from sounding thorough
+- **Scenario-based, but concise**: open with a concrete situation, but cut all corporate fluff. Keep only the cause-effect chain that sets up the question. Target ~25–35 words for the stem.
+  - ✅ "A linear regression model fails regardless of weight tuning. The team switches to an MLP. Which statement best explains why?"
+  - ❌ "A fintech startup builds a loan-default prediction model. Their initial linear regression model achieves poor training accuracy regardless of how weights are tuned. The team decides to switch to a three-layer MLP. Which statement most accurately explains..."
+- **Never hint at the answer in the stem** — do not include phrases that imply the correct direction (e.g., "suggesting the data is non-linear" gives away the answer)
+- **All 4 options must be similar length** — if the correct answer is noticeably longer or more detailed, rewrite the distractors to match. Length must not be a signal.
+- **Distractors must sound plausible** — each wrong option should reflect a real misconception a half-understanding student would genuinely consider. Never write a distractor that is obviously absurd or trivially false.
+- **No absolute language in any option** ("always", "never", "only", "cannot", "all", "none") — these are instant elimination tells. Rephrase to sound equally hedged across all options.
+- **Do not make the correct answer the most thorough-sounding one** — wrong options should also sound specific and reasoned, not vague or circular. The difference between options should be *what* they claim, not *how confidently* they claim it.
 - If past exam questions exist, match their difficulty and style exactly
 
 ### Short-answer / scenario question rules
