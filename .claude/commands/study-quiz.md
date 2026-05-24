@@ -132,7 +132,10 @@ Output all questions in final format, including answers. Then ask:
 
 After confirmation:
 
-1. Write to the appropriate test file (e.g., `测试/每周测试/第N周 [Topic].md`)
+1. **File structure**: each week gets its own file under `测试/每周测试/`:
+   - Naming: `测试/每周测试/W[N] [Topic].md` (e.g., `W2 神经网络基础.md`, `W9 多模态.md`)
+   - One file per week — questions covering that week's notes only
+   - Question numbers restart at Q1 per file (global sequential within a file, reset across files)
    - Create the file if it doesn't exist, using the established format
    - Append to existing file if it already has questions — add a `---` separator and `> 📌 **新增题目**` marker
    - Use `> [!note]- Answer` for collapsible answers
