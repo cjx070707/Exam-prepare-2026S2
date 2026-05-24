@@ -116,6 +116,13 @@ After confirmation:
    - Create the file if it doesn't exist, using the established format
    - Append to existing file if it already has questions — add a `---` separator and `> 📌 **新增题目**` marker
    - Use `> [!note]- Answer` for collapsible answers
+   - MCQ options must use checkbox format for Obsidian interactivity:
+     ```
+     - [ ] A. Option text
+     - [ ] B. Option text
+     - [ ] C. Option text
+     - [ ] D. Option text
+     ```
 
 2. Commit with a descriptive message (e.g., `quiz: W9 stream processing practice questions`)
 
