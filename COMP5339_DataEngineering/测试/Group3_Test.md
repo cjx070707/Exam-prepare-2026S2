@@ -154,6 +154,22 @@
 
 ---
 
+**Q11-C.** A team is building an NLP system and must choose between BERT and GPT for two tasks: (1) classifying customer support tickets by topic, and (2) auto-generating reply drafts. Which pairing is correct?
+
+- A. BERT for both — it handles all NLP tasks equally well
+- B. GPT for classification; BERT for generation — GPT is better at understanding context
+- C. BERT for classification; GPT for generation — they are optimised for understanding vs generating text respectively
+- D. Either model works for both tasks — the choice only affects training cost
+
+> [!note]- Answer
+> **C** — 架构决定用途：
+> - **BERT**：Bidirectional encoder-only，双向同时看左右语境，预训练目标是预测被遮盖的词（Masked LM）→ 擅长文本理解类任务（Classification、NER、Sentiment、QA），通过 fine-tuning 适配具体任务
+> - **GPT**：Unidirectional decoder，从左到右预测下一个词 → 擅长文本生成（Chat、Summarization、Reply drafting），支持 few-shot / zero-shot learning
+>
+> A 错：两模型架构不同，各有擅长场景。B 颠倒了两者的定位。D 错：架构差异直接影响任务表现，不只是训练成本问题。
+
+---
+
 ## Section B — Short Answer (8 marks each, 32 marks total)
 
 **Q11.** A city council has a database of park boundaries (polygons) and a separate dataset of public Wi-Fi access points (points). They want to find all Wi-Fi access points located inside any park. Describe how you would implement this query in PostGIS, including: the spatial query type, the index you would create, and why a standard B-Tree index would be insufficient. (8 marks)

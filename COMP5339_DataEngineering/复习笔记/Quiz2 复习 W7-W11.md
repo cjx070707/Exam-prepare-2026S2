@@ -318,6 +318,26 @@ Range 运算：`+`（UNION），`*`（INTERSECTION），`-`（DIFFERENCE）
 
 ---
 
+<span style="color: #e67e22">*BERT 用于理解文本，GPT 用于生成文本——两者都是 Transformer 模型，但架构和用途完全不同。*</span>
+
+### BERT vs GPT（重要对比）`★★`
+
+> [!tip] 做情感分类用 BERT 还是 GPT？生成文章摘要用哪个？
+
+| | **BERT** | **GPT** |
+|--|---------|---------|
+| **架构** | Bidirectional（双向），encoder-only | Unidirectional（单向），decoder |
+| **训练方式** | Masked Language Model（预测被遮盖的词） | Next Word Prediction（预测下一个词） |
+| **上下文** | 同时看左右两侧语境 | 只看左侧前文 |
+| **适用任务** | Text Classification、NER、Sentiment Analysis、QA | Text Generation、Chat、Summarization |
+| **微调方式** | Fine-tuning（有标注数据微调） | Few-shot / Zero-shot Learning |
+
+<span style="color: #9b59b6">💡 **白话理解**：BERT 双向读句子（左右都看），擅长"理解"——分类、NER、情感分析；GPT 从左到右预测下一个词，擅长"生成"——对话、摘要。同样是 Transformer，但用途相反。</span>
+
+> 📌 **新增**
+
+---
+
 ## Week 9 — Stream Data Processing
 
 > [!info] 问题链
