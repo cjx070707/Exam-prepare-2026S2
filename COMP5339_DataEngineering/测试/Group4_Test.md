@@ -209,75 +209,33 @@
 
 ---
 
-## Section C — Code Reading (8 marks)
+## Section C — Short Answer (8 marks)
 
-**Q14.** Read the following PySpark code and answer the questions below.
+**Q14.** A logistics company processes a stream of parcel scan events in real time. Each event records `scan_time` (when the parcel was scanned), `depot_id`, and `parcel_id`. Due to scanner connectivity issues, events may arrive up to 4 minutes after their `scan_time`. The team needs to count parcels scanned per depot in **non-overlapping 15-minute intervals**, and they also want a **separate running total** of all parcels scanned since midnight.
 
-```python
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, sum as _sum, count, window
-
-spark = SparkSession.builder.appName("RideAnalysis").getOrCreate()
-
-df = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", "broker:9092") \
-    .option("subscribe", "ride-events") \
-    .load()
-
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
-
-schema = StructType() \
-    .add("ride_id", StringType()) \
-    .add("driver_id", StringType()) \
-    .add("city", StringType()) \
-    .add("fare", DoubleType()) \
-    .add("event_time", TimestampType())
-
-rides = df.select(from_json(col("value").cast("string"), schema).alias("data")) \
-          .select("data.*") \
-          .withWatermark("event_time", "3 minutes")
-
-result = rides \
-    .groupBy(window(col("event_time"), "10 minutes"), col("city")) \
-    .agg(
-        count("ride_id").alias("ride_count"),
-        _sum("fare").alias("total_fare")
-    )
-
-query = result.writeStream \
-    .outputMode("update") \
-    .format("console") \
-    .start()
-
-query.awaitTermination()
-```
-
-**(a)** This code reads from Kafka. What does `.option("subscribe", "ride-events")` specify, and what does the `value` field in the Kafka message contain? (2 marks)
+**(a)** Identify the window type for each of the two aggregations and explain why each is appropriate. (2 marks)
 
 > [!note]- Answer
-> `.option("subscribe", "ride-events")` 指定订阅名为 `"ride-events"` 的 Kafka **Topic**，消费者会从该 Topic 的所有 Partition 读取消息。
-> 
-> Kafka 消息的 `value` 字段是消息的实际内容，默认是 **binary（字节流）**。这里用 `.cast("string")` 将其转为字符串，再用 `from_json()` 按定义的 schema 解析为结构化的列，提取出 `ride_id`、`driver_id` 等字段。
+> - **非重叠 15 分钟区间计数** → **Tumbling Window**（大小 15 分钟）：固定大小、不重叠，每条事件恰好属于一个窗口，符合"每 15 分钟一个独立统计桶"的需求。
+> - **自午夜起的累计总数** → **Agglomerative Window**（从流起点累积）：无固定结束时间，持续从流的起始点（午夜）累积到当前时刻，适合"全天累计"场景。
 
-**(b)** What does `.withWatermark("event_time", "3 minutes")` do? What happens to events that arrive more than 3 minutes late? (2 marks)
-
-> [!note]- Answer
-> `.withWatermark("event_time", "3 minutes")` 设置一个 3 分钟的 watermark：系统声明"当前最大 event_time - 3 分钟"之前的窗口可以安全关闭并产出结果，同时等待最多 3 分钟的迟到事件。
-> 
-> 超过 3 分钟迟到的事件被视为 **late data**：Spark Structured Streaming 在 `update` 模式下会**丢弃**这些事件（它们对应的窗口已经被触发并清除状态）。如果需要保留 late data，需要改用 `append` 模式并配置 side output，或增大 watermark 时间。
-
-**(c)** What window type is used in `window(col("event_time"), "10 minutes")`? What would change if it were written as `window(col("event_time"), "10 minutes", "2 minutes")`? (2 marks)
+**(b)** Should the team use **event time** or **processing time** for the 15-minute tumbling window? Justify your answer. (2 marks)
 
 > [!note]- Answer
-> `window(col("event_time"), "10 minutes")` 使用 **Tumbling Window**（滚动窗口）：固定 10 分钟，不重叠，每条记录只属于一个窗口。
+> 应使用 **Event Time**（`scan_time`）。
 > 
-> 改为 `window(col("event_time"), "10 minutes", "2 minutes")` 则变为 **Sliding Window**（滑动窗口）：窗口大小仍是 10 分钟，但每 2 分钟滑动一次，窗口互相重叠。同一条记录可能同时属于多个窗口（最多 10/2 = 5 个），适合"过去 10 分钟内的实时统计，每 2 分钟更新"的场景。
+> 理由：扫描仪联网不稳定，事件可能延迟到达处理系统。如果用 processing time，延迟到达的扫描记录会被放入错误的 15 分钟窗口（被计入它到达时刻所在的窗口，而非实际扫描时刻所在的窗口），导致统计结果不准确。Event time 确保每条记录按其真实发生时间归入正确窗口。
 
-**(d)** The output mode is `"update"`. What does this mean, and why can't `"complete"` mode be used efficiently with a watermark? (2 marks)
+**(c)** The team sets a watermark of 4 minutes on `scan_time`. Explain what this watermark does and what happens to an event that arrives 6 minutes after its `scan_time`. (2 marks)
 
 > [!note]- Answer
-> **`"update"` 模式**：每次触发计算时，只输出自上次触发以来**发生变化**的行（新增或更新的聚合结果）。适合聚合查询，不会重复输出所有历史结果。
+> Watermark 声明：系统将等待最多 4 分钟的迟到事件，即当前观测到的最大 event_time 减去 4 分钟之前的窗口可以安全关闭并产出结果。
 > 
-> **`"complete"` 模式**：每次触发都输出**所有**聚合结果的完整快照。问题在于：当使用 watermark 时，Spark 会定期清除过期窗口的状态以控制内存使用。complete 模式要求保留所有历史状态才能输出完整结果，与 watermark 的状态清理机制冲突——要么内存无限增长，要么无法输出正确的 complete 结果。因此 watermark + complete 模式不兼容。
+> 对于迟到 6 分钟的事件（超过 4 分钟的 allowed lateness），其对应窗口已被触发并清除状态，该事件会被**丢弃**，不计入任何窗口的聚合结果。
+
+**(d)** Explain the key architectural difference between Spark Streaming and Apache Flink, and describe one scenario where Flink's architecture gives it a clear latency advantage. (2 marks)
+
+> [!note]- Answer
+> **架构差异**：Spark Streaming 采用 **micro-batching**，将流切成小批次（如每 500ms 一批）依次处理，每批有 Stage 边界和调度开销。Apache Flink 采用 **pipelining（真正的流处理）**，每条记录到达后立即在算子之间传递，无批次边界。
+> 
+> **Flink 延迟优势场景**：金融交易实时欺诈检测——每笔交易需要在毫秒内判断是否异常并阻止支付。Flink 每条记录逐一流过检测算子，延迟可低至几毫秒；Spark Streaming 必须等一个 micro-batch 积累完才处理，最低延迟受批次间隔限制（通常 100ms–几秒），无法满足此类极低延迟需求。
