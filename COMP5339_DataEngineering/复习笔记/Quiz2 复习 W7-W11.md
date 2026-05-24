@@ -131,6 +131,27 @@ WHERE salary > 85000;
 
 ---
 
+<span style="color: #e67e22">*时态语义解决了"历史怎么存"，但更简单的情况：我只需要追踪"当前状态从什么时候开始的"——这就是 Semi-Temporal 表。*</span>
+
+### Semi-Temporal Table vs Valid-Time Table（重要区分）
+
+> [!tip] 只追踪员工"当前所在城市及从什么时候起"，用 Semi-Temporal 表够吗？
+
+| | Semi-Temporal Table | Valid-Time Table |
+|--|--------------------|--------------------|
+| **列** | 只有一个 `since` 时间戳 | `start_date` + `end_date` 两列 |
+| **语义** | 事实从某时刻起持续到现在 `[since, NOW)` | 事实在 `[start, end)` 区间内成立 |
+| **能回答** | "现在是什么？从什么时候开始的？" | "某时刻是什么？历史如何变化？" |
+| **不能回答** | "之前是什么？什么时候改变的？" | — |
+| **优点** | 简单，低存储，适合当前状态追踪 | 完整历史，支持审计回溯 |
+| **缺点** | 无法查历史，无法审计 | 存储更多，查询更复杂 |
+
+**例子**：`Employees(tfn, name, city, since)` — 这是 Semi-Temporal 表，知道"当前在哪个城市从哪天起"，但无法知道"上一个城市是什么"。
+
+<span style="color: #9b59b6">💡 **白话理解**：Semi-Temporal 只有一个 since 时间戳，是"单时态"，只知道当前这条记录从什么时候开始，不能追溯历史。Valid-Time 有 start+end 两列，像时间轴上的线段，能还原任意时刻的状态。</span>
+
+---
+
 <span style="color: #e67e22">*时态查询全套解决了，最后一个问题：高频时序数据（传感器每秒一条）怎么存才高效？*</span>
 
 ### 时序数据的三种存储方案（重点对比）
@@ -139,14 +160,27 @@ WHERE salary > 85000;
 
 | 方案 | 结构 | 优点 | 缺点 |
 |------|------|------|------|
-| **Point-based（点表示）** | 每行一个时刻 | 标准 SQL，简单，容易索引 | 行数多，高频数据存储开销大 |
-| **Sequence-based（序列表示）** | 一行存数组 | 紧凑，适合批量分析 | 查询复杂，索引难，不跨 DBMS |
-| **Dedicated TSDB（专用时序库）** | TimescaleDB, InfluxDB | 高性能，自动分区，内置 downsampling | 额外维护成本，学习曲线 |
+| **Point-based（点表示）** | 每行一个时刻 | 标准 SQL，简单，B-Tree 索引（`CREATE INDEX ON ts`） | 行数多，高频数据存储开销大 |
+| **Sequence-based（序列表示）** | 一行存数组（违反 1NF） | 紧凑，适合批量分析，行数少 | 查询复杂，GIN 索引，不跨 DBMS |
+| **Dedicated TSDB（专用时序库）** | TimescaleDB, InfluxDB | 高性能，自动分区，内置 downsampling + retention | 额外维护成本，学习曲线 |
+
+**Sequence-based 关键操作**：
+- `UNNEST(array_column)` — 把数组展开为多行（array → rows），用于查询
+- `array_agg(value)` — 把多行聚合成数组（rows → array），用于写入
+- 索引：用 **GIN**（Generalised Inverted Index），非 GiST
 
 PostgreSQL 的 Range Types：`DATERANGE`, `TSRANGE`，用 GiST 索引
 常用谓词：`&&`（重叠），`@>`（包含），`upper_inf()`（无上界）
+Range 运算：`+`（UNION），`*`（INTERSECTION），`-`（DIFFERENCE）
 
-<span style="color: #9b59b6">💡 **白话理解**：Point-based 每时刻一行（灵活，标准 SQL）；Sequence-based 一行存整个数组（紧凑，但查询难）；TSDB 专门为时序优化（高性能，但要额外维护）。</span>
+**时序数据五大工程挑战**：
+1. **Missing data** — 传感器故障导致数据缺失
+2. **Irregular intervals** — 事件驱动数据间隔不等
+3. **Large volume** — 高频数据量极大，需要 downsampling
+4. **Time zones** — 跨时区系统时间对齐复杂
+5. **Late-arriving data** — 网络延迟导致数据乱序到达
+
+<span style="color: #9b59b6">💡 **白话理解**：Point-based 每时刻一行（灵活，B-Tree 索引最简单）；Sequence-based 一行存整个数组（紧凑，UNNEST 展开，GIN 索引，但违反 1NF）；TSDB 专门为时序优化（高性能，内置 downsampling/retention）。</span>
 
 ---
 

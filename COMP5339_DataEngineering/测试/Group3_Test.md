@@ -128,6 +128,32 @@
 
 ---
 
+---
+
+**Q11-A.** An employee table stores records with a single `since` date column: `Employees(id, name, city, since)`. An analyst tries to answer: "What city was this employee in before their current city?" What type of table is this, and why can it NOT answer that question?
+
+- A. Bitemporal table — it lacks Transaction Time
+- B. Semi-temporal table — it only records when the current fact became true, not previous states
+- C. Valid-time table — it lacks a `valid_end` column
+- D. Sequence-based table — it stores arrays rather than individual rows
+
+> [!note]- Answer
+> **B** — `Employees(id, name, city, since)` 是 **Semi-temporal table**：只记录当前事实从 `since` 时间开始，代表 `[since, NOW)`。当员工城市改变时，旧记录被覆盖（或新记录替换），之前的历史状态永久丢失。要回答"之前在哪"，需要 Valid-Time table（两列：`start_date` + `end_date`），每次改变都新增一行而非覆盖。
+
+---
+
+**Q11-B.** A sensor network generates readings every second. An engineer is choosing between Point-based and Sequence-based storage. Which statement about Sequence-based storage is CORRECT?
+
+- A. Sequence-based storage uses B-Tree indexes for efficient time-range queries
+- B. Sequence-based storage stores each reading as a separate row, making it compatible with all SQL databases
+- C. Sequence-based storage violates First Normal Form (1NF) because it stores arrays in a single column
+- D. Sequence-based storage is always preferable because it reduces storage costs without any trade-offs
+
+> [!note]- Answer
+> **C** — Sequence-based 将同一传感器的多个时间点读数存入一行的数组列（如 `FLOAT[]`），这违反了 1NF（每个属性必须是原子值）。查询时需要 `UNNEST()` 把数组展开为行，写入时需要 `array_agg()`，索引用 GIN 而非 B-Tree。它不能跨 DBMS 移植。A/B 描述的是 Point-based。D 忽略了查询复杂度和可移植性的代价。
+
+---
+
 ## Section B — Short Answer (8 marks each, 32 marks total)
 
 **Q11.** A city council has a database of park boundaries (polygons) and a separate dataset of public Wi-Fi access points (points). They want to find all Wi-Fi access points located inside any park. Describe how you would implement this query in PostGIS, including: the spatial query type, the index you would create, and why a standard B-Tree index would be insufficient. (8 marks)
