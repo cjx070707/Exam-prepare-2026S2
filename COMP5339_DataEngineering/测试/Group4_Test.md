@@ -262,3 +262,27 @@ Which property of distributed systems does Option Y leverage, and what is the ke
 > - **B 正确**：**Elasticity** 是在 Scale-Out 基础上的动态能力——根据负载自动增减节点。Option X（静态预置）在非峰值期间 140 个空闲节点的计算费用持续累积；Option Y 只在需要时使用更多节点，峰值结束后自动缩容，大幅降低成本。
 > - **C 错误**：Horizontal Partitioning 是数据分区策略，决定数据放在哪台机器，不涉及节点数量的动态调整。
 > - **D 错误**：CAP 定理描述一致性/可用性/分区容忍的权衡，与节点数量的动态调整无关。
+
+---
+
+> 📌 **新增题目**
+
+**Q10-C.** A fintech startup deploys a fraud detection model. Six months later, the team observes two separate degradation patterns:
+- **Pattern X**: The model receives feature vectors with significantly different value ranges than those in training (e.g., transaction amounts that are 3× higher than seen during training)
+- **Pattern Y**: Feature values are within normal ranges, but the correlation between "multiple logins from different cities within 1 hour" and fraudulent transactions has weakened, because legitimate users now routinely travel internationally
+
+Which statement correctly identifies the drift type and appropriate response for each pattern?
+
+- [ ] A. Both are Concept Drift — the model needs to be redesigned with new features in both cases
+- [ ] B. Pattern X is Data Drift (P(x) changed); Pattern Y is Concept Drift (P(y|x) changed). Pattern X → retrain with new data distribution; Pattern Y → re-examine feature relevance and model assumptions
+- [ ] C. Pattern X is Concept Drift; Pattern Y is Data Drift — Pattern X is more severe because feature values changed
+- [ ] D. Both are Data Drift — any change that causes model degradation is classified as Data Drift
+
+> [!note]- Answer
+> **B. Pattern X = Data Drift；Pattern Y = Concept Drift。**
+>
+> - **Data Drift（数据漂移）**：输入特征的统计分布 **P(x)** 改变。Pattern X：交易金额分布整体偏移（3× 于训练集），模型从未见过这个范围的输入，泛化能力下降。**应对**：收集新数据分布重训练。
+>
+> - **Concept Drift（概念漂移）**：特征与标签的关系 **P(y|x)** 改变。Pattern Y："同一小时多城市登录"这个 feature 值没变，但现实中它不再是欺诈的可靠信号（国际旅行常态化改变了行为规律）。**应对**：重新评估 feature 设计、引入新的判别特征、可能需要架构层面的调整。
+>
+> - **两种漂移都需要 CI/CD 机制触发自动重训**，但 Concept Drift 更难自动检测（因为 P(x) 看起来正常），需要更深入的业务分析。

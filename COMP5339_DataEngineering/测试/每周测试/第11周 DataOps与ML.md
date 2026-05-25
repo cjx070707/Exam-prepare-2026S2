@@ -171,3 +171,28 @@ A new VP of Engineering wants to eliminate the Spark batch job and "just use Fli
 > - **版本控制**：所有 SQL 转换通过 Git 管理，每次变更有记录，支持审计追溯
 > - **数据测试**：内置测试（`not_null`、`unique`、`accepted_values`）在每次 pipeline 运行时自动验证数据质量，防止错误数据流入贷款决策模型
 > - **Lineage（血缘）**：自动生成数据血缘图，审计人员可追溯"贷款决策 feature 来自哪些原始数据源，经过了哪些转换"
+
+---
+
+> 📌 **新增题目**
+
+**Question 8.** A recommendation model at an e-commerce platform was achieving 92% precision six months ago. After deploying without changes, precision has dropped to 74%. The ML team investigates and finds:
+- **Finding A**: The distribution of user age in the training data was 18–35, but current users average 45+
+- **Finding B**: The promotional discounts that previously correlated with purchases no longer predict behaviour after a major competitor entered the market
+
+Which types of drift best describe Finding A and Finding B respectively?
+
+- [ ] A. Concept Drift for both — the model's predictions are wrong in both cases
+- [ ] B. Data Drift for Finding A; Concept Drift for Finding B
+- [ ] C. Concept Drift for Finding A; Data Drift for Finding B
+- [ ] D. Data Drift for both — both are caused by changes in the input data
+
+> [!note]- Answer
+> **B. Data Drift for A; Concept Drift for B。**
+>
+> - **Finding A → Data Drift（数据漂移）**：输入特征的**分布 P(x) 改变**——用户年龄群体从 18-35 变为 45+，模型从未见过这种输入分布，但业务逻辑本身未变。解决方法：用新数据重训模型。
+>
+> - **Finding B → Concept Drift（概念漂移）**：特征与标签的**关系 P(y|x) 改变**——"促销折扣"这个 feature 值没变，但它与"购买"标签的关联关系因竞争对手入场而失效。更难检测，需要重新审视 feature 设计和模型假设。
+>
+> - **A 错误**：两种情况本质不同——Concept Drift 专指 P(y|x) 变化，Data Drift 专指 P(x) 变化。
+> - **D 错误**：Finding B 不是输入数据分布变了，而是同样的输入与输出之间的规律本身变了。
