@@ -239,3 +239,26 @@
 > **架构差异**：Spark Streaming 采用 **micro-batching**，将流切成小批次（如每 500ms 一批）依次处理，每批有 Stage 边界和调度开销。Apache Flink 采用 **pipelining（真正的流处理）**，每条记录到达后立即在算子之间传递，无批次边界。
 > 
 > **Flink 延迟优势场景**：金融交易实时欺诈检测——每笔交易需要在毫秒内判断是否异常并阻止支付。Flink 每条记录逐一流过检测算子，延迟可低至几毫秒；Spark Streaming 必须等一个 micro-batch 积累完才处理，最低延迟受批次间隔限制（通常 100ms–几秒），无法满足此类极低延迟需求。
+
+---
+
+> 📌 **新增题目**
+
+**Q10-B.** A SaaS analytics company runs on a cloud cluster of 20 nodes. During Black Friday, traffic spikes 8× for 6 hours. Their infrastructure team is debating two approaches:
+- **Option X**: Pre-provision 160 nodes permanently to handle peak load
+- **Option Y**: Configure the cluster to automatically scale from 20 to 160 nodes as demand rises, and scale back down afterward
+
+Which property of distributed systems does Option Y leverage, and what is the key advantage over Option X?
+
+- [ ] A. Replication — Option Y copies data to more nodes, reducing read latency
+- [ ] B. Elasticity — Option Y dynamically adds and removes nodes on-demand, paying only for actual usage; Option X wastes 80% of capacity for 18+ hours per day outside peak
+- [ ] C. Horizontal Partitioning — Option Y shards data across more nodes to handle the traffic
+- [ ] D. CAP Partition Tolerance — Option Y handles network partitions by adding more nodes
+
+> [!note]- Answer
+> **B. Elasticity（弹性扩缩容）— Scale-Out 的动态版本。**
+>
+> - **A 错误**：Replication 是数据冗余（容错 + 读扩展），与按需增减节点数量无关。
+> - **B 正确**：**Elasticity** 是在 Scale-Out 基础上的动态能力——根据负载自动增减节点。Option X（静态预置）在非峰值期间 140 个空闲节点的计算费用持续累积；Option Y 只在需要时使用更多节点，峰值结束后自动缩容，大幅降低成本。
+> - **C 错误**：Horizontal Partitioning 是数据分区策略，决定数据放在哪台机器，不涉及节点数量的动态调整。
+> - **D 错误**：CAP 定理描述一致性/可用性/分区容忍的权衡，与节点数量的动态调整无关。
