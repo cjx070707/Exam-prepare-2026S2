@@ -128,6 +128,20 @@
 
 ---
 
+> 📌 **新增题目**
+
+**Q10-A.** A fraud detection platform receives a stream of payment events at 80,000 events/second. Each event must be enriched with the account holder's risk tier (low / medium / high), stored in a reference table that is updated once per day. Which approach best balances latency and throughput?
+
+- A. Query the risk-tier database synchronously for each event — ensures data is always current
+- B. Use a Stream-Stream Join with a 24-hour window — captures all risk-tier updates in real time
+- C. Pre-load the risk-tier table into in-memory storage (e.g., Redis); refresh nightly; look up per event
+- D. Buffer events into 10-minute Tumbling Windows, then batch-enrich against the risk-tier table
+
+> [!note]- Answer
+> **C** — **Enrichment（Stream-Table Join）**：静态/低频更新的参考数据（每日一次）最适合预加载到 in-memory 存储（Redis）做毫秒级 lookup。80,000 events/sec 下直接查数据库（A）会造成严重性能瓶颈；Stream-Stream Join（B）适合两条都实时变化的流，不适合每日更新的参考表；Tumbling Window 批量处理（D）引入分钟级延迟，不适合欺诈检测。
+
+---
+
 ## Section B — Short Answer (8 marks each, 32 marks total)
 
 **Q11.** A ride-sharing company processes GPS pings from drivers in real time. They need to: (1) count the number of active drivers in each city zone **every 5 minutes** (non-overlapping), and (2) compute a **running total** of trips completed since the start of the day. For each requirement, identify the window type, classify the operation as stateless or stateful, and explain whether event time or processing time is more appropriate. (8 marks)
@@ -195,75 +209,80 @@
 
 ---
 
-## Section C — Code Reading (8 marks)
+## Section C — Short Answer (8 marks)
 
-**Q14.** Read the following PySpark code and answer the questions below.
+**Q14.** A logistics company processes a stream of parcel scan events in real time. Each event records `scan_time` (when the parcel was scanned), `depot_id`, and `parcel_id`. Due to scanner connectivity issues, events may arrive up to 4 minutes after their `scan_time`. The team needs to count parcels scanned per depot in **non-overlapping 15-minute intervals**, and they also want a **separate running total** of all parcels scanned since midnight.
 
-```python
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, sum as _sum, count, window
-
-spark = SparkSession.builder.appName("RideAnalysis").getOrCreate()
-
-df = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", "broker:9092") \
-    .option("subscribe", "ride-events") \
-    .load()
-
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
-
-schema = StructType() \
-    .add("ride_id", StringType()) \
-    .add("driver_id", StringType()) \
-    .add("city", StringType()) \
-    .add("fare", DoubleType()) \
-    .add("event_time", TimestampType())
-
-rides = df.select(from_json(col("value").cast("string"), schema).alias("data")) \
-          .select("data.*") \
-          .withWatermark("event_time", "3 minutes")
-
-result = rides \
-    .groupBy(window(col("event_time"), "10 minutes"), col("city")) \
-    .agg(
-        count("ride_id").alias("ride_count"),
-        _sum("fare").alias("total_fare")
-    )
-
-query = result.writeStream \
-    .outputMode("update") \
-    .format("console") \
-    .start()
-
-query.awaitTermination()
-```
-
-**(a)** This code reads from Kafka. What does `.option("subscribe", "ride-events")` specify, and what does the `value` field in the Kafka message contain? (2 marks)
+**(a)** Identify the window type for each of the two aggregations and explain why each is appropriate. (2 marks)
 
 > [!note]- Answer
-> `.option("subscribe", "ride-events")` 指定订阅名为 `"ride-events"` 的 Kafka **Topic**，消费者会从该 Topic 的所有 Partition 读取消息。
-> 
-> Kafka 消息的 `value` 字段是消息的实际内容，默认是 **binary（字节流）**。这里用 `.cast("string")` 将其转为字符串，再用 `from_json()` 按定义的 schema 解析为结构化的列，提取出 `ride_id`、`driver_id` 等字段。
+> - **非重叠 15 分钟区间计数** → **Tumbling Window**（大小 15 分钟）：固定大小、不重叠，每条事件恰好属于一个窗口，符合"每 15 分钟一个独立统计桶"的需求。
+> - **自午夜起的累计总数** → **Agglomerative Window**（从流起点累积）：无固定结束时间，持续从流的起始点（午夜）累积到当前时刻，适合"全天累计"场景。
 
-**(b)** What does `.withWatermark("event_time", "3 minutes")` do? What happens to events that arrive more than 3 minutes late? (2 marks)
-
-> [!note]- Answer
-> `.withWatermark("event_time", "3 minutes")` 设置一个 3 分钟的 watermark：系统声明"当前最大 event_time - 3 分钟"之前的窗口可以安全关闭并产出结果，同时等待最多 3 分钟的迟到事件。
-> 
-> 超过 3 分钟迟到的事件被视为 **late data**：Spark Structured Streaming 在 `update` 模式下会**丢弃**这些事件（它们对应的窗口已经被触发并清除状态）。如果需要保留 late data，需要改用 `append` 模式并配置 side output，或增大 watermark 时间。
-
-**(c)** What window type is used in `window(col("event_time"), "10 minutes")`? What would change if it were written as `window(col("event_time"), "10 minutes", "2 minutes")`? (2 marks)
+**(b)** Should the team use **event time** or **processing time** for the 15-minute tumbling window? Justify your answer. (2 marks)
 
 > [!note]- Answer
-> `window(col("event_time"), "10 minutes")` 使用 **Tumbling Window**（滚动窗口）：固定 10 分钟，不重叠，每条记录只属于一个窗口。
+> 应使用 **Event Time**（`scan_time`）。
 > 
-> 改为 `window(col("event_time"), "10 minutes", "2 minutes")` 则变为 **Sliding Window**（滑动窗口）：窗口大小仍是 10 分钟，但每 2 分钟滑动一次，窗口互相重叠。同一条记录可能同时属于多个窗口（最多 10/2 = 5 个），适合"过去 10 分钟内的实时统计，每 2 分钟更新"的场景。
+> 理由：扫描仪联网不稳定，事件可能延迟到达处理系统。如果用 processing time，延迟到达的扫描记录会被放入错误的 15 分钟窗口（被计入它到达时刻所在的窗口，而非实际扫描时刻所在的窗口），导致统计结果不准确。Event time 确保每条记录按其真实发生时间归入正确窗口。
 
-**(d)** The output mode is `"update"`. What does this mean, and why can't `"complete"` mode be used efficiently with a watermark? (2 marks)
+**(c)** The team sets a watermark of 4 minutes on `scan_time`. Explain what this watermark does and what happens to an event that arrives 6 minutes after its `scan_time`. (2 marks)
 
 > [!note]- Answer
-> **`"update"` 模式**：每次触发计算时，只输出自上次触发以来**发生变化**的行（新增或更新的聚合结果）。适合聚合查询，不会重复输出所有历史结果。
+> Watermark 声明：系统将等待最多 4 分钟的迟到事件，即当前观测到的最大 event_time 减去 4 分钟之前的窗口可以安全关闭并产出结果。
 > 
-> **`"complete"` 模式**：每次触发都输出**所有**聚合结果的完整快照。问题在于：当使用 watermark 时，Spark 会定期清除过期窗口的状态以控制内存使用。complete 模式要求保留所有历史状态才能输出完整结果，与 watermark 的状态清理机制冲突——要么内存无限增长，要么无法输出正确的 complete 结果。因此 watermark + complete 模式不兼容。
+> 对于迟到 6 分钟的事件（超过 4 分钟的 allowed lateness），其对应窗口已被触发并清除状态，该事件会被**丢弃**，不计入任何窗口的聚合结果。
+
+**(d)** Explain the key architectural difference between Spark Streaming and Apache Flink, and describe one scenario where Flink's architecture gives it a clear latency advantage. (2 marks)
+
+> [!note]- Answer
+> **架构差异**：Spark Streaming 采用 **micro-batching**，将流切成小批次（如每 500ms 一批）依次处理，每批有 Stage 边界和调度开销。Apache Flink 采用 **pipelining（真正的流处理）**，每条记录到达后立即在算子之间传递，无批次边界。
+> 
+> **Flink 延迟优势场景**：金融交易实时欺诈检测——每笔交易需要在毫秒内判断是否异常并阻止支付。Flink 每条记录逐一流过检测算子，延迟可低至几毫秒；Spark Streaming 必须等一个 micro-batch 积累完才处理，最低延迟受批次间隔限制（通常 100ms–几秒），无法满足此类极低延迟需求。
+
+---
+
+> 📌 **新增题目**
+
+**Q10-B.** A SaaS analytics company runs on a cloud cluster of 20 nodes. During Black Friday, traffic spikes 8× for 6 hours. Their infrastructure team is debating two approaches:
+- **Option X**: Pre-provision 160 nodes permanently to handle peak load
+- **Option Y**: Configure the cluster to automatically scale from 20 to 160 nodes as demand rises, and scale back down afterward
+
+Which property of distributed systems does Option Y leverage, and what is the key advantage over Option X?
+
+- [ ] A. Replication — Option Y copies data to more nodes, reducing read latency
+- [ ] B. Elasticity — Option Y dynamically adds and removes nodes on-demand, paying only for actual usage; Option X wastes 80% of capacity for 18+ hours per day outside peak
+- [ ] C. Horizontal Partitioning — Option Y shards data across more nodes to handle the traffic
+- [ ] D. CAP Partition Tolerance — Option Y handles network partitions by adding more nodes
+
+> [!note]- Answer
+> **B. Elasticity（弹性扩缩容）— Scale-Out 的动态版本。**
+>
+> - **A 错误**：Replication 是数据冗余（容错 + 读扩展），与按需增减节点数量无关。
+> - **B 正确**：**Elasticity** 是在 Scale-Out 基础上的动态能力——根据负载自动增减节点。Option X（静态预置）在非峰值期间 140 个空闲节点的计算费用持续累积；Option Y 只在需要时使用更多节点，峰值结束后自动缩容，大幅降低成本。
+> - **C 错误**：Horizontal Partitioning 是数据分区策略，决定数据放在哪台机器，不涉及节点数量的动态调整。
+> - **D 错误**：CAP 定理描述一致性/可用性/分区容忍的权衡，与节点数量的动态调整无关。
+
+---
+
+> 📌 **新增题目**
+
+**Q10-C.** A fintech startup deploys a fraud detection model. Six months later, the team observes two separate degradation patterns:
+- **Pattern X**: The model receives feature vectors with significantly different value ranges than those in training (e.g., transaction amounts that are 3× higher than seen during training)
+- **Pattern Y**: Feature values are within normal ranges, but the correlation between "multiple logins from different cities within 1 hour" and fraudulent transactions has weakened, because legitimate users now routinely travel internationally
+
+Which statement correctly identifies the drift type and appropriate response for each pattern?
+
+- [ ] A. Both are Concept Drift — the model needs to be redesigned with new features in both cases
+- [ ] B. Pattern X is Data Drift (P(x) changed); Pattern Y is Concept Drift (P(y|x) changed). Pattern X → retrain with new data distribution; Pattern Y → re-examine feature relevance and model assumptions
+- [ ] C. Pattern X is Concept Drift; Pattern Y is Data Drift — Pattern X is more severe because feature values changed
+- [ ] D. Both are Data Drift — any change that causes model degradation is classified as Data Drift
+
+> [!note]- Answer
+> **B. Pattern X = Data Drift；Pattern Y = Concept Drift。**
+>
+> - **Data Drift（数据漂移）**：输入特征的统计分布 **P(x)** 改变。Pattern X：交易金额分布整体偏移（3× 于训练集），模型从未见过这个范围的输入，泛化能力下降。**应对**：收集新数据分布重训练。
+>
+> - **Concept Drift（概念漂移）**：特征与标签的关系 **P(y|x)** 改变。Pattern Y："同一小时多城市登录"这个 feature 值没变，但现实中它不再是欺诈的可靠信号（国际旅行常态化改变了行为规律）。**应对**：重新评估 feature 设计、引入新的判别特征、可能需要架构层面的调整。
+>
+> - **两种漂移都需要 CI/CD 机制触发自动重训**，但 Concept Drift 更难自动检测（因为 P(x) 看起来正常），需要更深入的业务分析。

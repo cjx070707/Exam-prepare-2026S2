@@ -29,7 +29,12 @@ If no arguments are provided, ask the user which week or section they want to be
    > - 多周测试（W___ 到 W___）
    > - 全范围（Quiz / 期末）"
 
-4. Read the study notes for the given week(s). Identify all topics by importance:
+4. **Source hierarchy (non-negotiable):**
+   - **复习笔记** is the authoritative source for question content — all question stems, answer explanations, and concept descriptions must be traceable to what the notes actually say.
+   - 复习笔记 is itself derived from lecture PDFs. If a topic is not in the notes, do not generate questions on it using training knowledge — flag the gap instead.
+   - **Never inject content from training knowledge.** Every fact in a question must appear in the notes you have read.
+
+5. Read the study notes for the given week(s). Identify all topics by importance:
    - ★★★ Must cover — almost certain to appear
    - ★★ Should cover — high-frequency
    - ★ Skip unless multi-week or full-range mock exam
@@ -77,12 +82,22 @@ Wait for confirmation or adjustment before generating.
 ## Step 5 — Generate questions
 
 ### MCQ rules (non-negotiable)
-- **Always scenario-based**: open with a concrete situation ("A fintech startup processes 2M transactions/day...", "A hospital's IoT sensors transmit every 30s...")
-- **All 4 options similar length** — the correct answer must not stand out by being longer or more comprehensive
-- **Distractors reflect real misconceptions** — each wrong option should be something a student who half-understands the topic would genuinely consider
-- **No absolute language** in wrong options ("always", "never", "only", "cannot") — these are instant tells
-- **Do not make the correct answer the "most complete" sounding one** — correctness comes from matching the scenario, not from sounding thorough
+- **Scenario-based, but concise**: open with a concrete situation, but cut all corporate fluff. Keep only the cause-effect chain that sets up the question. Target ~25–35 words for the stem.
+  - ✅ "A linear regression model fails regardless of weight tuning. The team switches to an MLP. Which statement best explains why?"
+  - ❌ "A fintech startup builds a loan-default prediction model. Their initial linear regression model achieves poor training accuracy regardless of how weights are tuned. The team decides to switch to a three-layer MLP. Which statement most accurately explains..."
+- **Never hint at the answer in the stem** — do not include phrases that imply the correct direction (e.g., "suggesting the data is non-linear" gives away the answer)
+- **All 4 options must be similar length** — if the correct answer is noticeably longer or more detailed, rewrite the distractors to match. Length must not be a signal.
+- **Distractors must sound plausible** — each wrong option should reflect a real misconception a half-understanding student would genuinely consider. Never write a distractor that is obviously absurd or trivially false.
+- **No absolute language in any option** ("always", "never", "only", "cannot", "all", "none") — these are instant elimination tells. Rephrase to sound equally hedged across all options.
+- **Do not make the correct answer the most thorough-sounding one** — wrong options should also sound specific and reasoned, not vague or circular. The difference between options should be *what* they claim, not *how confidently* they claim it.
 - If past exam questions exist, match their difficulty and style exactly
+- MCQ options **must use checkbox format** for Obsidian interactivity:
+  ```
+  - [ ] A. Option text
+  - [ ] B. Option text
+  - [ ] C. Option text
+  - [ ] D. Option text
+  ```
 
 ### Short-answer / scenario question rules
 - Ask for **comparison + tradeoff**, not just definition
@@ -90,10 +105,16 @@ Wait for confirmation or adjustment before generating.
 - Multi-part questions (a/b/c) should build: (a) identify/classify → (b) explain mechanism → (c) evaluate tradeoff or edge case
 - Mark allocation must be visible: **(X Marks)**
 
-### Coverage check
-Before finalising, verify:
-- Every ★★★ topic appears in at least one question
-- No question tests pure memorisation — each requires applying or reasoning about a concept
+### Coverage rules (non-negotiable)
+- **The pipeline is: Lecture PDF → 复习笔记 → 测试题.** Questions are generated from the notes; the notes are generated from PDFs. Never shortcut from PDF directly to questions, and never use training knowledge to fill either layer.
+- Before finalising questions, cross-check each ★★★ topic in the notes to confirm it has at least one question.
+- Every ★★★ topic must appear in at least one question. If a gap is found, **fill it immediately without asking** — generate the missing question and add it.
+- No question tests pure memorisation — each requires applying or reasoning about a concept.
+- **Gap-filling is automatic**: if the coverage audit reveals an uncovered ★★★ topic, add the question directly to the file. Do not ask for confirmation first.
+
+### Numbering rules
+- Questions are numbered **globally and sequentially** across all question types: Q1, Q2, Q3 ... regardless of section (MCQ / SA / Coding / Essay).
+- Never reuse a number within the same file. MCQ Q6 and SA Q6 in the same file is a bug — SA must continue from where MCQ left off.
 
 ---
 
@@ -103,16 +124,28 @@ Output all questions in final format, including answers. Then ask:
 
 > "以上题目确认？(Y 写入文件 / N 取消 / 具体修改意见)"
 
+**Exception**: If filling a coverage gap (Step 5 coverage rules), write directly to file without preview — the gap is clear, the user has already approved the overall plan.
+
 ---
 
 ## Step 7 — Write to file and push
 
 After confirmation:
 
-1. Write to the appropriate test file (e.g., `测试/每周测试/第N周 [Topic].md`)
+1. **File structure**: each week gets its own file under `测试/每周测试/`:
+   - Naming: `测试/每周测试/W[N] [Topic].md` (e.g., `W2 神经网络基础.md`, `W9 多模态.md`)
+   - One file per week — questions covering that week's notes only
+   - Question numbers restart at Q1 per file (global sequential within a file, reset across files)
    - Create the file if it doesn't exist, using the established format
    - Append to existing file if it already has questions — add a `---` separator and `> 📌 **新增题目**` marker
    - Use `> [!note]- Answer` for collapsible answers
+   - MCQ options must use checkbox format for Obsidian interactivity:
+     ```
+     - [ ] A. Option text
+     - [ ] B. Option text
+     - [ ] C. Option text
+     - [ ] D. Option text
+     ```
 
 2. Commit with a descriptive message (e.g., `quiz: W9 stream processing practice questions`)
 
