@@ -1,6 +1,8 @@
 # W7 — Sequence Modeling I
 **考点来源：复习笔记/第三组 序列数据.md（W7 部分）**
 
+> [!danger] 备考优先级：必考
+
 ---
 
 ## Multiple Choice Questions
@@ -10,7 +12,7 @@
 **Question 1.** *(BPTT 梯度消失 ★★★)* A team trains a vanilla RNN to classify 200-word product reviews. The model's predictions are heavily influenced by the last 10–20 words; the first 100+ words are effectively ignored. What is the most direct cause?
 
 - [ ] A. The hidden state $h_t$ has fixed dimensionality, so it cannot encode more than a bounded number of words regardless of sequence length
-- [ ] B. The gradient path to early time steps traverses a repeated product of $\tanh'(\cdot) \cdot W_{hh}$, which shrinks exponentially when the spectral radius of $W_{hh}$ is below 1
+- [x] B. The gradient path to early time steps traverses a repeated product of $\tanh'(\cdot) \cdot W_{hh}$, which shrinks exponentially when the spectral radius of $W_{hh}$ is below 1
 - [ ] C. Each time step computes a new hidden state that structurally overwrites the previous one, erasing early-token information after each forward step
 - [ ] D. Gradient clipping truncates small gradient values to zero during backpropagation, preventing updates from reaching early time steps
 
@@ -29,7 +31,7 @@
 - [ ] A. The LSTM applies layer normalization along the cell state gradient path, preventing both vanishing and exploding before the gradient reaches earlier steps
 - [ ] B. The update $c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t$ creates an additive path where $\partial c_t / \partial c_{t-1} \approx f_t$, a learnable value that can be trained close to 1
 - [ ] C. The output gate $o_t$ rescales the hidden state before backpropagation, reducing the effective per-step gradient magnitude and preventing numerical instability
-- [ ] D. LSTM's three gates partition the gradient into three parallel streams, so even if two streams vanish, the third preserves the signal to earlier layers
+- [x] D. LSTM's three gates partition the gradient into three parallel streams, so even if two streams vanish, the third preserves the signal to earlier layers
 
 > [!note]- Answer
 > **B**
