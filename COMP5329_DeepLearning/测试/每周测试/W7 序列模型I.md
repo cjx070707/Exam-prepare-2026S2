@@ -11,7 +11,7 @@
 
 - [ ] A. The hidden state $h_t$ has fixed dimensionality, so it cannot encode more than a bounded number of words regardless of sequence length
 - [ ] B. The gradient path to early time steps traverses a repeated product of $\tanh'(\cdot) \cdot W_{hh}$, which shrinks exponentially when the spectral radius of $W_{hh}$ is below 1
-- [ ] C. Each time step computes a new hidden state that structurally overwrites the previous one, erasing early-token information after each forward step
+- [x] C. Each time step computes a new hidden state that structurally overwrites the previous one, erasing early-token information after each forward step
 - [ ] D. Gradient clipping truncates small gradient values to zero during backpropagation, preventing updates from reaching early time steps
 
 > [!note]- Answer
