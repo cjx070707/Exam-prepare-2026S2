@@ -1,6 +1,8 @@
 # W7 — Sequence Modeling I
 **考点来源：复习笔记/第三组 序列数据.md（W7 部分）**
 
+> [!danger] 备考优先级：必考
+
 ---
 
 ## Multiple Choice Questions
