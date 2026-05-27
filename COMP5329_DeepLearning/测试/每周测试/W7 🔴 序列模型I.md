@@ -31,7 +31,7 @@
 - [ ] A. The LSTM applies layer normalization along the cell state gradient path, preventing both vanishing and exploding before the gradient reaches earlier steps
 - [ ] B. The update $c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t$ creates an additive path where $\partial c_t / \partial c_{t-1} \approx f_t$, a learnable value that can be trained close to 1
 - [ ] C. The output gate $o_t$ rescales the hidden state before backpropagation, reducing the effective per-step gradient magnitude and preventing numerical instability
-- [ ] D. LSTM's three gates partition the gradient into three parallel streams, so even if two streams vanish, the third preserves the signal to earlier layers
+- [x] D. LSTM's three gates partition the gradient into three parallel streams, so even if two streams vanish, the third preserves the signal to earlier layers
 
 > [!note]- Answer
 > **B**

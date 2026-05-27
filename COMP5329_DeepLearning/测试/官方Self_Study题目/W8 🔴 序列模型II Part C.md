@@ -24,28 +24,25 @@ A Vision Transformer splits a $224 \times 224$ image into non-overlapping $P \ti
 
 *Your answer:*
 
-<details>
-<summary><b>▸ Model Answer · Q1</b></summary>
-
-**(a)** With $P=16$: $T = (224/16)^2 = 14^2 = 196$. With $P=32$: $T = (224/32)^2 = 7^2 = 49$. So:
-
-- **(i)** $T$ drops from 196 to 49 — a factor of **4× fewer tokens**.
-- **(ii)** Self-attention FLOPs scale as $T^2 D$, so they drop by $(196/49)^2 = 16$× — **16× cheaper attention**.
-- **(iii)** The spatial area a single token covers goes from $16 \times 16 = 256$ pixels to $32 \times 32 = 1024$ pixels — **4× coarser** spatial granularity.
-
-Trade-off: larger patches = cheaper attention + coarser spatial detail; smaller patches = more expressive + quadratically more expensive. This is exactly the compute–accuracy dial ViT exposes.
-
-**(b)** In the Task B1 pipeline, the patch embedding after step 3 is `(B, T+1, D)`, a **set of tokens** with no intrinsic spatial ordering — unfold produces them in row-major order, but a Transformer encoder sees them as an unordered multiset because self-attention is **permutation-equivariant**: shuffle the token sequence and you get the same output set in the shuffled order. Without a positional embedding, the model cannot tell "the patch at the top-left of the image" apart from "the patch at the bottom-right." A ViT without positional encoding would be invariant to permutations of the 16 patches — a cat centred in the image and a cat whose patches were randomly shuffled would produce *identical* hidden states. The learnable `pos_embed` breaks this symmetry by adding a distinct vector to each slot, turning a permutation-invariant set into a structured sequence.
-
-**(c)** Convolutional layers bake in three inductive biases:
-1. **Locality** — a filter only looks at a small neighbourhood.
-2. **Translation equivariance** — the same filter slides across the whole image, so a cat in the top-left and a cat in the bottom-right activate the same features (just shifted).
-3. **Hierarchical composition** — shallow layers learn textures, deep layers learn semantics.
-
-These are hand-engineered priors matched to natural-image statistics. ViT's self-attention has none of these — it is a global, permutation-respecting pairwise operator, and any spatial structure must be *learned* from data. On **small** datasets (ImageNet-1K ≈ 1.2M images), the CNN's priors are exactly right; ViT cannot see enough images to rediscover them, and underperforms. On **large** datasets (JFT-300M ≈ 300M images), ViT has enough data to learn spatial organisations that are more flexible than the hard-coded CNN priors — including global, long-range dependencies in a single layer — and the rigid CNN priors become a *ceiling*.
-
-**One-line summary**: inductive bias is a double-edged sword — it does your homework for you when data is scarce, and holds you back when data is abundant.
-</details>
+> [!note]- Model Answer · Q1
+> **(a)** With $P=16$: $T = (224/16)^2 = 14^2 = 196$. With $P=32$: $T = (224/32)^2 = 7^2 = 49$. So:
+>
+> - **(i)** $T$ drops from 196 to 49 — a factor of **4× fewer tokens**.
+> - **(ii)** Self-attention FLOPs scale as $T^2 D$, so they drop by $(196/49)^2 = 16$× — **16× cheaper attention**.
+> - **(iii)** The spatial area a single token covers goes from $16 \times 16 = 256$ pixels to $32 \times 32 = 1024$ pixels — **4× coarser** spatial granularity.
+>
+> Trade-off: larger patches = cheaper attention + coarser spatial detail; smaller patches = more expressive + quadratically more expensive. This is exactly the compute–accuracy dial ViT exposes.
+>
+> **(b)** In the Task B1 pipeline, the patch embedding after step 3 is `(B, T+1, D)`, a **set of tokens** with no intrinsic spatial ordering — unfold produces them in row-major order, but a Transformer encoder sees them as an unordered multiset because self-attention is **permutation-equivariant**: shuffle the token sequence and you get the same output set in the shuffled order. Without a positional embedding, the model cannot tell "the patch at the top-left of the image" apart from "the patch at the bottom-right." A ViT without positional encoding would be invariant to permutations of the 16 patches — a cat centred in the image and a cat whose patches were randomly shuffled would produce *identical* hidden states. The learnable `pos_embed` breaks this symmetry by adding a distinct vector to each slot, turning a permutation-invariant set into a structured sequence.
+>
+> **(c)** Convolutional layers bake in three inductive biases:
+> 1. **Locality** — a filter only looks at a small neighbourhood.
+> 2. **Translation equivariance** — the same filter slides across the whole image, so a cat in the top-left and a cat in the bottom-right activate the same features (just shifted).
+> 3. **Hierarchical composition** — shallow layers learn textures, deep layers learn semantics.
+>
+> These are hand-engineered priors matched to natural-image statistics. ViT's self-attention has none of these — it is a global, permutation-respecting pairwise operator, and any spatial structure must be *learned* from data. On **small** datasets (ImageNet-1K ≈ 1.2M images), the CNN's priors are exactly right; ViT cannot see enough images to rediscover them, and underperforms. On **large** datasets (JFT-300M ≈ 300M images), ViT has enough data to learn spatial organisations that are more flexible than the hard-coded CNN priors — including global, long-range dependencies in a single layer — and the rigid CNN priors become a *ceiling*.
+>
+> **One-line summary**: inductive bias is a double-edged sword — it does your homework for you when data is scarce, and holds you back when data is abundant.
 
 ---
 
@@ -63,30 +60,27 @@ with $\bar A \in \mathbb R^{N\times N}$, $\bar B \in \mathbb R^{N \times 1}$, $C
 
 *Your answer:*
 
-<details>
-<summary><b>▸ Model Answer · Q2</b></summary>
-
-**(a)** Unroll the recurrence with $h_0 = 0$:
-$$h_1 = \bar B\,u_0,\quad h_2 = \bar A\bar B\,u_0 + \bar B\,u_1,\quad h_3 = \bar A^2\bar B\,u_0 + \bar A\bar B\,u_1 + \bar B\,u_2,\ \ldots$$
-In closed form:
-$$h_{k+1} = \sum_{i=0}^{k} \bar A^{\,k-i}\,\bar B\,u_i \quad\Longrightarrow\quad y_k = C h_{k+1} = \sum_{i=0}^{k}\big(C\,\bar A^{\,k-i}\,\bar B\big)\,u_i$$
-Define $K_i = C\,\bar A^{\,i}\,\bar B$ for $i = 0, 1, \ldots, L-1$. Then
-$$y_k = \sum_{i=0}^{k} K_{k-i}\,u_i = (K * u)_k$$
-— a length-$L$ **causal convolution**. The algebraic property that makes this work is that $\bar A, \bar B, C$ are **constants** (independent of $k$ and of $u$), so the weight linking $u_i$ to $y_k$ depends only on the *gap* $k - i$ — precisely the definition of a convolution kernel.
-
-**(b)** The attention weight $\alpha_{t,i}$ depends on $t$ (through $q_t$) and $i$ (through $k_i$) via the inner product $q_t^\top k_i$ — the two indices are **entangled, not separable**, so the weight is not a function of $t - i$ alone. On top of that, $Z_t = \sum_{j \le t}\exp(q_t^\top k_j)$ is a softmax normaliser that depends on the entire prefix and is non-linear — even the numerator $\exp(q_t^\top k_i)\,v_i$ would not separate. No fixed, input-independent $K$ can reproduce these weights, so no convolution form exists.
-
-**(c)**
-- **Naive** `torch.matrix_power(A_bar, i) @ B_bar` at each step: computing $\bar A^i$ fresh every iteration costs $O(i \cdot N^3)$, so the whole loop is $O(L^2 N^3)$.
-- **Incremental** `A_pow_B = A_bar @ A_pow_B`: each iteration is one matrix-vector multiply `(N,N) · (N,1)`, costing $O(N^2)$. Total is $O(L \cdot N^2)$.
-
-The incremental version is asymptotically optimal because it reuses the previous power: $\bar A^{i+1}\bar B = \bar A\,(\bar A^i \bar B)$, so each new kernel entry costs only one matrix-vector multiply on top of what is already in memory — no wasted work. This is the same "prefix-sum / running product" idea that makes cumulative-sum, dynamic programming, and RNN unrolling efficient.
-
-**Key points the tutor will land:**
-- The kernel $K_i = C\bar A^i\bar B$ is literally the **impulse response** of the linear system — drive the SSM with $u_0 = 1, u_{>0} = 0$ and you read off $K$ at the output.
-- Convolution-form equivalence is exactly why S4-style SSMs can be trained on TPU/GPU at Transformer speeds, while still running in $O(N)$ per step at inference time.
-- What Mamba gives up: making $\bar A, \bar B, C$ depend on $u_k$ destroys both the "constants" hypothesis (so the separable gap-only weight disappears) *and* the incremental-power trick (every step has its own $\bar A$, so $\bar A^i$ is not well-defined). Mamba recovers parallel training via a parallel scan instead.
-</details>
+> [!note]- Model Answer · Q2
+> **(a)** Unroll the recurrence with $h_0 = 0$:
+> $$h_1 = \bar B\,u_0,\quad h_2 = \bar A\bar B\,u_0 + \bar B\,u_1,\quad h_3 = \bar A^2\bar B\,u_0 + \bar A\bar B\,u_1 + \bar B\,u_2,\ \ldots$$
+> In closed form:
+> $$h_{k+1} = \sum_{i=0}^{k} \bar A^{\,k-i}\,\bar B\,u_i \quad\Longrightarrow\quad y_k = C h_{k+1} = \sum_{i=0}^{k}\big(C\,\bar A^{\,k-i}\,\bar B\big)\,u_i$$
+> Define $K_i = C\,\bar A^{\,i}\,\bar B$ for $i = 0, 1, \ldots, L-1$. Then
+> $$y_k = \sum_{i=0}^{k} K_{k-i}\,u_i = (K * u)_k$$
+> — a length-$L$ **causal convolution**. The algebraic property that makes this work is that $\bar A, \bar B, C$ are **constants** (independent of $k$ and of $u$), so the weight linking $u_i$ to $y_k$ depends only on the *gap* $k - i$ — precisely the definition of a convolution kernel.
+>
+> **(b)** The attention weight $\alpha_{t,i}$ depends on $t$ (through $q_t$) and $i$ (through $k_i$) via the inner product $q_t^\top k_i$ — the two indices are **entangled, not separable**, so the weight is not a function of $t - i$ alone. On top of that, $Z_t = \sum_{j \le t}\exp(q_t^\top k_j)$ is a softmax normaliser that depends on the entire prefix and is non-linear — even the numerator $\exp(q_t^\top k_i)\,v_i$ would not separate. No fixed, input-independent $K$ can reproduce these weights, so no convolution form exists.
+>
+> **(c)**
+> - **Naive** `torch.matrix_power(A_bar, i) @ B_bar` at each step: computing $\bar A^i$ fresh every iteration costs $O(i \cdot N^3)$, so the whole loop is $O(L^2 N^3)$.
+> - **Incremental** `A_pow_B = A_bar @ A_pow_B`: each iteration is one matrix-vector multiply `(N,N) · (N,1)`, costing $O(N^2)$. Total is $O(L \cdot N^2)$.
+>
+> The incremental version is asymptotically optimal because it reuses the previous power: $\bar A^{i+1}\bar B = \bar A\,(\bar A^i \bar B)$, so each new kernel entry costs only one matrix-vector multiply on top of what is already in memory — no wasted work. This is the same "prefix-sum / running product" idea that makes cumulative-sum, dynamic programming, and RNN unrolling efficient.
+>
+> **Key points the tutor will land:**
+> - The kernel $K_i = C\bar A^i\bar B$ is literally the **impulse response** of the linear system — drive the SSM with $u_0 = 1, u_{>0} = 0$ and you read off $K$ at the output.
+> - Convolution-form equivalence is exactly why S4-style SSMs can be trained on TPU/GPU at Transformer speeds, while still running in $O(N)$ per step at inference time.
+> - What Mamba gives up: making $\bar A, \bar B, C$ depend on $u_k$ destroys both the "constants" hypothesis (so the separable gap-only weight disappears) *and* the incremental-power trick (every step has its own $\bar A$, so $\bar A^i$ is not well-defined). Mamba recovers parallel training via a parallel scan instead.
 
 ---
 
@@ -106,28 +100,25 @@ Which of BERT / GPT is the natural choice for each, and **why**? Your answer mus
 
 *Your answer:*
 
-<details>
-<summary><b>▸ Model Answer · Q3</b></summary>
-
-**(a)**
-
-- **BERT** uses a **full (all-ones) mask**: $M_{ij} = 1$ for every $(i, j)$, so every token attends to every other token in both directions. Shape $T \times T$, every entry is 1.
-- **GPT** uses a **lower-triangular (causal) mask**: $M_{ij} = 1$ if $j \le i$, else 0. Shape $T \times T$; the upper triangle is zero. In code this is the attention-logit mask
-$$M = \begin{pmatrix} 1 & 0 & 0 & \cdots & 0 \\ 1 & 1 & 0 & \cdots & 0 \\ 1 & 1 & 1 & \cdots & 0 \\ \vdots & & & \ddots & \vdots \\ 1 & 1 & 1 & \cdots & 1 \end{pmatrix}$$
-applied as additive $-\infty$ on the masked positions before the softmax so they contribute zero weight.
-
-**(b)** MLM replaces a token in the *middle* of the sequence and asks the model to predict it from its context. To get any signal about the original token, the encoder at the masked position must be able to attend to tokens both to its **left** AND **right** — the right-hand context is critical (the cat sat on the \_\_\_ → "mat" only from the left; the \_\_\_ sat on the mat → "cat" only from the right; in practice both are needed). A causally-masked GPT can only see tokens to the *left* of each position, so it literally cannot condition on the right context and the MLM objective is strictly weaker than predicting the next token from the prefix. GPT's causal mask is incompatible with MLM.
-
-**(c)**
-
-- **(i) Movie-review sentiment classification → BERT.** For a classification task you see the *entire* review up front and want the best possible representation at a single `[CLS]` position. BERT's bidirectional attention mask (the all-ones matrix above) lets the `[CLS]` representation at the top of the stack combine information from every word in the review — left context and right context, early and late — in a single forward pass. A GPT `[CLS]` at position 0 could never see a single word of the review (upper triangle zeroed), and a GPT `[CLS]` at position $T$ could see the whole review but with the strict ordering constraint that forces every attention weight to be a function of a one-way prefix, losing the symmetric pair-interactions BERT has. Bidirectional = better for "look at everything at once" tasks.
-
-- **(ii) Email-continuation generation → GPT.** Here you are given a prefix and must produce tokens one at a time. This is literally the objective GPT was pretrained on: $p_\theta(x_t \mid x_{<t})$ with a causal mask. At inference you feed the prefix, sample $x_{T+1}$, append it, and repeat — the causal mask guarantees that the prediction at each new step only looks at tokens that already exist, so the sampling procedure is consistent with training. You could in principle fine-tune BERT for generation, but the MLM objective does not match how you'd actually call the model at inference (there's no `[MASK]` in the user's half-written email, and BERT was never trained to produce coherent long sequences), so you would need architectural hacks that defeat the point of pretraining. Causal mask = naturally fits autoregressive generation.
-
-**Key points:**
-- The attention mask **is** the architecture. BERT and GPT share 95% of their PyTorch code; the only structural difference is whether the attention logits get the causal triangle applied or not, and that single bit determines whether the model is an encoder (understanding) or a decoder (generation).
-- Pretraining objective and attention mask must agree: bidirectional encoder ↔ MLM; causal decoder ↔ next-token prediction. Mixing them breaks both the training signal and the inference story.
-</details>
+> [!note]- Model Answer · Q3
+> **(a)**
+>
+> - **BERT** uses a **full (all-ones) mask**: $M_{ij} = 1$ for every $(i, j)$, so every token attends to every other token in both directions. Shape $T \times T$, every entry is 1.
+> - **GPT** uses a **lower-triangular (causal) mask**: $M_{ij} = 1$ if $j \le i$, else 0. Shape $T \times T$; the upper triangle is zero. In code this is the attention-logit mask
+> $$M = \begin{pmatrix} 1 & 0 & 0 & \cdots & 0 \\ 1 & 1 & 0 & \cdots & 0 \\ 1 & 1 & 1 & \cdots & 0 \\ \vdots & & & \ddots & \vdots \\ 1 & 1 & 1 & \cdots & 1 \end{pmatrix}$$
+> applied as additive $-\infty$ on the masked positions before the softmax so they contribute zero weight.
+>
+> **(b)** MLM replaces a token in the *middle* of the sequence and asks the model to predict it from its context. To get any signal about the original token, the encoder at the masked position must be able to attend to tokens both to its **left** AND **right** — the right-hand context is critical (the cat sat on the \_\_\_ → "mat" only from the left; the \_\_\_ sat on the mat → "cat" only from the right; in practice both are needed). A causally-masked GPT can only see tokens to the *left* of each position, so it literally cannot condition on the right context and the MLM objective is strictly weaker than predicting the next token from the prefix. GPT's causal mask is incompatible with MLM.
+>
+> **(c)**
+>
+> - **(i) Movie-review sentiment classification → BERT.** For a classification task you see the *entire* review up front and want the best possible representation at a single `[CLS]` position. BERT's bidirectional attention mask (the all-ones matrix above) lets the `[CLS]` representation at the top of the stack combine information from every word in the review — left context and right context, early and late — in a single forward pass. A GPT `[CLS]` at position 0 could never see a single word of the review (upper triangle zeroed), and a GPT `[CLS]` at position $T$ could see the whole review but with the strict ordering constraint that forces every attention weight to be a function of a one-way prefix, losing the symmetric pair-interactions BERT has. Bidirectional = better for "look at everything at once" tasks.
+>
+> - **(ii) Email-continuation generation → GPT.** Here you are given a prefix and must produce tokens one at a time. This is literally the objective GPT was pretrained on: $p_\theta(x_t \mid x_{<t})$ with a causal mask. At inference you feed the prefix, sample $x_{T+1}$, append it, and repeat — the causal mask guarantees that the prediction at each new step only looks at tokens that already exist, so the sampling procedure is consistent with training. You could in principle fine-tune BERT for generation, but the MLM objective does not match how you'd actually call the model at inference (there's no `[MASK]` in the user's half-written email, and BERT was never trained to produce coherent long sequences), so you would need architectural hacks that defeat the point of pretraining. Causal mask = naturally fits autoregressive generation.
+>
+> **Key points:**
+> - The attention mask **is** the architecture. BERT and GPT share 95% of their PyTorch code; the only structural difference is whether the attention logits get the causal triangle applied or not, and that single bit determines whether the model is an encoder (understanding) or a decoder (generation).
+> - Pretraining objective and attention mask must agree: bidirectional encoder ↔ MLM; causal decoder ↔ next-token prediction. Mixing them breaks both the training signal and the inference story.
 
 ---
 
