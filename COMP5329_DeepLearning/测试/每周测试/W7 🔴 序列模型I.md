@@ -12,8 +12,8 @@
 **Question 1.** *(BPTT 梯度消失 ★★★)* A team trains a vanilla RNN to classify 200-word product reviews. The model's predictions are heavily influenced by the last 10–20 words; the first 100+ words are effectively ignored. What is the most direct cause?
 
 - [ ] A. The hidden state $h_t$ has fixed dimensionality, so it cannot encode more than a bounded number of words regardless of sequence length
-- [ ] B. The gradient path to early time steps traverses a repeated product of $\tanh'(\cdot) \cdot W_{hh}$, which shrinks exponentially when the spectral radius of $W_{hh}$ is below 1
-- [x] C. Each time step computes a new hidden state that structurally overwrites the previous one, erasing early-token information after each forward step
+- [x] B. The gradient path to early time steps traverses a repeated product of $\tanh'(\cdot) \cdot W_{hh}$, which shrinks exponentially when the spectral radius of $W_{hh}$ is below 1
+- [ ] C. Each time step computes a new hidden state that structurally overwrites the previous one, erasing early-token information after each forward step
 - [ ] D. Gradient clipping truncates small gradient values to zero during backpropagation, preventing updates from reaching early time steps
 
 > [!note]- Answer
