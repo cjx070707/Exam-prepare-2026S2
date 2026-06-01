@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "COMP9123_DataStructures/复习笔记/第二组 树与有序结构.md",
+                "file": "COMP5990/复习笔记/5990 复习笔记.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "第二组 树与有序结构"
+              "title": "5990 复习笔记"
             }
           },
           {
@@ -185,10 +185,13 @@
   },
   "active": "861ff8fddf3ae211",
   "lastOpenFiles": [
+    "COMP5329_DeepLearning/测试/期末模拟题.md",
+    "COMP5990/复习笔记/5990 复习笔记.md",
+    "COMP5990/复习资料/Exam Practice questions INFO5990.pdf",
+    "COMP9123_DataStructures/复习笔记/第二组 树与有序结构.md",
     "COMP5329_DeepLearning/复习笔记/第三组 序列数据.md",
     "COMP9123_DataStructures/复习笔记/第一组 线性数据结构.md",
     "COMP9123_DataStructures/复习笔记/第三组 哈希与图.md",
-    "COMP9123_DataStructures/复习笔记/第二组 树与有序结构.md",
     "COMP9123_DataStructures/复习笔记/第四组 算法设计范式.md",
     "COMP5339_DataEngineering/复习笔记/第一组 数据采集.md",
     "COMP5329_DeepLearning/复习笔记/第二组 结构化数据.md",
@@ -213,13 +216,10 @@
     "COMP5329_DeepLearning/测试/每周测试/W3 正则化.md",
     "COMP5329_DeepLearning/测试/每周测试/W2 神经网络基础.md",
     "COMP5329_DeepLearning/测试/每周测试/W12 生成模型.md",
-    "COMP5329_DeepLearning/测试/每周测试/W11 自监督学习.md",
-    "COMP5329_DeepLearning/测试/每周测试/W10 强化学习.md",
     "COMP5329_DeepLearning/测试/每周测试",
     "COMP5339_DataEngineering/测试/每周测试",
     "COMP5339_DataEngineering/考点梳理",
     "COMP5339_DataEngineering/复习笔记",
-    "COMP5329_DeepLearning/考点梳理",
-    "COMP5329_DeepLearning/复习笔记"
+    "COMP5329_DeepLearning/考点梳理"
   ]
 }
