@@ -16,6 +16,8 @@ Lecture slides are in `9123/复习/` (root workspace).
   - **Complexity analysis** — determine Big-O for given pseudocode
   - **Pseudocode writing** — design or modify algorithms
 
+**→ 期末规范与四道大题：** `考点梳理/期末考试规范.md` · 模拟卷 `测试/考试模拟题/老师给考试题 1.md`
+
 ## Study Structure: Four Narrative Groups
 
 The course follows one chain: **data needs to be stored and retrieved → simple structures hit limits → more complex structures solve specific problems → algorithm design patterns optimize solutions**.
@@ -79,6 +81,7 @@ Exam-prepare-2026S2/COMP9123_DataStructures/
 │   └── 第四组 算法设计范式.md            ← W10 + W11 + W12 (pending)
 ├── 测试/                               ← quiz files (pending)
 └── 考点梳理/
+    ├── 期末考试规范.md                 ← 题型 + 答题模板
     └── 更新进度.md                     ← AI progress tracker
 
 Lecture slides (primary reading):
