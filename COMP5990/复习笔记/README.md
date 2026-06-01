@@ -1,4 +1,7 @@
 # 复习笔记
 
-- `5990 复习笔记.md`：由 `复习资料/` 下的 PDF 提炼生成
+| 文件 | 范围 |
+|------|------|
+| `第一组 专业实践与组织价值.md` | W1 Introduction + W2 Organisational Value |
+| `5990 复习笔记.md` | Practice PDF 情景题速练（Q1–Q11） |
 
