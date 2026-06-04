@@ -18,6 +18,10 @@ Lecture slides are in `9123/复习/` (root workspace).
 
 **→ 期末规范与四道大题：** `考点梳理/期末考试规范.md` · 模拟卷 `测试/考试模拟题/老师给考试题 1.md`
 
+**→ 新增导航（从全局到考前）：**
+- `考点梳理/知识图谱.md`（知识关系：实现/依赖/对比）
+- `考点梳理/期末考点总览.md`（期末 checklist：按 P1–P4 + ★★★）
+
 ## Study Structure: Four Narrative Groups
 
 The course follows one chain: **data needs to be stored and retrieved → simple structures hit limits → more complex structures solve specific problems → algorithm design patterns optimize solutions**.
@@ -81,6 +85,8 @@ Exam-prepare-2026S2/COMP9123_DataStructures/
 │   └── 第四组 算法设计范式.md            ← W10 + W11 + W12 (pending)
 ├── 测试/                               ← quiz files (pending)
 └── 考点梳理/
+    ├── 知识图谱.md                     ← 概念关系（知识图谱）
+    ├── 期末考点总览.md                 ← 考前 checklist
     ├── 期末考试规范.md                 ← 题型 + 答题模板
     └── 更新进度.md                     ← AI progress tracker
 
