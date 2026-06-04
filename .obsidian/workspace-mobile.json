@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "COMP5990/复习笔记/5990 复习笔记.md",
+                "file": "COMP5329_DeepLearning/测试/试卷和答案/模拟试卷（一）.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "5990 复习笔记"
+              "title": "模拟试卷（一）"
             }
           },
           {
@@ -185,6 +185,9 @@
   },
   "active": "861ff8fddf3ae211",
   "lastOpenFiles": [
+    "COMP5329_DeepLearning/测试/试卷和答案/模拟试卷（二）.md",
+    "COMP5329_DeepLearning/考点梳理/考点梳理.md",
+    "COMP5990/复习笔记/5990 复习笔记.md",
     "COMP9123_DataStructures/考点梳理/期末考试规范.md",
     "COMP9123_DataStructures/测试/考试模拟题/images/page-11-problem3.png",
     "COMP9123_DataStructures/测试/考试模拟题/images/page-01-cover.png",
@@ -201,7 +204,6 @@
     "COMP5329_DeepLearning/测试/购买试卷和答案/assets",
     "COMP5329_DeepLearning/测试/购买试卷和答案",
     "COMP5329_DeepLearning/测试/期末模拟题.md",
-    "COMP5990/复习笔记/5990 复习笔记.md",
     "COMP5990/复习资料/Exam Practice questions INFO5990.pdf",
     "COMP9123_DataStructures/复习笔记/第二组 树与有序结构.md",
     "COMP5329_DeepLearning/复习笔记/第三组 序列数据.md",
@@ -224,8 +226,6 @@
     "COMP5339_DataEngineering/考点梳理/更新进度.md",
     "COMP5329_DeepLearning/测试/第一组 基础知识 练习题.md",
     "COMP5329_DeepLearning/测试/每周测试/W9 多模态.md",
-    "COMP5329_DeepLearning/测试/每周测试/W8 序列模型II.md",
-    "COMP5329_DeepLearning/测试/每周测试/W7 序列模型I.md",
-    "COMP5329_DeepLearning/测试/每周测试/W5 图神经网络.md"
+    "COMP5329_DeepLearning/测试/每周测试/W8 序列模型II.md"
   ]
 }
