@@ -8,4 +8,5 @@
 | `第四组 安全、质量与伦理.md` | W8–W10 Security + W11 QA/Testing + W12 Ethics |
 | `5990 复习笔记.md` | Practice PDF 情景题速练（Q1–Q11） |
 | **`5990 必背速查.md`** | **考前极简必背（22 条框架 + 万能句）** |
+| **`5990 Cheatsheet A4.pdf`** | **2 页 A4 打印 cheatsheet**（源：`5990 Cheatsheet A4.html`） |
 

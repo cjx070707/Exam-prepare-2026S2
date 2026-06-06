@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>INFO5990 Cheatsheet A4</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm 9mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    font-size: 9.2pt;
+    line-height: 1.28;
+    color: #111;
+  }
+  .page {
+    width: 100%;
+    height: 281mm;
+    display: flex;
+    gap: 5mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+  .col { flex: 1; min-width: 0; }
+  h1 {
+    font-size: 11pt;
+    text-align: center;
+    margin-bottom: 2mm;
+    border-bottom: 1.2pt solid #222;
+    padding-bottom: 1mm;
+  }
+  h2 {
+    font-size: 9.6pt;
+    margin: 2mm 0 0.8mm;
+    padding: 0.4mm 1.2mm;
+    background: #eee;
+    border-left: 2pt solid #333;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.2mm;
+    font-size: 8.6pt;
+  }
+  th, td {
+    border: 0.4pt solid #999;
+    padding: 0.6mm 1mm;
+    vertical-align: top;
+  }
+  th { background: #f5f5f5; font-weight: 700; }
+  .mono { font-family: Menlo, Consolas, monospace; font-size: 8.2pt; }
+  .flow { margin-bottom: 1mm; }
+  .en { font-weight: 600; }
+  .zh { color: #333; }
+  ul { padding-left: 3.5mm; margin-bottom: 1mm; }
+  li { margin-bottom: 0.4mm; }
+  .phrase {
+    font-size: 8.4pt;
+    margin-bottom: 1mm;
+    padding-left: 2mm;
+    border-left: 1pt solid #ccc;
+  }
+  .phrase .en { font-weight: 500; }
+  .phrase .hint { font-size: 8pt; color: #444; }
+  .tag { font-size: 8pt; background: #f0f0f0; padding: 0 1mm; }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGE 1 ========== -->
+<div class="page">
+<div class="col">
+
+<h1>INFO5990 · Cheatsheet · Page 1/2</h1>
+
+<h2>答题骨架 Answer Flow</h2>
+<table>
+<tr><th>#</th><th>步骤</th><th>写什么</th></tr>
+<tr><td>1</td><td>Framework</td><td>点名 CIA / IR·DR·BCP / Agile·Waterfall / Lifecycle …</td></tr>
+<tr><td>2</td><td>Map</td><td>题干哪句 → 框架哪一项</td></tr>
+<tr><td>3</td><td>Impact</td><td>customers / employees / company 后果</td></tr>
+<tr><td>4</td><td>Recommend</td><td>2 条对策 + 为何降风险</td></tr>
+</table>
+
+<h2>Block A · 价值与项目</h2>
+<table>
+<tr><th>Topic</th><th>背什么</th></tr>
+<tr><td><span class="en">Professionalism</span><br>专业主义</td><td>ethical + responsible → reliable solutions<br>行为：own mistakes · honest progress · client confidentiality（客户保密）<br>组织：onboarding · peer-feedback / mentoring</td></tr>
+<tr><td><span class="en">can we → should we</span><br>专业判断</td><td>Can build? → Should proceed? Risks? Who affected?<br>核心：<span class="en">professional judgement</span>（专业判断）看后果与责任</td></tr>
+<tr><td><span class="en">IT Lifecycle</span><br>八阶段</td><td class="mono">plan→analysis→design→dev→test→impl→ops→retire</td></tr>
+<tr><td>跳过步骤风险</td><td>undetected requirements · <span class="en">technical debt</span>（技术债）→ overruns<br><span class="en">lifecycle reviews</span>（生命周期评审）→ 识别 obsolescence（过时）</td></tr>
+</table>
+
+<table>
+<tr><th></th><th>Agile 敏捷</th><th>Waterfall 瀑布</th></tr>
+<tr><td>结构</td><td>短迭代 iterative</td><td>线性 linear gates</td></tr>
+<tr><td>变化</td><td>adapt to change</td><td>late change 成本高</td></tr>
+<tr><td>风险</td><td>frequent test + client review → early detection</td><td>late integration test</td></tr>
+<tr><td>干系人</td><td>持续参与 stakeholder engagement</td><td>首尾参与</td></tr>
+</table>
+
+<table>
+<tr><th></th><th>Linear 线性</th><th>Continuous 持续</th></tr>
+<tr><td>发布</td><td>large infrequent releases</td><td>small frequent releases</td></tr>
+<tr><td>风险</td><td>issues detected late</td><td>continuous testing 早修复</td></tr>
+<tr><td>循环</td><td colspan="2">Plan → Build → Deploy → Monitor → 再 Plan</td></tr>
+</table>
+
+<h2>Block B · 沟通</h2>
+<table>
+<tr><th>7Cs</th><td class="mono">Clear 清楚 · Concise 简洁 · Concrete 具体 · Correct 正确 · Coherent 连贯 · Complete 完整 · Courteous 礼貌</td></tr>
+</table>
+<table>
+<tr><th>SBAR</th><th>写什么</th></tr>
+<tr><td><b>S</b> Situation 现状</td><td>现在发生什么（短、直接）</td></tr>
+<tr><td><b>B</b> Background 背景</td><td>为何重要</td></tr>
+<tr><td><b>A</b> Assessment 评估</td><td>原因 / 影响分析</td></tr>
+<tr><td><b>R</b> Recommendation 建议</td><td>下一步 + 需要对方做什么</td></tr>
+</table>
+
+<table>
+<tr><th colspan="2">Power–Interest 权力–利益矩阵</th></tr>
+<tr><td>高 Power · 高 Interest</td><td><b>Manage closely</b> 密切管理</td></tr>
+<tr><td>高 Power · 低 Interest</td><td><b>Keep satisfied</b> 保持满意</td></tr>
+<tr><td>低 Power · 高 Interest</td><td><b>Keep informed</b> 保持知情</td></tr>
+<tr><td>低 Power · 低 Interest</td><td><b>Monitor</b> 最低投入监控</td></tr>
+</table>
+
+</div>
+<div class="col">
+
+<h2>Block B · 治理与变革</h2>
+<table>
+<tr><th>IT Governance 三问</th></tr>
+<tr><td>1 做对的事？ alignment 战略对齐</td></tr>
+<tr><td>2 做对的方式？ accountability 问责 · compliance 合规</td></tr>
+<tr><td>3 拿到收益？ value delivery · KPIs</td></tr>
+</table>
+
+<table>
+<tr><th>COBIT</th><th>内容</th></tr>
+<tr><td><b>EDM</b> 治理</td><td>Evaluate · Direct · Monitor</td></tr>
+<tr><td><b>APO</b> Plan</td><td>Align, Plan, Organise</td></tr>
+<tr><td><b>BAI</b> Build</td><td>Build, Acquire, Implement</td></tr>
+<tr><td><b>DSS</b> Run</td><td>Deliver, Service, Support</td></tr>
+<tr><td><b>MEA</b> Monitor</td><td>Monitor, Evaluate, Assess</td></tr>
+</table>
+<div class="flow"><span class="en">COBIT vs ITIL</span>：COBIT = <span class="zh">治理定方向 alignment/control</span>；ITIL = <span class="zh">服务怎么交付交付 ITSM</span></div>
+
+<table>
+<tr><th></th><th>Project 项目管理</th><th>Change 变革管理</th></tr>
+<tr><td>focus</td><td>scope/time/cost/quality</td><td>people adoption 人员采纳</td></tr>
+<tr><td>goal</td><td>deliver solution 交付方案</td><td>deliver adoption 交付采纳</td></tr>
+<tr><td>success</td><td>on time/budget</td><td>员工在用、有信心、能胜任</td></tr>
+</table>
+
+<table>
+<tr><th>ADKAR 个人变革</th></tr>
+<tr><td class="mono">Awareness 认知 → Desire 意愿 → Knowledge 知识 → Ability 能力 → Reinforcement 巩固</td></tr>
+</table>
+<div class="flow"><span class="en">Change states</span>：current → <b>transition 过渡期（最危险）</b> → future</div>
+<div class="flow"><span class="en">Kübler-Ross</span>：denial 否认 → anger 愤怒 → bargaining 讨价还价 → depression 抑郁 → acceptance 接受</div>
+
+<h2>估算 Estimation · Q7</h2>
+<table>
+<tr><th>作用</th><td>forecast time/cost/resources → schedules & budgets</td></tr>
+<tr><th>不准原因</th><td><span class="en">scope creep</span> 范围蔓延 · changing requirements<br><span class="en">optimism bias</span> 乐观偏差 · lack of historical data</td></tr>
+<tr><th>方法</th><td><b>PERT</b> 三点估 best/most likely/worst<br><b>Delphi</b> 专家匿名共识 expert judgement</td></tr>
+</table>
+
+<h2>Block E · 句库（通用）</h2>
+<div class="phrase"><span class="en">Agile reduces risk through frequent testing and client reviews, enabling early detection of issues.</span><br><span class="hint">→ 敏捷靠频繁测试与客户评审，早发现风险</span></div>
+<div class="phrase"><span class="en">True success comes when end-users adopt the new system and integrate it into daily work.</span><br><span class="hint">→ 变革成功 = 用户真正采纳并日常使用</span></div>
+<div class="phrase"><span class="en">Governance sets direction (EDM), while management plans, builds, runs, and monitors (PBRM).</span><br><span class="hint">→ 治理定方向，管理负责执行</span></div>
+
+</div>
+</div>
+
+<!-- ========== PAGE 2 ========== -->
+<div class="page">
+<div class="col">
+
+<h1>INFO5990 · Cheatsheet · Page 2/2</h1>
+
+<h2>Block C · 安全 Security · Q8/Q10</h2>
+<table>
+<tr><th>CIA</th><th>场景触发</th></tr>
+<tr><td><b>C</b> Confidentiality 保密</td><td>plain text 明文 · weak hashing 弱哈希 · XSS 偷 session</td></tr>
+<tr><td><b>I</b> Integrity 完整</td><td>records altered 记录被改 · exam files · SQLi 改库</td></tr>
+<tr><td><b>A</b> Availability 可用</td><td>peak crash 高峰宕机 · ransomware 勒索 · exam period down</td></tr>
+</table>
+
+<table>
+<tr><th>漏洞 Vulnerability</th><th>典型</th></tr>
+<tr><td><b>Human</b> 人为 ★</td><td>weak passwords · phishing 钓鱼 · insider 内部威胁 · weakest link</td></tr>
+<tr><td>Technological</td><td>unpatched 未打补丁 · misconfiguration 配置错误 · weak encryption</td></tr>
+<tr><td>Organisational</td><td>no policies · poor IR planning · third-party risk</td></tr>
+<tr><td>Process</td><td>excessive privileges 权限过大 · poor patch mgmt</td></tr>
+<tr><td>Physical</td><td>insecure server room · theft · power failure</td></tr>
+</table>
+
+<table>
+<tr><th>NIST CSF</th><td class="mono">Identify 识别 · Protect 防护 · Detect 检测 · Respond 响应 · Recover 恢复</td></tr>
+<tr><th>STRIDE</th><td class="mono">Spoofing 假冒 · Tampering 篡改 · Repudiation 抵赖 · Info disclosure 泄露 · DoS 拒绝服务 · Elevation 提权</td></tr>
+</table>
+
+<table>
+<tr><th>Data Lifecycle</th><th>控制点</th></tr>
+<tr><td>collection 采集</td><td>minimisation 最小化 · input validation · consent 同意</td></tr>
+<tr><td>storage 存储</td><td>encryption at rest 静态加密 · access control · backups</td></tr>
+<tr><td>processing 处理</td><td>RBAC · audit logs 审计日志</td></tr>
+<tr><td>sharing 共享</td><td>TLS/VPN · masking/anonymization 脱敏</td></tr>
+<tr><td>archival 归档</td><td>retention schedules 保留策略</td></tr>
+<tr><td>destruction 销毁</td><td>secure wiping · cryptographic erasure</td></tr>
+</table>
+
+<h2>Block C · 应急 IR/DR · Q9/Q11</h2>
+<table>
+<tr><th>IRP 阶段</th><td class="mono">Preparation → Identification → Containment 遏制 → Eradication 根除 → Recovery → Lessons learned</td></tr>
+</table>
+
+<table>
+<tr><th>计划</th><th>何时用</th><th>核心</th></tr>
+<tr><td><b>IRP</b> Incident Response</td><td>攻击进行中 active attack</td><td>detect · contain · eradicate · recover</td></tr>
+<tr><td><b>DRP</b> Disaster Recovery</td><td>系统已破坏 major outage</td><td>restore IT · RTO/RPO 恢复目标</td></tr>
+<tr><td><b>BCP</b> Business Continuity</td><td>业务不能停</td><td>maintain critical functions 关键业务</td></tr>
+</table>
+
+<div class="flow"><span class="en">GDPR</span> 核心：minimisation 最小化 · purpose limitation 目的限制 · accountability 问责 · lawfulness/transparency 合法透明</div>
+
+<h2>Block E · 安全句库 Q8–Q11</h2>
+<div class="phrase"><span class="en">At its core, information security ensures confidentiality, integrity, and availability of data.</span><br><span class="hint">→ 信息安全核心是 C/I/A</span></div>
+<div class="phrase"><span class="en">Implement secure password hashing (bcrypt/PBKDF2/Argon2 + unique salts) so credentials remain protected even if the database is compromised.</span><br><span class="hint">→ 哈希+盐，库泄露也难还原密码</span></div>
+<div class="phrase"><span class="en">Use input validation, output sanitization, and parameterized queries to reduce injection and XSS risks.</span><br><span class="hint">→ 输入验证、输出净化、参数化查询防注入/XSS</span></div>
+
+</div>
+<div class="col">
+
+<h2>Block D · 质量 Quality · W10/W11</h2>
+<table>
+<tr><th>概念</th><th>定位</th><th>关键词</th></tr>
+<tr><td><b>QA</b> 质量保证</td><td>proactive 事前 · process</td><td>prevent defects 预防缺陷</td></tr>
+<tr><td><b>QC</b> 质量控制</td><td>reactive 事后 · product</td><td>detect defects 发现缺陷</td></tr>
+<tr><td><b>Testing</b> 测试</td><td>QC 子集</td><td>verification 验证 + validation 确认</td></tr>
+</table>
+<div class="flow"><span class="en">PDCA</span>：<b>Plan</b> 计划 → <b>Do</b> 执行 → <b>Check</b> 检查 → <b>Act</b> 改进（continuous improvement 持续改进）</div>
+
+<h2>Block D · 伦理 Ethics · W12</h2>
+<table>
+<tr><th></th><th>Laws 法律</th><th>Ethics 伦理</th></tr>
+<tr><td>标准</td><td>minimum 最低底线</td><td>ideal 理想 aspirational</td></tr>
+<tr><td>性质</td><td>formal, enforceable 可强制执行</td><td>dynamic, contextual 依情境</td></tr>
+<tr><td>依据</td><td>legal system</td><td>conscience + professional values</td></tr>
+</table>
+<div class="flow"><span class="tag">要点</span> legal compliance alone isn't enough 仅合规不够</div>
+
+<table>
+<tr><th>ACS Code 六项价值</th></tr>
+<tr><td class="mono">Public interest 公众利益 · Quality of life 提升生活质量 · Honesty 诚实 · Competence 胜任 · Professional development 专业发展 · Professionalism 专业精神</td></tr>
+</table>
+
+<table>
+<tr><th>Ethical Models 伦理模型</th><th>判断依据</th></tr>
+<tr><td><b>Utilitarian</b> 功利/后果论</td><td>maximise overall good 最大化整体利益</td></tr>
+<tr><td><b>Deontological</b> 义务论</td><td>duties & rules 规则与义务；intent 意图</td></tr>
+<tr><td><b>Virtue ethics</b> 美德论</td><td>character & integrity 品格与诚信</td></tr>
+</table>
+
+<h2>Block E · 应急 & Impact 句库</h2>
+<div class="phrase"><span class="en">This requires incident response to detect, contain, and investigate the active security event before damage spreads.</span><br><span class="hint">→ 需 IR：检测、遏制、调查进行中事件</span></div>
+<div class="phrase"><span class="en">This requires disaster recovery to restore encrypted systems and critical services within acceptable RTO/RPO targets.</span><br><span class="hint">→ 需 DR：在 RTO/RPO 内恢复系统</span></div>
+<div class="phrase"><span class="en">A formal incident response plan defines roles, escalation, containment steps, and is validated through exercises.</span><br><span class="hint">→ 正式 IR 计划：角色/升级/遏制 + 演练</span></div>
+<div class="phrase"><span class="en">Maintain secure, isolated backups (offline/immutable, regularly tested) to improve recovery reliability.</span><br><span class="hint">→ 离线/不可变备份 + 定期测试</span></div>
+<div class="phrase"><span class="en">Customers face financial losses and loss of trust; employees bear remediation workload; the company risks reputational damage and regulatory penalties.</span><br><span class="hint">→ Impact 三连：客户/员工/公司</span></div>
+<div class="phrase"><span class="en">IT professionals must place the primacy of the public interest above personal and sectional interests.</span><br><span class="hint">→ ACS：公众利益优先 primacy of the public interest</span></div>
+<div class="phrase"><span class="en">QA prevents defects by improving processes; QC detects defects in deliverables; testing verifies and validates behaviour.</span><br><span class="hint">→ QA 防 · QC 查 · Testing 验</span></div>
+
+<div class="flow" style="margin-top:2mm;font-size:8pt;color:#555;text-align:center;">Closed-book exam · 闭卷仅供复习 · 详情见四组笔记 + 5990 必背速查</div>
+
+</div>
+</div>
+
+</body>
+</html>
