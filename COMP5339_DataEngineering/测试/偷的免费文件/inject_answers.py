@@ -142,13 +142,6 @@ ANSWERS = {
 }
 
 
-def mark_mcq(block: str, letter: str) -> str:
-    for opt in "ABCD":
-        block = block.replace(f"- [ ] ({opt})", f"- [{'x' if opt == letter else ' '}] ({opt})")
-        block = block.replace(f"- [x] ({opt})", f"- [{'x' if opt == letter else ' '}] ({opt})")
-    return block
-
-
 def format_answer(lines: list[str]) -> str:
     return "\n> [!note]- Answer\n> " + "\n> ".join(lines) + "\n"
 
@@ -164,8 +157,6 @@ def inject_section(body: str, section: str) -> str:
         key = (section, qnum)
         if key in ANSWERS and "> [!note]- Answer" not in q_body:
             letter, lines = ANSWERS[key]
-            if letter:
-                q_body = mark_mcq(q_body, letter)
             q_body = q_body.rstrip()
             ans = format_answer(lines)
             if re.search(r"\n---\s*$", q_body):

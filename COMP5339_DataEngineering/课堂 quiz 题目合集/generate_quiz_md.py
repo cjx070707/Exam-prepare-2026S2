@@ -41,9 +41,8 @@ ORDER_TABLE = """| ORDERNUMBER | CUSTOMERNAME | ORDERDATE | STATUS | SALES |
 
 def mcq(label, question, options, correct_idx, explanation):
     lines = [f"**{label}.** {question}", ""]
-    for i, opt in enumerate(options):
-        mark = "x" if i == correct_idx else " "
-        lines.append(f"- [{mark}] {opt}")
+    for opt in options:
+        lines.append(f"- [ ] {opt}")
     lines.extend(["", "> [!note]- Answer", f"> {explanation}", "", "---", ""])
     return "\n".join(lines)
 

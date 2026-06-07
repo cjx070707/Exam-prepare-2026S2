@@ -2,7 +2,7 @@
 
 > **来源**：外部练习资料（截至 26S1）  
 > **内容**：W1–W12 全部题目 + Answer Key（共 120 题）  
-> **格式**：`> [!note]- Answer` 折叠答案；选择题已标 `[x]`  
+> **格式**：`> [!note]- Answer` 折叠答案；答案见折叠块，选项不预填  
 > **说明**：本文件为唯一汇总文档；原始扫描页见文末附录
 
 ## 目录
@@ -33,7 +33,7 @@
 A dashboard is updated by a script that downloads a CSV manually, edits column names in a spreadsheet, and uploads the result to a shared folder. Which change most directly turns this into a data-engineering pipeline rather than a manual reporting task?
 
 - [ ] (A) Move the spreadsheet to a shared drive but keep the same manual edits.
-- [x] (B) Automate ingestion, validation, transformation, and repeatable delivery with logging.
+- [ ] (B) Automate ingestion, validation, transformation, and repeatable delivery with logging.
 - [ ] (C) Add a dashboard refresh button without validating source changes.
 - [ ] (D) Keep only the final edited spreadsheet and no run logs or validation results.
 
@@ -72,7 +72,7 @@ A manager says: *"If our model is wrong, that is a data-science problem, not a d
 Which pair best matches the terms?
 
 - [ ] (A) Throughput: delay until data is usable; latency: records processed per second.
-- [x] (B) Throughput: records processed per unit time; latency: time from source event to usable output.
+- [ ] (B) Throughput: records processed per unit time; latency: time from source event to usable output.
 - [ ] (C) Throughput: number of tables; latency: number of columns.
 - [ ] (D) Throughput: storage cost; latency: cloud region.
 
@@ -124,7 +124,7 @@ flowchart LR
 
 A pipeline reads transaction files nightly. One night the source silently changes the date format and half the rows are rejected. Which quality dimension is most directly threatened?
 
-- [x] (A) Completeness and validity/accuracy.
+- [ ] (A) Completeness and validity/accuracy.
 - [ ] (B) Freshness only, because the source file still arrived on time.
 - [ ] (C) Lineage only, because row rejection cannot affect data values.
 - [ ] (D) Security only, because any date parsing issue is an access-control problem.
@@ -185,7 +185,7 @@ Name the four common data-engineering challenge categories **volume**, **variety
 A source database can emit commit-log changes with operation type and timestamp. Which ingestion strategy is usually preferable for a large table that changes frequently?
 
 - [ ] (A) Download the whole table every minute.
-- [x] (B) Change data capture with idempotent target writes.
+- [ ] (B) Change data capture with idempotent target writes.
 - [ ] (C) Run a full extract every hour and overwrite the target without operation metadata.
 - [ ] (D) Append all changed rows without deduplication or delete handling.
 
@@ -242,7 +242,7 @@ Classify the missingness mechanism and explain an appropriate cleaning strategy.
 
 Which check is most suitable for detecting **schema drift** before it silently breaks a dashboard?
 
-- [x] (A) Compare incoming field names, types, and required columns against a versioned schema.
+- [ ] (A) Compare incoming field names, types, and required columns against a versioned schema.
 - [ ] (B) Sort the rows alphabetically.
 - [ ] (C) Only check whether the final dashboard still has the same number of charts.
 - [ ] (D) Accept all new fields but never alert on missing required fields.
@@ -289,7 +289,7 @@ Diagnose the bug and propose a safer cleaning workflow.
 Which statement about **raw staging data** is best?
 
 - [ ] (A) It is useless once curated tables exist.
-- [x] (B) It can support replay, auditing, and changed transformation logic if access is controlled.
+- [ ] (B) It can support replay, auditing, and changed transformation logic if access is controlled.
 - [ ] (C) It should always be editable by analysts.
 - [ ] (D) It removes the need for metadata.
 
@@ -321,7 +321,7 @@ Explain why data cleaning assumptions should be recorded as **metadata or docume
 Why can pushing a filter and aggregation into a DBMS be better than exporting the whole table to Python?
 
 - [ ] (A) It always changes the answer.
-- [x] (B) It can reduce data transfer and use indexes/optimisation.
+- [ ] (B) It can reduce data transfer and use indexes/optimisation.
 - [ ] (C) It prevents all data-quality issues.
 - [ ] (D) It removes the need for SQL permissions.
 
@@ -364,7 +364,7 @@ A finance report changes after an analyst edits a transformation rule. What **li
 
 Which operation best describes aggregating daily sales to monthly sales in an OLAP cube?
 
-- [x] (A) Roll-up.
+- [ ] (A) Roll-up.
 - [ ] (B) Drill-through to raw logs.
 - [ ] (C) Packet routing.
 - [ ] (D) Hash partitioning.
@@ -408,7 +408,7 @@ What is a **slowly changing dimension**? Give an example where preserving old di
 
 A dashboard query joins large fact rows to dimensions but one dimension key is missing for many records. Which issue is most likely?
 
-- [x] (A) Referential-integrity or late-arriving dimension problem.
+- [ ] (A) Referential-integrity or late-arriving dimension problem.
 - [ ] (B) Successful compression.
 - [ ] (C) Correct pivoting.
 - [ ] (D) A late-arriving dimension or inconsistent key mapping.
@@ -447,7 +447,7 @@ Design a **politeness policy** for a small crawler that collects public product 
 
 Which response should usually cause a crawler to **slow down or back off**?
 
-- [x] (A) HTTP 429 Too Many Requests.
+- [ ] (A) HTTP 429 Too Many Requests.
 - [ ] (B) HTTP 200 OK.
 - [ ] (C) A smaller HTML heading.
 - [ ] (D) A CSV delimiter.
@@ -520,7 +520,7 @@ Give three pieces of **metadata** a pipeline should store for each API extractio
 
 A web API changes one field from **integer to string** without notice. Which downstream failure is most plausible?
 
-- [x] (A) Type validation or numeric aggregation fails.
+- [ ] (A) Type validation or numeric aggregation fails.
 - [ ] (B) Rate limiting becomes stricter because the field is now textual.
 - [ ] (C) A spatial CRS mismatch appears in unrelated distance queries.
 - [ ] (D) The API authentication token gains broader privileges automatically.
@@ -551,7 +551,7 @@ Explain why **authentication secrets** for APIs should not be hard-coded in note
 
 Which property best describes **semi-structured data**?
 
-- [x] (A) It may have nested, optional, or heterogeneous fields while still carrying structure.
+- [ ] (A) It may have nested, optional, or heterogeneous fields while still carrying structure.
 - [ ] (B) It cannot be parsed by any program.
 - [ ] (C) It must be stored only in CSV files.
 - [ ] (D) It has no labels or tags of any kind.
@@ -583,7 +583,7 @@ A bookstore platform receives XML inventory, JSON user reviews, and scraped HTML
 
 Which MongoDB aggregation approach is most flexible for multi-stage transformations such as match, unwind, group, and project?
 
-- [x] (A) Aggregation pipeline.
+- [ ] (A) Aggregation pipeline.
 - [ ] (B) Screenshot aggregation.
 - [ ] (C) Manual copy-paste.
 - [ ] (D) HTML heading levels.
@@ -643,7 +643,7 @@ Model a **recommendation graph** with users, books, and authors. Specify node la
 Which statement about NoSQL schema design is best?
 
 - [ ] (A) NoSQL removes all need to think about schema.
-- [x] (B) The access pattern should strongly influence the document/key/graph structure.
+- [ ] (B) The access pattern should strongly influence the document/key/graph structure.
 - [ ] (C) All relationships should always be embedded.
 - [ ] (D) Sharding always improves every query.
 
@@ -664,7 +664,7 @@ Which statement about NoSQL schema design is best?
 
 Which pair of time dimensions is needed for **bitemporal audit queries**?
 
-- [x] (A) Valid time and transaction time.
+- [ ] (A) Valid time and transaction time.
 - [ ] (B) CPU time and screen time.
 - [ ] (C) Latitude time and longitude time.
 - [ ] (D) HTML time and XML time.
@@ -705,7 +705,7 @@ A sensor emits one reading every **5 seconds** per device. There are **240 devic
 
 A stream window includes events by their **event timestamp**, not arrival timestamp. What problem must the system handle?
 
-- [x] (A) Late and out-of-order events.
+- [ ] (A) Late and out-of-order events.
 - [ ] (B) XML declarations.
 - [ ] (C) Polygon holes.
 - [ ] (D) Choosing a CRS suitable for measurement rather than only web display.
@@ -737,7 +737,7 @@ An energy provider corrects yesterday's hourly meter readings after a calibratio
 
 Which SQL predicate is safest for a **half-open validity interval**?
 
-- [x] (A) `valid_start <= t AND t < valid_end`
+- [ ] (A) `valid_start <= t AND t < valid_end`
 - [ ] (B) `valid_start < t AND valid_end < t`
 - [ ] (C) `t < valid_start AND valid_end < t`
 - [ ] (D) `valid_start = valid_end`
@@ -775,7 +775,7 @@ A retailer joins clickstream events to a product catalogue that changes over tim
 
 Which geometry type is most natural for a **bus GPS observation** at one timestamp?
 
-- [x] (A) Point.
+- [ ] (A) Point.
 - [ ] (B) Polygon.
 - [ ] (C) MultiPolygon boundary.
 - [ ] (D) XML body.
@@ -825,7 +825,7 @@ Why is computing **Euclidean distance directly on latitude and longitude degrees
 
 Which predicate is most appropriate to test whether a point lies **inside a suburb polygon**?
 
-- [x] (A) `ST_Contains` or `ST_Within`.
+- [ ] (A) `ST_Contains` or `ST_Within`.
 - [ ] (B) `ST_Uppercase`.
 - [ ] (C) SQL `COUNT` only.
 - [ ] (D) XML standalone.
@@ -857,7 +857,7 @@ Compare **point-based** and **sequence-based** representation for bus movement d
 
 A spatial index primarily helps by:
 
-- [x] (A) Reducing candidate geometries before expensive exact spatial predicates.
+- [ ] (A) Reducing candidate geometries before expensive exact spatial predicates.
 - [ ] (B) Converting JSON to XML.
 - [ ] (C) Proving every polygon is valid.
 - [ ] (D) Replacing all CRS transformations.
@@ -889,7 +889,7 @@ Design a **spatial-temporal table** for ride-share pickups and drop-offs that su
 
 Which is the best first engineering step before running sentiment analysis over millions of support emails?
 
-- [x] (A) Define ingestion, parsing, metadata, access control, and privacy controls before model training.
+- [ ] (A) Define ingestion, parsing, metadata, access control, and privacy controls before model training.
 - [ ] (B) Train the largest available model immediately on raw email bodies.
 - [ ] (C) Delete all attachments and headers without documenting assumptions.
 - [ ] (D) Copy every email into a shared folder with no retention policy.
@@ -921,7 +921,7 @@ A company extracts text from scanned contracts using **OCR**. Some pages are rot
 
 What is a common reason to convert images or text into **feature vectors or embeddings**?
 
-- [x] (A) To support similarity search, classification, or retrieval over unstructured content.
+- [ ] (A) To support similarity search, classification, or retrieval over unstructured content.
 - [ ] (B) To replace access controls because vectorised data cannot contain sensitive information.
 - [ ] (C) To remove all data quality checks.
 - [ ] (D) To make every file smaller than one byte.
@@ -962,7 +962,7 @@ An embedding index stores **8 million documents** with **768-dimensional float32
 
 Which risk is highest if raw customer emails are copied into a broad analytics workspace?
 
-- [x] (A) Exposure of PII and sensitive content beyond need-to-know access.
+- [ ] (A) Exposure of PII and sensitive content beyond need-to-know access.
 - [ ] (B) Automatic improvement of data quality.
 - [ ] (C) Elimination of retention requirements.
 - [ ] (D) Faster polygon intersection.
@@ -1002,7 +1002,7 @@ A news archive search engine returns irrelevant articles because **boilerplate n
 
 Which statement best describes a **data stream**?
 
-- [x] (A) A potentially unbounded, time-varying sequence of records.
+- [ ] (A) A potentially unbounded, time-varying sequence of records.
 - [ ] (B) A static table that never changes.
 - [ ] (C) A PDF cover page.
 - [ ] (D) A one-row CSV only.
@@ -1034,7 +1034,7 @@ A parcel platform publishes scan events keyed by parcel id. During a network fai
 
 Kafka preserves order most directly within:
 
-- [x] (A) A partition.
+- [ ] (A) A partition.
 - [ ] (B) All topics globally.
 - [ ] (C) Every consumer group across the cluster.
 - [ ] (D) Records with the same key after partitioning.
@@ -1075,7 +1075,7 @@ A fraud-detection stream joins card transactions to a customer-risk table that u
 
 Backpressure is used to:
 
-- [x] (A) Prevent overloaded downstream components from being overwhelmed by upstream rate.
+- [ ] (A) Prevent overloaded downstream components from being overwhelmed by upstream rate.
 - [ ] (B) Convert XML attributes to JSON arrays.
 - [ ] (C) Ensure every stream has no timestamps.
 - [ ] (D) Delete source metadata.
@@ -1124,7 +1124,7 @@ A stream processor computes **5-minute revenue windows**. Events are keyed by st
 
 In Spark, which operation is an **action** rather than a lazy transformation?
 
-- [x] (A) `count()`
+- [ ] (A) `count()`
 - [ ] (B) `select()`
 - [ ] (C) `filter()`
 - [ ] (D) `withColumn()`
@@ -1178,7 +1178,7 @@ A dataset has **1.2 TB** across **300 partitions**. If one partition has **180 G
 
 Which file format is generally better than raw CSV for repeated analytical scans with **column pruning**?
 
-- [x] (A) Parquet.
+- [ ] (A) Parquet.
 - [ ] (B) Plain screenshot.
 - [ ] (C) HTML with inline styles.
 - [ ] (D) Uncompressed random text.
@@ -1210,7 +1210,7 @@ A team scales from **one worker to twenty workers** but runtime barely improves.
 
 What is the **small-files problem**?
 
-- [x] (A) Too many tiny files create metadata and scheduling overhead for distributed jobs.
+- [ ] (A) Too many tiny files create metadata and scheduling overhead for distributed jobs.
 - [ ] (B) Small files always compress better.
 - [ ] (C) Small files eliminate schema drift.
 - [ ] (D) A file cannot be under 1 MB.
@@ -1250,7 +1250,7 @@ Design a **scalable pipeline** for real-time social-media sentiment monitoring. 
 
 Which DataOps practice most directly helps **reproduce yesterday's failed pipeline run**?
 
-- [x] (A) Versioned code, configuration, input snapshot references, and run metadata.
+- [ ] (A) Versioned code, configuration, input snapshot references, and run metadata.
 - [ ] (B) Deleting logs after success.
 - [ ] (C) Renaming the dashboard.
 - [ ] (D) Running every step manually.
@@ -1286,7 +1286,7 @@ A daily ML feature pipeline silently changes because a source column changes uni
 
 Which item is most likely to belong in a **data contract**?
 
-- [x] (A) Expected fields, types, semantics, freshness, and quality guarantees.
+- [ ] (A) Expected fields, types, semantics, freshness, and quality guarantees.
 - [ ] (B) The current informal column names from one producer's staging table only.
 - [ ] (C) A promise that consumers never ask questions.
 - [ ] (D) A producer-side note saying consumers should infer missing fields from context.
@@ -1336,7 +1336,7 @@ What is the difference between monitoring **data freshness** and monitoring **da
 
 Which failure mode is **training-serving skew**?
 
-- [x] (A) The model is trained on features computed one way but served with features computed differently.
+- [ ] (A) The model is trained on features computed one way but served with features computed differently.
 - [ ] (B) The warehouse stores raw and curated data.
 - [ ] (C) A stream has a watermark.
 - [ ] (D) A polygon has a hole.
@@ -1367,7 +1367,7 @@ Design a **lineage record** for a feature table used by an ML model. Include eno
 
 Which field is most clearly **personally identifiable information** by itself?
 
-- [x] (A) Full name with date of birth.
+- [ ] (A) Full name with date of birth.
 - [ ] (B) A rounded monthly count by suburb.
 - [ ] (C) A random row number with no mapping.
 - [ ] (D) A table name.
@@ -1399,7 +1399,7 @@ A bank wants to copy ten years of customer interaction notes into an **unrestric
 
 Which statement about **de-identification** is most accurate?
 
-- [x] (A) It reduces risk but may not eliminate re-identification risk, especially when linked with other data.
+- [ ] (A) It reduces risk but may not eliminate re-identification risk, especially when linked with other data.
 - [ ] (B) It always makes data public-safe.
 - [ ] (C) It means deleting the database.
 - [ ] (D) It only applies to XML files.
@@ -1449,7 +1449,7 @@ Why are **audit logs** themselves sensitive data?
 
 Which approach best follows **least privilege**?
 
-- [x] (A) Give analysts only the views and fields needed for their approved task.
+- [ ] (A) Give analysts only the views and fields needed for their approved task.
 - [ ] (B) Give everyone admin access because it is faster.
 - [ ] (C) Grant warehouse-wide read access to all analysts for convenience.
 - [ ] (D) Disable all logs.

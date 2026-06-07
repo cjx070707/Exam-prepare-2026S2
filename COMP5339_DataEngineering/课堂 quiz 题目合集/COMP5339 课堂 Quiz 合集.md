@@ -35,7 +35,7 @@
 
 **Question 1A.** In the "Data Engineering Lifecycle" diagram, why is Storage drawn as a long layer underneath ingestion → transformation → serving (instead of being a single step)?
 
-- [x] Storage supports all stages (landing raw data, staging transformations, and serving curated data), and its choice affects performance, cost, and reliability across the pipeline
+- [ ] Storage supports all stages (landing raw data, staging transformations, and serving curated data), and its choice affects performance, cost, and reliability across the pipeline
 - [ ] Storage is only used for archiving after analytics are complete
 - [ ] Storage is mainly for backups and doesn't affect pipeline design
 - [ ] Storage is only needed when working with streaming systems
@@ -48,7 +48,7 @@
 ---
 **Question 1B.** When extracting data from a webpage, what is the most important first step?
 
-- [x] Inspecting the webpage structure
+- [ ] Inspecting the webpage structure
 - [ ] Writing extraction code
 - [ ] Storing data in a database
 - [ ] Running the crawler
@@ -62,7 +62,7 @@
 **Question 1C.** A data engineering team is building a pipeline to ingest data from multiple external APIs whose structures frequently change (new fields, missing fields, nested variations). Which design choice is most appropriate?
 
 - [ ] Use a strictly normalised relational schema before ingestion
-- [x] Use a schema-on-read approach with a document-oriented store
+- [ ] Use a schema-on-read approach with a document-oriented store
 - [ ] Use a schema-on-write approach with enforced constraints
 - [ ] Use a columnar data warehouse with a fixed schema
 
@@ -134,7 +134,7 @@ What controls and design choices would you put in place to handle schema evoluti
 - [ ] Staging tables are the final tables used by BI dashboards; fact/dim tables are just temporary
 - [ ] Staging replaces the OLTP system by serving user transactions with high concurrency
 - [ ] Staging exists only to store aggregated results (e.g., monthly revenue)
-- [x] Staging stores a raw or lightly cleaned copy of source data to support reruns, deduplication, and incremental loading before building fact/dim tables
+- [ ] Staging stores a raw or lightly cleaned copy of source data to support reruns, deduplication, and incremental loading before building fact/dim tables
 
 > [!note]- Answer
 > **Staging 是 OLTP → OLAP 的中间缓冲层。**
@@ -147,7 +147,7 @@ What controls and design choices would you put in place to handle schema evoluti
 - [ ] Pandas cannot do joins or group-bys
 - [ ] SQL cannot express aggregations compared to Pandas
 - [ ] Bulk-loading is always slower, even for small datasets
-- [x] DBMS can optimise queries, and bulk-loading requires the full dataset to fit into memory
+- [ ] DBMS can optimise queries, and bulk-loading requires the full dataset to fit into memory
 
 > [!note]- Answer
 > **DBMS 可优化查询；bulk-load 需整表进内存。**
@@ -160,7 +160,7 @@ What controls and design choices would you put in place to handle schema evoluti
 - [ ] Enforces strict consistency across all records
 - [ ] Reduces storage size compared to relational databases
 - [ ] Eliminates the need for data validation entirely
-- [x] Allows ingestion of heterogeneous data without a predefined schema
+- [ ] Allows ingestion of heterogeneous data without a predefined schema
 
 > [!note]- Answer
 > **Schema-late 允许异构数据无需预定义 schema 即可 ingest。**
@@ -239,7 +239,7 @@ How do you enforce consistent metric definitions across the organisation, and wh
 
 - [ ] Data storage
 - [ ] Network speed
-- [x] Maintaining consistent structure across pages
+- [ ] Maintaining consistent structure across pages
 - [ ] Visualising the data
 
 > [!note]- Answer
@@ -251,7 +251,7 @@ How do you enforce consistent metric definitions across the organisation, and wh
 **Question 1B.** In a document database (such as MongoDB), relationships between entities can be represented using embedding or referencing. When is embedding preferred?
 
 - [ ] When data is highly normalised
-- [x] When related data is frequently accessed together
+- [ ] When related data is frequently accessed together
 - [ ] When relationships are many-to-many and large
 - [ ] When strict ACID transactions are required
 
@@ -263,7 +263,7 @@ How do you enforce consistent metric definitions across the organisation, and wh
 ---
 **Question 1C.** Why are APIs generally preferred over web scraping in data engineering?
 
-- [x] APIs provide structured and stable access to data
+- [ ] APIs provide structured and stable access to data
 - [ ] APIs provide unstructured data
 - [ ] APIs are always free
 - [ ] APIs require more manual effort
@@ -374,7 +374,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 **Question 1A.** A data engineering team is building a pipeline to ingest data from multiple external APIs whose structures frequently change. Which design choice is most appropriate?
 
 - [ ] Use a strictly normalised relational schema before ingestion
-- [x] Use a schema-on-read approach with a document-oriented store
+- [ ] Use a schema-on-read approach with a document-oriented store
 - [ ] Use a schema-on-write approach with enforced constraints
 - [ ] Use a columnar data warehouse with a fixed schema
 
@@ -387,7 +387,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] Staging tables are the final tables used by BI dashboards; fact/dim tables are just temporary
 - [ ] Staging replaces the OLTP system by serving user transactions with high concurrency
 - [ ] Staging exists only to store aggregated results (e.g., monthly revenue)
-- [x] Staging stores a raw or lightly cleaned copy of source data to support reruns, deduplication, and incremental loading before building fact/dim tables
+- [ ] Staging stores a raw or lightly cleaned copy of source data to support reruns, deduplication, and incremental loading before building fact/dim tables
 
 > [!note]- Answer
 > **Staging 存 raw/lightly cleaned 副本** — 同 Quiz 1-2A。
@@ -398,7 +398,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] Pandas cannot do joins or group-bys
 - [ ] SQL cannot express aggregations compared to Pandas
 - [ ] Bulk-loading is always slower, even for small datasets
-- [x] DBMS can optimise queries, and bulk-loading requires the full dataset to fit into memory
+- [ ] DBMS can optimise queries, and bulk-loading requires the full dataset to fit into memory
 
 > [!note]- Answer
 > **DBMS query optimization + memory constraint** — 同 Quiz 1-2B。
@@ -480,7 +480,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] It must always use image data
 - [ ] It does not require preprocessing
 - [ ] It only works on structured data
-- [x] It must include ground-truth labels linked correctly to features
+- [ ] It must include ground-truth labels linked correctly to features
 
 > [!note]- Answer
 > **Ground-truth labels linked correctly to features.**
@@ -491,7 +491,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 **Question 1B.** Why is metadata analysis attractive in image pipelines?
 
 - [ ] It is always more accurate than image content
-- [x] It can provide useful structured information without full image-content analysis
+- [ ] It can provide useful structured information without full image-content analysis
 - [ ] It avoids all storage requirements
 - [ ] It replaces feature extraction completely in every case
 
@@ -503,7 +503,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 ---
 **Question 1C.** Which of the following is an example of a transactional data stream?
 
-- [x] Credit card purchases by customers
+- [ ] Credit card purchases by customers
 - [ ] Temperature readings from sensors
 - [ ] Road traffic speed measurements
 - [ ] Weather history reports
@@ -566,7 +566,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 
 **Question 1A.** In a supervised text-classification pipeline, which sequence is most appropriate?
 
-- [x] Raw text → feature extraction → labels + features → model training
+- [ ] Raw text → feature extraction → labels + features → model training
 - [ ] Raw text → clustering → labels → storage
 - [ ] Raw text → image similarity → prediction
 - [ ] Raw text → regression → tokenisation
@@ -582,7 +582,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] Specific consumers directly
 - [ ] Window operators only
 - [ ] Relational tables only
-- [x] Topics managed by a broker
+- [ ] Topics managed by a broker
 
 > [!note]- Answer
 > **Topics managed by a broker.**
@@ -592,7 +592,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 ---
 **Question 1C.** Why might one-hot encoding become problematic in a production pipeline?
 
-- [x] It may create very high-dimensional data when there are many categories
+- [ ] It may create very high-dimensional data when there are many categories
 - [ ] It cannot represent categories
 - [ ] It works only on images
 - [ ] It always causes label leakage
@@ -653,7 +653,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] It preserves sentence structure
 - [ ] It only works for images
 - [ ] It gives more weight to words common across all documents
-- [x] It reduces the weight of terms that are common across documents
+- [ ] It reduces the weight of terms that are common across documents
 
 > [!note]- Answer
 > **TF-IDF down-weights terms common across all documents.**
@@ -666,7 +666,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] A batch file waiting for ETL
 - [ ] A fixed-size table stored on disk
 - [ ] A normalised relational schema
-- [x] A potentially unbounded sequence of tuples
+- [ ] A potentially unbounded sequence of tuples
 
 > [!note]- Answer
 > **A potentially unbounded sequence of tuples.**
@@ -677,7 +677,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 **Question 1C.** Why are message processing guarantees difficult to achieve?
 
 - [ ] Because streams are always small
-- [x] Because producers, brokers, and consumers can fail, causing loss or duplication
+- [ ] Because producers, brokers, and consumers can fail, causing loss or duplication
 - [ ] Because SQL does not support streaming
 - [ ] Because topics cannot be partitioned
 
@@ -736,7 +736,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 - [ ] Stop-word removal
 - [ ] GPS metadata extraction
 - [ ] Binary thresholding only
-- [x] Lag features and rolling averages
+- [ ] Lag features and rolling averages
 
 > [!note]- Answer
 > **Lag features and rolling averages.**
@@ -746,7 +746,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 ---
 **Question 1B.** In ML pipelines, what is the strongest reason to keep preprocessing and feature extraction consistent between training and inference?
 
-- [x] To ensure the model receives inputs in the same feature space it learned from
+- [ ] To ensure the model receives inputs in the same feature space it learned from
 - [ ] To make slides look cleaner
 - [ ] To avoid using storage systems
 - [ ] To convert all unstructured data into metadata
@@ -760,7 +760,7 @@ What data quality issues may arise, and how would you handle them in a pipeline?
 **Question 1C.** In a DSMS, queries are typically:
 
 - [ ] One-time and transient
-- [x] Continuous and persistent
+- [ ] Continuous and persistent
 - [ ] Only executed at the end of the day
 - [ ] Limited to batch tables
 
