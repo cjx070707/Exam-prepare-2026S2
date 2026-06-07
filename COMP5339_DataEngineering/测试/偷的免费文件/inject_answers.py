@@ -4,7 +4,7 @@
 from pathlib import Path
 import re
 
-MD = Path(__file__).parent / "COMP5339 26s1 Final Practice (W1-W12).md"
+MD = Path(__file__).parent / "COMP5339 26s1 Final Practice 合集.md"
 
 ANSWERS = {
     # --- W1 ---

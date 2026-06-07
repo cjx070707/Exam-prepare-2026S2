@@ -1,58 +1,24 @@
-# COMP5339 — 26s1 Final Practice (W1–W12)
+# COMP5339 — 26s1 Final Practice 合集
 
 > **来源**：外部练习资料（截至 26S1）  
-> **格式**：参照 [`Quiz2 模拟题.md`](../Quiz2%20模拟题.md)  
-> **说明**：W1–W12 已附 Answer Key（`> [!note]- Answer`）；含图片/表格的题已附原图
+> **内容**：W1–W12 全部题目 + Answer Key（共 120 题）  
+> **格式**：`> [!note]- Answer` 折叠答案；选择题已标 `[x]`  
+> **说明**：本文件为唯一汇总文档；原始扫描页见文末附录
 
-**原始扫描页：**
+## 目录
 
-| 页 | 内容 |
-|----|------|
-| [Page 1 — W1](images/page-01-w1.png) | Week 1 Introduction + Q1–Q9 |
-| [Page 2 — W2/W3](images/page-02-w2-w3.png) | Q9 续 + W2 全题 + W3 Q1 |
-| [Page 3 — W3/W4](images/page-03-w3-w4.png) | W3 Q2–Q10 + W4 Web Scraping & APIs |
-| [Page 4 — W5/W6](images/page-04-w5-w6.png) | W5 NoSQL + W6 Temporal（Q1–Q4） |
-| [Page 5 — W6/W7/W8](images/page-05-w6-w8.png) | W6 Q5–Q10 + W7 Spatial + W8 Q1 |
-| [Page 6 — W8/W9](images/page-06-w8-w9.png) | W8 Q2–Q10 + W9 Q1–Q8 |
-| [Page 7 — W9/W10/W11](images/page-07-w9-w11.png) | W9 Q9–Q10 + W10 全题 + W11 Q1 |
-| [Page 8 — W11/W12](images/page-08-w11-w12.png) | W11 Q2–Q10 + W12 Q1–Q9 |
-| [Page 9 — W12](images/page-09-w12-q10.png) | W12 Q9 续 + Q10 |
-| [Answer Key 1 — W1/W2](images/answer-key-01-w1-w2.png) | W1–W2 答案 |
-| [Answer Key 2 — W2–W4](images/answer-key-02-w2-w4.png) | W2 续 + W3–W4 答案 |
-| [Answer Key 3 — W4–W6](images/answer-key-03-w4-w6.png) | W4 续 + W5–W6 答案 |
-| [Answer Key 4 — W6–W8](images/answer-key-04-w6-w8.png) | W6 续 + W7–W8 答案 |
-| [Answer Key 5 — W9–W10](images/answer-key-05-w9-w10.png) | W9 + W10 答案 |
-| [Answer Key 6 — W11–W12](images/answer-key-06-w11-w12.png) | W11 + W12 答案 |
-
-![Page 1 原图](images/page-01-w1.png)
-
-![Page 2 原图](images/page-02-w2-w3.png)
-
-![Page 3 原图](images/page-03-w3-w4.png)
-
-![Page 4 原图](images/page-04-w5-w6.png)
-
-![Page 5 原图](images/page-05-w6-w8.png)
-
-![Page 6 原图](images/page-06-w8-w9.png)
-
-![Page 7 原图](images/page-07-w9-w11.png)
-
-![Page 8 原图](images/page-08-w11-w12.png)
-
-![Page 9 原图](images/page-09-w12-q10.png)
-
-![Answer Key 1](images/answer-key-01-w1-w2.png)
-
-![Answer Key 2](images/answer-key-02-w2-w4.png)
-
-![Answer Key 3](images/answer-key-03-w4-w6.png)
-
-![Answer Key 4](images/answer-key-04-w6-w8.png)
-
-![Answer Key 5](images/answer-key-05-w9-w10.png)
-
-![Answer Key 6](images/answer-key-06-w11-w12.png)
+- [W1 — Introduction to Data Engineering and Data Pipelines](#w1-introduction-to-data-engineering-and-data-pipelines)
+- [W2 — Data Acquisition and Data Cleaning](#w2-data-acquisition-and-data-cleaning)
+- [W3 — Databases, SQL, Warehouses, and OLAP](#w3-databases-sql-warehouses-and-olap)
+- [W4 — Web Scraping and Web APIs](#w4-web-scraping-and-web-apis)
+- [W5 — Semistructured Data and NoSQL](#w5-semistructured-data-and-nosql)
+- [W6 — Temporal Data Engineering](#w6-temporal-data-engineering)
+- [W7 — Spatial-Temporal Data Engineering](#w7-spatial-temporal-data-engineering)
+- [W8 — Processing Unstructured Data](#w8-processing-unstructured-data)
+- [W9 — Stream Data Processing](#w9-stream-data-processing)
+- [W10 — Scalable Data Engineering](#w10-scalable-data-engineering)
+- [W11 — DataOps and ML Pipelines](#w11-dataops-and-ml-pipelines)
+- [W12 — Data Privacy and Security](#w12-data-privacy-and-security)
 
 ---
 
@@ -1502,3 +1468,41 @@ A data lake stores raw API responses containing **IP addresses** and **precise m
 
 
 ---
+---
+
+## 附录 — 原始扫描页与 Answer Key
+
+| 文件 | 内容 |
+|------|------|
+| [page-01-w1.png](images/page-01-w1.png) | W1 题目 |
+| [page-02-w2-w3.png](images/page-02-w2-w3.png) | W2 + W3 Q1 |
+| [page-03-w3-w4.png](images/page-03-w3-w4.png) | W3 续 + W4 |
+| [page-04-w5-w6.png](images/page-04-w5-w6.png) | W5 + W6 前半 |
+| [page-05-w6-w8.png](images/page-05-w6-w8.png) | W6 续 + W7 + W8 Q1 |
+| [page-06-w8-w9.png](images/page-06-w8-w9.png) | W8 续 + W9 前半 |
+| [page-07-w9-w11.png](images/page-07-w9-w11.png) | W9 续 + W10 + W11 Q1 |
+| [page-08-w11-w12.png](images/page-08-w11-w12.png) | W11 续 + W12 前半 |
+| [page-09-w12-q10.png](images/page-09-w12-q10.png) | W12 续 |
+| [q6-unmanaged-flow.png](images/q6-unmanaged-flow.png) | W1 Q6 流程图 |
+| [answer-key-01 ~ 06](images/) | W1–W12 答案扫描 |
+
+<details>
+<summary>展开查看全部扫描图</summary>
+
+![Page 1](images/page-01-w1.png)
+![Page 2](images/page-02-w2-w3.png)
+![Page 3](images/page-03-w3-w4.png)
+![Page 4](images/page-04-w5-w6.png)
+![Page 5](images/page-05-w6-w8.png)
+![Page 6](images/page-06-w8-w9.png)
+![Page 7](images/page-07-w9-w11.png)
+![Page 8](images/page-08-w11-w12.png)
+![Page 9](images/page-09-w12-q10.png)
+![Answer Key 1](images/answer-key-01-w1-w2.png)
+![Answer Key 2](images/answer-key-02-w2-w4.png)
+![Answer Key 3](images/answer-key-03-w4-w6.png)
+![Answer Key 4](images/answer-key-04-w6-w8.png)
+![Answer Key 5](images/answer-key-05-w9-w10.png)
+![Answer Key 6](images/answer-key-06-w11-w12.png)
+
+</details>
