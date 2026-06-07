@@ -4,7 +4,7 @@
 
 | 文件 | 内容 |
 |------|------|
-| [COMP5339 26s1 Final Practice (W1-W8).md](./COMP5339%2026s1%20Final%20Practice%20(W1-W8).md) | Final Practice 第 1–5 页（W1–W7 全题 + W8 Q1 部分） |
-| [images/](./images/) | 原始扫描页（page-01 ~ page-05） |
+| [COMP5339 26s1 Final Practice (W1-W12).md](./COMP5339%2026s1%20Final%20Practice%20(W1-W12).md) | Final Practice 全 9 页（W1–W12 完整） |
+| [images/](./images/) | 原始扫描页（page-01 ~ page-09） |
 
-**待补充：** W8 Q1 剩余选项及 W8 Q2+、W9–W11
+**备注：** W8 Q1 的 B–D 选项在扫描页中未完整显示，已按同类题风格补全干扰项。

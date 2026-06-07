@@ -1,8 +1,8 @@
-# COMP5339 — 26s1 Final Practice (W1–W8)
+# COMP5339 — 26s1 Final Practice (W1–W12)
 
 > **来源**：外部练习资料（截至 26S1）  
 > **格式**：参照 [`Quiz2 模拟题.md`](../Quiz2%20模拟题.md)  
-> **说明**：题目无官方答案；含图片的题已附原图或重绘 diagram
+> **说明**：题目无官方答案；含图片/表格的题已附原图
 
 **原始扫描页：**
 
@@ -13,6 +13,10 @@
 | [Page 3 — W3/W4](images/page-03-w3-w4.png) | W3 Q2–Q10 + W4 Web Scraping & APIs |
 | [Page 4 — W5/W6](images/page-04-w5-w6.png) | W5 NoSQL + W6 Temporal（Q1–Q4） |
 | [Page 5 — W6/W7/W8](images/page-05-w6-w8.png) | W6 Q5–Q10 + W7 Spatial + W8 Q1 |
+| [Page 6 — W8/W9](images/page-06-w8-w9.png) | W8 Q2–Q10 + W9 Q1–Q8 |
+| [Page 7 — W9/W10/W11](images/page-07-w9-w11.png) | W9 Q9–Q10 + W10 全题 + W11 Q1 |
+| [Page 8 — W11/W12](images/page-08-w11-w12.png) | W11 Q2–Q10 + W12 Q1–Q9 |
+| [Page 9 — W12](images/page-09-w12-q10.png) | W12 Q9 续 + Q10 |
 
 ![Page 1 原图](images/page-01-w1.png)
 
@@ -23,6 +27,14 @@
 ![Page 4 原图](images/page-04-w5-w6.png)
 
 ![Page 5 原图](images/page-05-w6-w8.png)
+
+![Page 6 原图](images/page-06-w8-w9.png)
+
+![Page 7 原图](images/page-07-w9-w11.png)
+
+![Page 8 原图](images/page-08-w11-w12.png)
+
+![Page 9 原图](images/page-09-w12-q10.png)
 
 ---
 
@@ -627,7 +639,7 @@ Design a **spatial-temporal table** for ride-share pickups and drop-offs that su
 
 > **本周重点**：非结构化数据处理——text/PDF/image、OCR、embedding、metadata。强调保留 raw artifact、版本化、metadata、quality check 和 manual review queue；注意 privacy 与 access control。
 
-> ⚠️ **资料截断**：原扫描页仅收录 W8 Q1 部分选项，后续题目待补充。
+![W8/W9 原页](images/page-06-w8-w9.png)
 
 ---
 
@@ -636,6 +648,430 @@ Design a **spatial-temporal table** for ride-share pickups and drop-offs that su
 Which is the best first engineering step before running sentiment analysis over millions of support emails?
 
 - [ ] (A) Define ingestion, parsing, metadata, access control, and privacy controls before model training.
-- [ ] (B) *(其余选项在扫描页中截断，待补全)*
+- [ ] (B) Train the largest available model immediately on raw email bodies.
+- [ ] (C) Delete all attachments and headers without documenting assumptions.
+- [ ] (D) Copy every email into a shared folder with no retention policy.
+
+---
+
+### Q2
+
+Give three examples of **metadata** that make unstructured documents more usable for analytics.
+
+---
+
+### Q3 · 创新题
+
+A company extracts text from scanned contracts using **OCR**. Some pages are rotated, some contain tables, and confidence scores vary. Design a pipeline that prevents low-quality extraction from silently entering a search index.
+
+---
+
+### Q4 · 选择题
+
+What is a common reason to convert images or text into **feature vectors or embeddings**?
+
+- [ ] (A) To support similarity search, classification, or retrieval over unstructured content.
+- [ ] (B) To replace access controls because vectorised data cannot contain sensitive information.
+- [ ] (C) To remove all data quality checks.
+- [ ] (D) To make every file smaller than one byte.
+
+---
+
+### Q5
+
+Why can a **bag-of-words** text pipeline miss important meaning?
+
+---
+
+### Q6 · 策略题
+
+A social-media pipeline stores raw posts, extracted entities, and sentiment scores. Later the sentiment model is updated. Explain how to design storage so analysts can compare old and new scores **reproducibly**.
+
+---
+
+### Q7 · 公式题
+
+An embedding index stores **8 million documents** with **768-dimensional float32** vectors. Estimate raw vector storage in **GB** using 4 bytes per float, ignoring index overhead.
+
+---
+
+### Q8 · 选择题
+
+Which risk is highest if raw customer emails are copied into a broad analytics workspace?
+
+- [ ] (A) Exposure of PII and sensitive content beyond need-to-know access.
+- [ ] (B) Automatic improvement of data quality.
+- [ ] (C) Elimination of retention requirements.
+- [ ] (D) Faster polygon intersection.
+
+---
+
+### Q9
+
+Explain one advantage and one disadvantage of storing only **extracted features** rather than raw unstructured data.
+
+---
+
+### Q10
+
+A news archive search engine returns irrelevant articles because **boilerplate navigation text** is indexed with article content. Diagnose the pipeline flaw and propose a cleaning strategy.
+
+---
+
+## W9 — Stream Data Processing
+
+> **本周重点**：stream processing——bounded batch vs unbounded stream、Kafka partition ordering、consumer lag、backpressure、at-least-once/idempotence、window、event time、watermark。考试常给 late events、duplicate consumption、offset commit、stream-table join 场景，要求设计既不丢数也不 double-billing 的处理链。答题重点在 state、time、fault recovery 和最终一致输出，而非只写 "用 Kafka/Spark/Flink"。
+
+![W9/W10 原页](images/page-07-w9-w11.png)
+
+---
+
+### Q1 · 选择题
+
+Which statement best describes a **data stream**?
+
+- [ ] (A) A potentially unbounded, time-varying sequence of records.
+- [ ] (B) A static table that never changes.
+- [ ] (C) A PDF cover page.
+- [ ] (D) A one-row CSV only.
+
+---
+
+### Q2
+
+Why are traditional **stored-data DBMS** query assumptions often awkward for stream processing?
+
+---
+
+### Q3 · 创新题
+
+A parcel platform publishes scan events keyed by parcel id. During a network failure producers retry and a consumer is offline for **thirty minutes**. Explain how **duplicates**, **ordering**, **offsets**, and **retention** should be handled.
+
+---
+
+### Q4 · 选择题
+
+Kafka preserves order most directly within:
+
+- [ ] (A) A partition.
+- [ ] (B) All topics globally.
+- [ ] (C) Every consumer group across the cluster.
+- [ ] (D) Records with the same key after partitioning.
+
+---
+
+### Q5 · 公式题
+
+A stream processor handles **4,000 events/sec**. Input rises to **5,500 events/sec** for **10 minutes**. Ignoring scaling and overhead, how many events of **backlog** accumulate?
+
+---
+
+### Q6 · 简答题
+
+Explain **at-least-once** processing and why **idempotent writes** matter.
+
+---
+
+### Q7
+
+A fraud-detection stream joins card transactions to a customer-risk table that updates hourly. Discuss whether the join should use latest **processing-time state** or **event-time state**.
+
+---
+
+### Q8 · 选择题
+
+Backpressure is used to:
+
+- [ ] (A) Prevent overloaded downstream components from being overwhelmed by upstream rate.
+- [ ] (B) Convert XML attributes to JSON arrays.
+- [ ] (C) Ensure every stream has no timestamps.
+- [ ] (D) Delete source metadata.
+
+---
+
+### Q9
+
+Give two examples of **stream-monitoring metrics** and what each reveals.
+
+---
+
+### Q10
+
+A stream processor computes **5-minute revenue windows**. Events are keyed by store id and may arrive up to **7 minutes late**.
+
+| Event | event time | arrival time | revenue |
+|-------|------------|--------------|---------|
+| A | 10:01 | 10:02 | 40 |
+| B | 10:04 | 10:05 | 60 |
+| C | 10:03 | 10:11 | 20 |
+| D | 10:08 | 10:09 | 80 |
+
+1. **(A)** With a 7-minute allowed lateness policy, explain when the **10:00–10:05** window may be finalised.
+2. **(B)** State whether **C** should update the window or be sent to a correction path if the watermark has already passed 10:05.
+3. **(C)** Name two pieces of output metadata needed by a dashboard that shows preliminary and final window values.
+
+---
+
+## W10 — Scalable Data Engineering
+
+> **本周重点**：scalable data engineering——Spark/MapReduce、lazy transformation vs action、shuffle、join 类型、partitioning、Parquet、small files、execution plan。考试常给 PySpark 代码或 skew 场景，要求指出哪步触发 shuffle、如何 broadcast/prune/repartition，以及 scale-out 后为何加速不明显。
+
+---
+
+### Q1 · 选择题
+
+In Spark, which operation is an **action** rather than a lazy transformation?
+
+- [ ] (A) `count()`
+- [ ] (B) `select()`
+- [ ] (C) `filter()`
+- [ ] (D) `withColumn()`
+
+---
+
+### Q2
+
+Consider this PySpark plan for daily order enrichment:
+
+```python
+raw = spark.read.csv(path, header=True)
+orders = raw.select("order_id", "postcode", "amount", "day")
+lookup = spark.read.parquet(postcode_path)
+joined = orders.filter("day = '2026-05-01'")
+joined = joined.join(lookup, "postcode")
+joined.write.partitionBy("state").parquet(out)
+```
+
+1. **(A)** Classify the `select`, `filter`, `join`, and `write` steps as **transformations** or **actions**.
+2. **(B)** Identify the operation most likely to cause a **shuffle** and explain why.
+3. **(C)** Give two execution-plan improvements (e.g., broadcast, pruning, repartitioning, or skew handling) and state the condition under which each is appropriate.
+
+---
+
+### Q3 · 真题改编（Semester 2, 2023 modified）
+
+A company must count error types across **2 TB** of server logs stored across many machines. Explain how a **MapReduce-style** design decomposes the work, why it can speed up processing, and name one limitation that still needs engineering attention.
+
+---
+
+### Q4 · 公式题
+
+A dataset has **1.2 TB** across **300 partitions**. If one partition has **180 GB** and the rest share the remaining data evenly, what **scalability problem** appears?
+
+---
+
+### Q5 · 选择题
+
+Which file format is generally better than raw CSV for repeated analytical scans with **column pruning**?
+
+- [ ] (A) Parquet.
+- [ ] (B) Plain screenshot.
+- [ ] (C) HTML with inline styles.
+- [ ] (D) Uncompressed random text.
+
+---
+
+### Q6 · 简答题
+
+Give two ways to reduce **data movement** before a distributed join.
+
+---
+
+### Q7
+
+A team scales from **one worker to twenty workers** but runtime barely improves. Give **four possible causes** and how you would diagnose them.
+
+---
+
+### Q8 · 选择题
+
+What is the **small-files problem**?
+
+- [ ] (A) Too many tiny files create metadata and scheduling overhead for distributed jobs.
+- [ ] (B) Small files always compress better.
+- [ ] (C) Small files eliminate schema drift.
+- [ ] (D) A file cannot be under 1 MB.
+
+---
+
+### Q9
+
+Explain the difference between **horizontal scaling** and **vertical scaling** for a data pipeline.
+
+---
+
+### Q10
+
+Design a **scalable pipeline** for real-time social-media sentiment monitoring. Include ingestion, stream processing, storage, serving, and failure handling.
+
+---
+
+## W11 — DataOps and ML Pipelines
+
+> **本周重点**：DataOps、orchestration、ML pipeline——把 notebook 变成可运维 DAG、data contract、freshness check、training-serving skew、feature lineage。考试常给 feature pipeline 或 notebook 上生产场景，要求画 DAG、放 quality gate、说明 reproducibility metadata。
+
+![W11/W12 原页](images/page-08-w11-w12.png)
+
+---
+
+### Q1 · 选择题
+
+Which DataOps practice most directly helps **reproduce yesterday's failed pipeline run**?
+
+- [ ] (A) Versioned code, configuration, input snapshot references, and run metadata.
+- [ ] (B) Deleting logs after success.
+- [ ] (C) Renaming the dashboard.
+- [ ] (D) Running every step manually.
+
+---
+
+### Q2
+
+An ML feature pipeline has tasks `extract_events`, `build_labels`, `make_features`, `train`, and `publish_features`. Draw or describe an **Airflow-style DAG** and include the quality gates.
+
+1. **(A)** Which tasks can run in **parallel** and which must wait for another task?
+2. **(B)** Where would you place **schema**, **freshness**, and **leakage** checks?
+3. **(C)** What **metadata** must be written for reproducibility of the trained model?
+
+---
+
+### Q3 · 创新题
+
+A daily ML feature pipeline silently changes because a source column changes units from **dollars to cents**. Design **tests and monitors** to catch this before model scores are served.
+
+---
+
+### Q4 · 选择题
+
+Which item is most likely to belong in a **data contract**?
+
+- [ ] (A) Expected fields, types, semantics, freshness, and quality guarantees.
+- [ ] (B) The current informal column names from one producer's staging table only.
+- [ ] (C) A promise that consumers never ask questions.
+- [ ] (D) A producer-side note saying consumers should infer missing fields from context.
+
+---
+
+### Q5
+
+Explain why **feature leakage** is a data-engineering problem as well as a modelling problem.
+
+---
+
+### Q6 · 策略题
+
+A notebook used for a group project becomes a **production weekly report**. Identify four production risks and propose a **DataOps replacement**.
+
+---
+
+### Q7 · 公式题
+
+A pipeline has three independent validation tasks taking **8**, **11**, and **15 minutes**, followed by a **20-minute** aggregation task. What is the **minimum runtime** if validations run in parallel? What if they run sequentially?
+
+---
+
+### Q8 · 概念题
+
+What is the difference between monitoring **data freshness** and monitoring **data quality**?
+
+---
+
+### Q9 · 选择题
+
+Which failure mode is **training-serving skew**?
+
+- [ ] (A) The model is trained on features computed one way but served with features computed differently.
+- [ ] (B) The warehouse stores raw and curated data.
+- [ ] (C) A stream has a watermark.
+- [ ] (D) A polygon has a hole.
+
+---
+
+### Q10
+
+Design a **lineage record** for a feature table used by an ML model. Include enough fields to support audit and rollback.
+
+---
+
+## W12 — Data Privacy and Security
+
+> **本周重点**：privacy、security 与 governance——data minimisation、least privilege、encryption、audit logging、secret management、de-identification、small-cell disclosure、retention/legal hold、raw-zone access。考试常给位置/健康/日志/文本场景，要求判断哪些字段识别个人、怎样分层访问、怎样发布聚合结果且降低再识别风险。答题要把技术控制和数据生命周期结合起来，不能只写"加密即可"。
+
+![W12 原页](images/page-09-w12-q10.png)
+
+---
+
+### Q1 · 选择题
+
+Which field is most clearly **personally identifiable information** by itself?
+
+- [ ] (A) Full name with date of birth.
+- [ ] (B) A rounded monthly count by suburb.
+- [ ] (C) A random row number with no mapping.
+- [ ] (D) A table name.
+
+---
+
+### Q2
+
+Give three **security controls** relevant to a data-engineering pipeline handling sensitive customer data.
+
+---
+
+### Q3 · 创新题
+
+A bank wants to copy ten years of customer interaction notes into an **unrestricted analytics workspace**. Identify **privacy-by-design** problems and propose a safer architecture.
+
+---
+
+### Q4 · 选择题
+
+Which statement about **de-identification** is most accurate?
+
+- [ ] (A) It reduces risk but may not eliminate re-identification risk, especially when linked with other data.
+- [ ] (B) It always makes data public-safe.
+- [ ] (C) It means deleting the database.
+- [ ] (D) It only applies to XML files.
+
+---
+
+### Q5
+
+Explain the difference between **authentication** and **authorisation** in a data platform.
+
+---
+
+### Q6 · 策略题
+
+A health analytics team wants **suburb-level disease dashboards**. Small suburbs sometimes have counts of one or two. Explain the **privacy risk** and design a **release control**.
+
+---
+
+### Q7 · 公式题
+
+A dataset has **2,000,000 rows**. A retention policy requires deleting records older than **7 years**. If **18%** are older than 7 years, but **40,000** of those expired rows are under **legal hold** and must be retained, how many rows are **deleted now**?
+
+---
+
+### Q8 · 概念题
+
+Why are **audit logs** themselves sensitive data?
+
+---
+
+### Q9 · 选择题
+
+Which approach best follows **least privilege**?
+
+- [ ] (A) Give analysts only the views and fields needed for their approved task.
+- [ ] (B) Give everyone admin access because it is faster.
+- [ ] (C) Grant warehouse-wide read access to all analysts for convenience.
+- [ ] (D) Disable all logs.
+
+---
+
+### Q10
+
+A data lake stores raw API responses containing **IP addresses** and **precise mobile locations**. Design a **governance policy** that balances analytics value with privacy and security.
 
 ---
