@@ -2,7 +2,7 @@
 
 > **来源**：外部练习资料（截至 26S1）  
 > **格式**：参照 [`Quiz2 模拟题.md`](../Quiz2%20模拟题.md)  
-> **说明**：W1–W4 已附 Answer Key；W5–W12 暂无答案。含图片/表格的题已附原图
+> **说明**：W1–W12 已附 Answer Key（`> [!note]- Answer`）；含图片/表格的题已附原图
 
 **原始扫描页：**
 
@@ -19,6 +19,10 @@
 | [Page 9 — W12](images/page-09-w12-q10.png) | W12 Q9 续 + Q10 |
 | [Answer Key 1 — W1/W2](images/answer-key-01-w1-w2.png) | W1–W2 答案 |
 | [Answer Key 2 — W2–W4](images/answer-key-02-w2-w4.png) | W2 续 + W3–W4 答案 |
+| [Answer Key 3 — W4–W6](images/answer-key-03-w4-w6.png) | W4 续 + W5–W6 答案 |
+| [Answer Key 4 — W6–W8](images/answer-key-04-w6-w8.png) | W6 续 + W7–W8 答案 |
+| [Answer Key 5 — W9–W10](images/answer-key-05-w9-w10.png) | W9 + W10 答案 |
+| [Answer Key 6 — W11–W12](images/answer-key-06-w11-w12.png) | W11 + W12 答案 |
 
 ![Page 1 原图](images/page-01-w1.png)
 
@@ -41,6 +45,14 @@
 ![Answer Key 1](images/answer-key-01-w1-w2.png)
 
 ![Answer Key 2](images/answer-key-02-w2-w4.png)
+
+![Answer Key 3](images/answer-key-03-w4-w6.png)
+
+![Answer Key 4](images/answer-key-04-w6-w8.png)
+
+![Answer Key 5](images/answer-key-05-w9-w10.png)
+
+![Answer Key 6](images/answer-key-06-w11-w12.png)
 
 ---
 
@@ -524,10 +536,8 @@ A scraper starts returning **empty prices** after a website redesign. The HTTP s
 An API allows an effective steady rate of **600 requests per 10 minutes** per token, with no initial burst. You need to fetch **18,000 product records**, one request per product, using one token. What is the **minimum time** ignoring network latency? What **design concern** remains?
 
 > [!note]- Answer
-> Rate = 600 req / 10 min = 60 req/min。18,000 / 60 = **300 minutes = 5 hours**（minimum，无 network latency）。
-> Design concern：no initial burst、retries/failures 延长总时间、token expiry、需 idempotent retry 避免 duplicate fetch side effects。
-> 
-> *(Q7 答案扫描页截断，以上为根据题意补全。)*
+> 600 req / 10 min = **60 req/min**。18,000 / 60 = **300 minutes = 5 hours**（minimum，ignoring network latency）。
+> Remaining concerns：quotas、retries、pagination、data freshness、backoff、bulk endpoints or incremental sync。
 
 
 ---
@@ -535,25 +545,34 @@ An API allows an effective steady rate of **600 requests per 10 minutes** per to
 
 Give three pieces of **metadata** a pipeline should store for each API extraction run.
 
----
+> [!note]- Answer
+> Examples：endpoint/params、time window、status、pagination cursor、token、schema version、row count、checksum、error count、source timestamp。
 
+
+---
 ### Q9 · 选择题
 
 A web API changes one field from **integer to string** without notice. Which downstream failure is most plausible?
 
-- [ ] (A) Type validation or numeric aggregation fails.
+- [x] (A) Type validation or numeric aggregation fails.
 - [ ] (B) Rate limiting becomes stricter because the field is now textual.
 - [ ] (C) A spatial CRS mismatch appears in unrelated distance queries.
 - [ ] (D) The API authentication token gains broader privileges automatically.
 
----
+> [!note]- Answer
+> **答案：A** — Type change breaks validation/parsing/joins/numeric calculations。
 
+
+---
 ### Q10
 
 Explain why **authentication secrets** for APIs should not be hard-coded in notebooks or committed to version control.
 
----
+> [!note]- Answer
+> Secrets in code leak to repos/logs；用 secret store/env vars + rotation + least privilege + audit。
 
+
+---
 ## W5 — Semistructured Data and NoSQL
 
 > **本周重点**：半结构化数据与 NoSQL 建模。理解 XML/JSON/HTML 结构差异、schema-late 的灵活性与风险、document DB 的 embedding vs referencing 取舍、shard key 与 access pattern 的匹配。高分答案要说明约束在哪里 enforced、如何控制文档膨胀、如何避免 hot shard。
@@ -566,77 +585,107 @@ Explain why **authentication secrets** for APIs should not be hard-coded in note
 
 Which property best describes **semi-structured data**?
 
-- [ ] (A) It may have nested, optional, or heterogeneous fields while still carrying structure.
+- [x] (A) It may have nested, optional, or heterogeneous fields while still carrying structure.
 - [ ] (B) It cannot be parsed by any program.
 - [ ] (C) It must be stored only in CSV files.
 - [ ] (D) It has no labels or tags of any kind.
 
----
+> [!note]- Answer
+> **答案：A** — Nested/optional/heterogeneous fields with structure。
 
+
+---
 ### Q2
 
 Compare **XML** and **JSON** for data exchange. Mention one advantage and one disadvantage of each.
 
----
+> [!note]- Answer
+> **XML**：attributes/namespaces/schema but verbose。**JSON**：compact/API-friendly but loose typing/schema drift。
 
+
+---
 ### Q3 · 真题改编（Semester 2, 2024 modified）
 
 A bookstore platform receives XML inventory, JSON user reviews, and scraped HTML book pages. Explain why the data is semi-structured and design a **MongoDB collection** for books and reviews.
 
----
+> [!note]- Answer
+> Embed bounded book attrs；reviews 单独 collection keyed by book_id/time；index/shard by access pattern；schema version + quarantine counts。
 
+
+---
 ### Q4 · 选择题
 
 Which MongoDB aggregation approach is most flexible for multi-stage transformations such as match, unwind, group, and project?
 
-- [ ] (A) Aggregation pipeline.
+- [x] (A) Aggregation pipeline.
 - [ ] (B) Screenshot aggregation.
 - [ ] (C) Manual copy-paste.
 - [ ] (D) HTML heading levels.
 
----
+> [!note]- Answer
+> **答案：A** — Aggregation pipeline (match/unwind/group/project)。
 
+
+---
 ### Q5
 
 Explain the design trade-off between **embedding** and **referencing** in a document database.
 
----
+> [!note]- Answer
+> **Embedding**：locality/atomic read but duplication/large docs。**Referencing**：less duplication but extra lookups。
 
+
+---
 ### Q6 · 策略题
 
 A MongoDB collection stores user documents with an **unbounded array of click events**. Over time some documents exceed practical size and updates slow down. Diagnose the design problem and propose a redesign.
 
----
+> [!note]- Answer
+> Unbounded array → doc growth/contention；拆 events collection by user/time、bucket/summarise old events。
 
+
+---
 ### Q7 · 真题改编（Semester 1, 2024 modified）
 
 Briefly compare **relational databases** and **NoSQL databases** in terms of data structure and scalability.
 
----
+> [!note]- Answer
+> Relational：fixed schema/SQL/constraints。NoSQL：flexible schema/horizontal scale；app 承担 consistency/joins。
 
+
+---
 ### Q8 · 公式题 / 计算题
 
 A sharded collection stores **90 million events** across **9 shards** by region. One region accounts for **45 million events**. What **imbalance risk** appears, and what **shard-key improvement** could reduce it?
 
----
+> [!note]- Answer
+> Hotspot：一 region 45M/90M；改进 shard key：region + hashed user_id 或 time bucket。
 
+
+---
 ### Q9
 
 Model a **recommendation graph** with users, books, and authors. Specify node labels, relationship types, and one **Cypher-style query** to find authors liked by users who follow Alice.
 
----
+> [!note]- Answer
+> Nodes：User/Book/Author；Rels：FOLLOWS/LIKES/WROTE；Cypher：authors liked by followers of Alice。
 
+
+---
 ### Q10 · 选择题
 
 Which statement about NoSQL schema design is best?
 
 - [ ] (A) NoSQL removes all need to think about schema.
-- [ ] (B) The access pattern should strongly influence the document/key/graph structure.
+- [x] (B) The access pattern should strongly influence the document/key/graph structure.
 - [ ] (C) All relationships should always be embedded.
 - [ ] (D) Sharding always improves every query.
 
----
+> [!note]- Answer
+> **答案：B** — Access pattern drives structure；仍需 schema discipline。
 
+
+---
 ## W6 — Temporal Data Engineering
 
 > **本周重点**：时间语义——event time、ingestion/processing time、valid time、transaction time；interval 表示、late data 与 correction、watermark、bitemporal 设计、as-of 查询。考试常给医疗/能源/零售场景，要求说明为何单个 `updated_at` 不够、如何用 half-open interval 表达 validity、late event 怎样进入 window。
@@ -649,77 +698,107 @@ Which statement about NoSQL schema design is best?
 
 Which pair of time dimensions is needed for **bitemporal audit queries**?
 
-- [ ] (A) Valid time and transaction time.
+- [x] (A) Valid time and transaction time.
 - [ ] (B) CPU time and screen time.
 - [ ] (C) Latitude time and longitude time.
 - [ ] (D) HTML time and XML time.
 
----
+> [!note]- Answer
+> **答案：A** — Valid time + transaction time for bitemporal audit。
 
+
+---
 ### Q2
 
 A hospital guideline table has condition, treatment, start date, replacement date, and database load time. Explain why a single **last-updated timestamp** cannot answer: *what was valid on 15 March 2024 according to the database on 30 April 2024?*
 
----
+> [!note]- Answer
+> Single timestamp 无法区分 validity vs storage time；需 valid-time + transaction-time intervals。
 
+
+---
 ### Q3 · 概念题
 
 Give two reasons **time zones** can break a data pipeline even when all timestamps look valid.
 
----
+> [!note]- Answer
+> Local time/UTC/DST/ambiguous offsets；joins/windows/daily aggregates 会错 unless normalised。
 
+
+---
 ### Q4 · 公式题 / 计算题
 
 A sensor emits one reading every **5 seconds** per device. There are **240 devices**. How many readings arrive per **hour**? What **storage design concern** follows?
 
----
+> [!note]- Answer
+> 720 readings/device/hour × 240 = **172,800/hour**；需 time partition、compression/retention。
 
+
+---
 ### Q5 · 选择题
 
 A stream window includes events by their **event timestamp**, not arrival timestamp. What problem must the system handle?
 
-- [ ] (A) Late and out-of-order events.
+- [x] (A) Late and out-of-order events.
 - [ ] (B) XML declarations.
 - [ ] (C) Polygon holes.
 - [ ] (D) Choosing a CRS suitable for measurement rather than only web display.
 
----
+> [!note]- Answer
+> **答案：A** — Late and out-of-order events。
 
+
+---
 ### Q6
 
 Compare **point-based** and **interval-based** temporal representation with examples.
 
----
+> [!note]- Answer
+> **Point**：instants。**Interval**：valid periods；支持 duration/overlap queries。
 
+
+---
 ### Q7
 
 An energy provider corrects yesterday's hourly meter readings after a calibration issue. Dashboards already consumed the old values. Design a **temporal ingestion strategy** that supports correction, replay, and audit.
 
----
+> [!note]- Answer
+> Immutable raw + versioned corrections + event/transaction time + reason/run ids；bitemporal/upsert + audit views。
 
+
+---
 ### Q8 · 选择题
 
 Which SQL predicate is safest for a **half-open validity interval**?
 
-- [ ] (A) `valid_start <= t AND t < valid_end`
+- [x] (A) `valid_start <= t AND t < valid_end`
 - [ ] (B) `valid_start < t AND valid_end < t`
 - [ ] (C) `t < valid_start AND valid_end < t`
 - [ ] (D) `valid_start = valid_end`
 
----
+> [!note]- Answer
+> **答案：A** — `valid_start <= t AND t < valid_end` half-open interval。
 
+
+---
 ### Q9
 
 What is a **watermark** in stream processing, and why is it useful for temporal aggregation?
 
----
+> [!note]- Answer
+> Watermark = 估计不再有更早 event-time 记录到达；允许关闭 window 并设 lateness policy。
 
+
+---
 ### Q10
 
 A retailer joins clickstream events to a product catalogue that changes over time. Explain how a **temporal join** should decide which product category to attach to each click.
 
----
+> [!note]- Answer
+> Join click time 到 catalogue **valid interval** 内的 version，非 simply latest category。
 
+
+---
 ## W7 — Spatial-Temporal Data Engineering
 
 > **本周重点**：空间与时间结合——point/line/polygon、CRS、spatial index、point-in-polygon、trajectory、geospatial join。常见陷阱：CRS 不一致、把 polygon 当 centroid、未做 bounding-box 预过滤就全量精确计算。答题要把 geometry 类型、索引策略和查询 workflow 连起来。
@@ -730,77 +809,108 @@ A retailer joins clickstream events to a product catalogue that changes over tim
 
 Which geometry type is most natural for a **bus GPS observation** at one timestamp?
 
-- [ ] (A) Point.
+- [x] (A) Point.
 - [ ] (B) Polygon.
 - [ ] (C) MultiPolygon boundary.
 - [ ] (D) XML body.
 
----
+> [!note]- Answer
+> **答案：A** — Point for single GPS observation。
 
+
+---
 ### Q2
 
 Name suitable **geometry types** for rainfall gauges, road segments, suburb boundaries, and flood extents.
 
----
+> [!note]- Answer
+> Gauge→Point；Road→LineString；Suburb→Polygon；Flood→Polygon/MultiPolygon。
 
+
+---
 ### Q3 · 真题改编（Semester 1, 2024 modified）
 
 A spatial pipeline combines Airbnb points in **WGS84** with incident polygons in **GDA94**. Explain the **CRS problem** and design a query workflow for finding listings within **5 km** of incidents.
 
----
+> [!note]- Answer
+> WGS84 vs GDA94 CRS mismatch；transform to common projected CRS → spatial index → ST_DWithin。
 
+
+---
 ### Q4 · 公式题
 
 A GPS feed sends one point every **5 seconds** for each of **1,500 buses**. Estimate **points per day**. State one **indexing or partitioning** strategy.
 
----
+> [!note]- Answer
+> 17,280 points/bus/day × 1,500 = **25,920,000/day**；time partition + GiST spatial index。
 
+
+---
 ### Q5
 
 Why is computing **Euclidean distance directly on latitude and longitude degrees** usually wrong?
 
----
+> [!note]- Answer
+> Degrees ≠ equal linear distance；需 projected CRS 或 geodesic functions。
 
+
+---
 ### Q6 · 选择题
 
 Which predicate is most appropriate to test whether a point lies **inside a suburb polygon**?
 
-- [ ] (A) `ST_Contains` or `ST_Within`.
+- [x] (A) `ST_Contains` or `ST_Within`.
 - [ ] (B) `ST_Uppercase`.
 - [ ] (C) SQL `COUNT` only.
 - [ ] (D) XML standalone.
 
----
+> [!note]- Answer
+> **答案：A** — ST_Contains / ST_Within point-in-polygon。
 
+
+---
 ### Q7
 
 A prototype stores flood extents as only **centroid points**. Explain one analysis that becomes impossible or misleading and propose a corrected representation.
 
----
+> [!note]- Answer
+> Centroid 无法表示 area/overlap；用 Polygon + area-based predicates。
 
+
+---
 ### Q8 · 概念题
 
 Compare **point-based** and **sequence-based** representation for bus movement data.
 
----
+> [!note]- Answer
+> **Point-based**：简单 recent location。**Sequence/trajectory**：route-shape analysis，更新更复杂。
 
+
+---
 ### Q9 · 选择题
 
 A spatial index primarily helps by:
 
-- [ ] (A) Reducing candidate geometries before expensive exact spatial predicates.
+- [x] (A) Reducing candidate geometries before expensive exact spatial predicates.
 - [ ] (B) Converting JSON to XML.
 - [ ] (C) Proving every polygon is valid.
 - [ ] (D) Replacing all CRS transformations.
 
----
+> [!note]- Answer
+> **答案：A** — Filter candidate bounding boxes before exact predicates。
 
+
+---
 ### Q10
 
 Design a **spatial-temporal table** for ride-share pickups and drop-offs that supports queries by time window, pickup suburb, and trip distance. Include key fields and two indexes.
 
----
+> [!note]- Answer
+> Fields：trip_id、pickup/dropoff time+geom、distance、CRS、metadata。
+> Indexes：pickup_time partition + GiST on geometries。
 
+
+---
 ## W8 — Processing Unstructured Data
 
 > **本周重点**：非结构化数据处理——text/PDF/image、OCR、embedding、metadata。强调保留 raw artifact、版本化、metadata、quality check 和 manual review queue；注意 privacy 与 access control。
@@ -813,77 +923,107 @@ Design a **spatial-temporal table** for ride-share pickups and drop-offs that su
 
 Which is the best first engineering step before running sentiment analysis over millions of support emails?
 
-- [ ] (A) Define ingestion, parsing, metadata, access control, and privacy controls before model training.
+- [x] (A) Define ingestion, parsing, metadata, access control, and privacy controls before model training.
 - [ ] (B) Train the largest available model immediately on raw email bodies.
 - [ ] (C) Delete all attachments and headers without documenting assumptions.
 - [ ] (D) Copy every email into a shared folder with no retention policy.
 
----
+> [!note]- Answer
+> **答案：A** — Governance/metadata/quality/access control before ML。
 
+
+---
 ### Q2
 
 Give three examples of **metadata** that make unstructured documents more usable for analytics.
 
----
+> [!note]- Answer
+> source、capture time、author、language、doc type、encoding、classification、OCR confidence、checksum、lineage id。
 
+
+---
 ### Q3 · 创新题
 
 A company extracts text from scanned contracts using **OCR**. Some pages are rotated, some contain tables, and confidence scores vary. Design a pipeline that prevents low-quality extraction from silently entering a search index.
 
----
+> [!note]- Answer
+> OCR confidence thresholds、table checks、review queue、raw retention、versioning、alerts on low-confidence rate。
 
+
+---
 ### Q4 · 选择题
 
 What is a common reason to convert images or text into **feature vectors or embeddings**?
 
-- [ ] (A) To support similarity search, classification, or retrieval over unstructured content.
+- [x] (A) To support similarity search, classification, or retrieval over unstructured content.
 - [ ] (B) To replace access controls because vectorised data cannot contain sensitive information.
 - [ ] (C) To remove all data quality checks.
 - [ ] (D) To make every file smaller than one byte.
 
----
+> [!note]- Answer
+> **答案：A** — Embeddings enable similarity search/classification/retrieval。
 
+
+---
 ### Q5
 
 Why can a **bag-of-words** text pipeline miss important meaning?
 
----
+> [!note]- Answer
+> BoW 忽略 word order、negation、context、sarcasm、domain meaning、document structure。
 
+
+---
 ### Q6 · 策略题
 
 A social-media pipeline stores raw posts, extracted entities, and sentiment scores. Later the sentiment model is updated. Explain how to design storage so analysts can compare old and new scores **reproducibly**.
 
----
+> [!note]- Answer
+> Version raw posts + model/feature version + scoring time；新 scores 新 column/table，不 overwrite without history。
 
+
+---
 ### Q7 · 公式题
 
 An embedding index stores **8 million documents** with **768-dimensional float32** vectors. Estimate raw vector storage in **GB** using 4 bytes per float, ignoring index overhead.
 
----
+> [!note]- Answer
+> 8M × 768 × 4 bytes = **24,576,000,000 B ≈ 24.6 GB**（≈22.9 GiB）；index 有额外 overhead。
 
+
+---
 ### Q8 · 选择题
 
 Which risk is highest if raw customer emails are copied into a broad analytics workspace?
 
-- [ ] (A) Exposure of PII and sensitive content beyond need-to-know access.
+- [x] (A) Exposure of PII and sensitive content beyond need-to-know access.
 - [ ] (B) Automatic improvement of data quality.
 - [ ] (C) Elimination of retention requirements.
 - [ ] (D) Faster polygon intersection.
 
----
+> [!note]- Answer
+> **答案：A** — PII/sensitive content exposure。
 
+
+---
 ### Q9
 
 Explain one advantage and one disadvantage of storing only **extracted features** rather than raw unstructured data.
 
----
+> [!note]- Answer
+> Features：less storage/privacy、更快；但 lose context、难 reprocess、preserve errors。Raw：audit/reprocess but strict governance。
 
+
+---
 ### Q10
 
 A news archive search engine returns irrelevant articles because **boilerplate navigation text** is indexed with article content. Diagnose the pipeline flaw and propose a cleaning strategy.
 
----
+> [!note]- Answer
+> 未分离 main content vs template；boilerplate removal、DOM-aware extraction、content-density heuristics、fielded indexing。
 
+
+---
 ## W9 — Stream Data Processing
 
 > **本周重点**：stream processing——bounded batch vs unbounded stream、Kafka partition ordering、consumer lag、backpressure、at-least-once/idempotence、window、event time、watermark。考试常给 late events、duplicate consumption、offset commit、stream-table join 场景，要求设计既不丢数也不 double-billing 的处理链。答题重点在 state、time、fault recovery 和最终一致输出，而非只写 "用 Kafka/Spark/Flink"。
@@ -896,71 +1036,98 @@ A news archive search engine returns irrelevant articles because **boilerplate n
 
 Which statement best describes a **data stream**?
 
-- [ ] (A) A potentially unbounded, time-varying sequence of records.
+- [x] (A) A potentially unbounded, time-varying sequence of records.
 - [ ] (B) A static table that never changes.
 - [ ] (C) A PDF cover page.
 - [ ] (D) A one-row CSV only.
 
----
+> [!note]- Answer
+> **答案：A** — Potentially unbounded, time-varying sequence。
 
+
+---
 ### Q2
 
 Why are traditional **stored-data DBMS** query assumptions often awkward for stream processing?
 
----
+> [!note]- Answer
+> DBMS 查 finite stored data；streams unbounded、late/out-of-order、需 windows/state/backpressure。
 
+
+---
 ### Q3 · 创新题
 
 A parcel platform publishes scan events keyed by parcel id. During a network failure producers retry and a consumer is offline for **thirty minutes**. Explain how **duplicates**, **ordering**, **offsets**, and **retention** should be handled.
 
----
+> [!note]- Answer
+> Key by parcel id、idempotent、dedupe by event id、commit offset after durable process、retention、DLQ、monitor lag。
 
+
+---
 ### Q4 · 选择题
 
 Kafka preserves order most directly within:
 
-- [ ] (A) A partition.
+- [x] (A) A partition.
 - [ ] (B) All topics globally.
 - [ ] (C) Every consumer group across the cluster.
 - [ ] (D) Records with the same key after partitioning.
 
----
+> [!note]- Answer
+> **答案：A** — Ordering per partition。
 
+
+---
 ### Q5 · 公式题
 
 A stream processor handles **4,000 events/sec**. Input rises to **5,500 events/sec** for **10 minutes**. Ignoring scaling and overhead, how many events of **backlog** accumulate?
 
----
+> [!note]- Answer
+> Deficit 1,500/s × 600s = **900,000 events** backlog。
 
+
+---
 ### Q6 · 简答题
 
 Explain **at-least-once** processing and why **idempotent writes** matter.
 
----
+> [!note]- Answer
+> At-least-once 可能 duplicate；idempotent writes 使重复处理最终 state 相同。
 
+
+---
 ### Q7
 
 A fraud-detection stream joins card transactions to a customer-risk table that updates hourly. Discuss whether the join should use latest **processing-time state** or **event-time state**.
 
----
+> [!note]- Answer
+> Processing-time state 简单但 replay 不一致；event-time state 可复现历史决策但需 versioned state；匹配 business/audit 需求。
 
+
+---
 ### Q8 · 选择题
 
 Backpressure is used to:
 
-- [ ] (A) Prevent overloaded downstream components from being overwhelmed by upstream rate.
+- [x] (A) Prevent overloaded downstream components from being overwhelmed by upstream rate.
 - [ ] (B) Convert XML attributes to JSON arrays.
 - [ ] (C) Ensure every stream has no timestamps.
 - [ ] (D) Delete source metadata.
 
----
+> [!note]- Answer
+> **答案：A** — Backpressure when downstream cannot keep up。
 
+
+---
 ### Q9
 
 Give two examples of **stream-monitoring metrics** and what each reveals.
 
----
+> [!note]- Answer
+> **Consumer lag** processing behind；**throughput/latency** capacity/freshness；**error/DLQ rate** bad records；**watermark delay** lateness。
 
+
+---
 ### Q10
 
 A stream processor computes **5-minute revenue windows**. Events are keyed by store id and may arrive up to **7 minutes late**.
@@ -976,8 +1143,11 @@ A stream processor computes **5-minute revenue windows**. Events are keyed by st
 2. **(B)** State whether **C** should update the window or be sent to a correction path if the watermark has already passed 10:05.
 3. **(C)** Name two pieces of output metadata needed by a dashboard that shows preliminary and final window values.
 
----
+> [!note]- Answer
+> 10:00–10:05 window finalise after watermark + 7min lateness (~10:12 progress)。A/B in window；C by event time—若 watermark passed → correction path else update window。Metadata：window bounds、finality status、version、late count、processing time。
 
+
+---
 ## W10 — Scalable Data Engineering
 
 > **本周重点**：scalable data engineering——Spark/MapReduce、lazy transformation vs action、shuffle、join 类型、partitioning、Parquet、small files、execution plan。考试常给 PySpark 代码或 skew 场景，要求指出哪步触发 shuffle、如何 broadcast/prune/repartition，以及 scale-out 后为何加速不明显。
@@ -988,13 +1158,16 @@ A stream processor computes **5-minute revenue windows**. Events are keyed by st
 
 In Spark, which operation is an **action** rather than a lazy transformation?
 
-- [ ] (A) `count()`
+- [x] (A) `count()`
 - [ ] (B) `select()`
 - [ ] (C) `filter()`
 - [ ] (D) `withColumn()`
 
----
+> [!note]- Answer
+> **答案：A** — `count()` is action; others are lazy transformations。
 
+
+---
 ### Q2
 
 Consider this PySpark plan for daily order enrichment:
@@ -1012,66 +1185,93 @@ joined.write.partitionBy("state").parquet(out)
 2. **(B)** Identify the operation most likely to cause a **shuffle** and explain why.
 3. **(C)** Give two execution-plan improvements (e.g., broadcast, pruning, repartitioning, or skew handling) and state the condition under which each is appropriate.
 
----
+> [!note]- Answer
+> select/filter/join = transformations；write = action。Join on postcode → shuffle（unless broadcast）。Improve：filter early、broadcast small lookup、repartition by key、skew handling。
 
+
+---
 ### Q3 · 真题改编（Semester 2, 2023 modified）
 
 A company must count error types across **2 TB** of server logs stored across many machines. Explain how a **MapReduce-style** design decomposes the work, why it can speed up processing, and name one limitation that still needs engineering attention.
 
----
+> [!note]- Answer
+> Map：partial counts by error_type；Reduce：global totals。Parallel near data。Limitation：shuffle cost、skew、stragglers。
 
+
+---
 ### Q4 · 公式题
 
 A dataset has **1.2 TB** across **300 partitions**. If one partition has **180 GB** and the rest share the remaining data evenly, what **scalability problem** appears?
 
----
+> [!note]- Answer
+> 180 GB partition = **skewed straggler** dominates runtime。
 
+
+---
 ### Q5 · 选择题
 
 Which file format is generally better than raw CSV for repeated analytical scans with **column pruning**?
 
-- [ ] (A) Parquet.
+- [x] (A) Parquet.
 - [ ] (B) Plain screenshot.
 - [ ] (C) HTML with inline styles.
 - [ ] (D) Uncompressed random text.
 
----
+> [!note]- Answer
+> **答案：A** — Parquet columnar + column pruning。
 
+
+---
 ### Q6 · 简答题
 
 Give two ways to reduce **data movement** before a distributed join.
 
----
+> [!note]- Answer
+> Filter early、select columns、broadcast small table、partition/bucket by join key、pre-aggregate。
 
+
+---
 ### Q7
 
 A team scales from **one worker to twenty workers** but runtime barely improves. Give **four possible causes** and how you would diagnose them.
 
----
+> [!note]- Answer
+> Causes：serial bottleneck、shuffle、skew、small files、bad partitions、slow I/O、driver bottleneck。Diagnose：execution plan、stage metrics、partition sizes。
 
+
+---
 ### Q8 · 选择题
 
 What is the **small-files problem**?
 
-- [ ] (A) Too many tiny files create metadata and scheduling overhead for distributed jobs.
+- [x] (A) Too many tiny files create metadata and scheduling overhead for distributed jobs.
 - [ ] (B) Small files always compress better.
 - [ ] (C) Small files eliminate schema drift.
 - [ ] (D) A file cannot be under 1 MB.
 
----
+> [!note]- Answer
+> **答案：A** — Tiny files → metadata/scheduling overhead。
 
+
+---
 ### Q9
 
 Explain the difference between **horizontal scaling** and **vertical scaling** for a data pipeline.
 
----
+> [!note]- Answer
+> **Vertical**：bigger machine。**Horizontal**：more workers + partitionable work + coordination。
 
+
+---
 ### Q10
 
 Design a **scalable pipeline** for real-time social-media sentiment monitoring. Include ingestion, stream processing, storage, serving, and failure handling.
 
----
+> [!note]- Answer
+> Broker ingestion → stream parse/score → raw+curated storage → model version metadata → serving aggregates → retries/DLQ → lag/error monitoring → privacy filtering。
 
+
+---
 ## W11 — DataOps and ML Pipelines
 
 > **本周重点**：DataOps、orchestration、ML pipeline——把 notebook 变成可运维 DAG、data contract、freshness check、training-serving skew、feature lineage。考试常给 feature pipeline 或 notebook 上生产场景，要求画 DAG、放 quality gate、说明 reproducibility metadata。
@@ -1084,13 +1284,16 @@ Design a **scalable pipeline** for real-time social-media sentiment monitoring. 
 
 Which DataOps practice most directly helps **reproduce yesterday's failed pipeline run**?
 
-- [ ] (A) Versioned code, configuration, input snapshot references, and run metadata.
+- [x] (A) Versioned code, configuration, input snapshot references, and run metadata.
 - [ ] (B) Deleting logs after success.
 - [ ] (C) Renaming the dashboard.
 - [ ] (D) Running every step manually.
 
----
+> [!note]- Answer
+> **答案：A** — Versioned artefacts + run metadata for reproducibility。
 
+
+---
 ### Q2
 
 An ML feature pipeline has tasks `extract_events`, `build_labels`, `make_features`, `train`, and `publish_features`. Draw or describe an **Airflow-style DAG** and include the quality gates.
@@ -1099,66 +1302,93 @@ An ML feature pipeline has tasks `extract_events`, `build_labels`, `make_feature
 2. **(B)** Where would you place **schema**, **freshness**, and **leakage** checks?
 3. **(C)** What **metadata** must be written for reproducibility of the trained model?
 
----
+> [!note]- Answer
+> DAG：extract∥labels → features → train → publish；checks at extraction/features/training；metadata：commits、versions、validation、model owner。
 
+
+---
 ### Q3 · 创新题
 
 A daily ML feature pipeline silently changes because a source column changes units from **dollars to cents**. Design **tests and monitors** to catch this before model scores are served.
 
----
+> [!note]- Answer
+> Schema/type/range checks、distribution drift、baseline comparison、canary scoring、blocking rules for anomalies。
 
+
+---
 ### Q4 · 选择题
 
 Which item is most likely to belong in a **data contract**?
 
-- [ ] (A) Expected fields, types, semantics, freshness, and quality guarantees.
+- [x] (A) Expected fields, types, semantics, freshness, and quality guarantees.
 - [ ] (B) The current informal column names from one producer's staging table only.
 - [ ] (C) A promise that consumers never ask questions.
 - [ ] (D) A producer-side note saying consumers should infer missing fields from context.
 
----
+> [!note]- Answer
+> **答案：A** — Fields/types/semantics/freshness/quality guarantees。
 
+
+---
 ### Q5
 
 Explain why **feature leakage** is a data-engineering problem as well as a modelling problem.
 
----
+> [!note]- Answer
+> Pipeline 可能 join future info/post-outcome fields → leakage；需 temporal joins、contracts、training-serving parity。
 
+
+---
 ### Q6 · 策略题
 
 A notebook used for a group project becomes a **production weekly report**. Identify four production risks and propose a **DataOps replacement**.
 
----
+> [!note]- Answer
+> Notebook risks：hidden state、manual run、unpinned deps、no tests/logs。Replace：orchestrated DAG、CI、secrets、monitoring。
 
+
+---
 ### Q7 · 公式题
 
 A pipeline has three independent validation tasks taking **8**, **11**, and **15 minutes**, followed by a **20-minute** aggregation task. What is the **minimum runtime** if validations run in parallel? What if they run sequentially?
 
----
+> [!note]- Answer
+> Parallel：max(8,11,15)+20 = **35 min**。Sequential：8+11+15+20 = **54 min**。
 
+
+---
 ### Q8 · 概念题
 
 What is the difference between monitoring **data freshness** and monitoring **data quality**?
 
----
+> [!note]- Answer
+> **Freshness**：arrived on time。**Quality**：values/schema/distributions/rules acceptable。
 
+
+---
 ### Q9 · 选择题
 
 Which failure mode is **training-serving skew**?
 
-- [ ] (A) The model is trained on features computed one way but served with features computed differently.
+- [x] (A) The model is trained on features computed one way but served with features computed differently.
 - [ ] (B) The warehouse stores raw and curated data.
 - [ ] (C) A stream has a watermark.
 - [ ] (D) A polygon has a hole.
 
----
+> [!note]- Answer
+> **答案：A** — Training and serving feature generation differ。
 
+
+---
 ### Q10
 
 Design a **lineage record** for a feature table used by an ML model. Include enough fields to support audit and rollback.
 
----
+> [!note]- Answer
+> Feature table version、source versions、extraction window、code commit、run id、validation、schema version、model version、retention/classification。
 
+
+---
 ## W12 — Data Privacy and Security
 
 > **本周重点**：privacy、security 与 governance——data minimisation、least privilege、encryption、audit logging、secret management、de-identification、small-cell disclosure、retention/legal hold、raw-zone access。考试常给位置/健康/日志/文本场景，要求判断哪些字段识别个人、怎样分层访问、怎样发布聚合结果且降低再识别风险。答题要把技术控制和数据生命周期结合起来，不能只写"加密即可"。
@@ -1171,73 +1401,104 @@ Design a **lineage record** for a feature table used by an ML model. Include eno
 
 Which field is most clearly **personally identifiable information** by itself?
 
-- [ ] (A) Full name with date of birth.
+- [x] (A) Full name with date of birth.
 - [ ] (B) A rounded monthly count by suburb.
 - [ ] (C) A random row number with no mapping.
 - [ ] (D) A table name.
 
----
+> [!note]- Answer
+> **答案：A** — Full name + DOB identifies a person。
 
+
+---
 ### Q2
 
 Give three **security controls** relevant to a data-engineering pipeline handling sensitive customer data.
 
----
+> [!note]- Answer
+> Least privilege、encryption、secrets management、audit logging、masking、MFA、network isolation。
 
+
+---
 ### Q3 · 创新题
 
 A bank wants to copy ten years of customer interaction notes into an **unrestricted analytics workspace**. Identify **privacy-by-design** problems and propose a safer architecture.
 
----
+> [!note]- Answer
+> Excessive collection/broad access/retention；safer：minimisation、restricted raw zone、RBAC、pseudonymisation、aggregated outputs、approval workflows。
 
+
+---
 ### Q4 · 选择题
 
 Which statement about **de-identification** is most accurate?
 
-- [ ] (A) It reduces risk but may not eliminate re-identification risk, especially when linked with other data.
+- [x] (A) It reduces risk but may not eliminate re-identification risk, especially when linked with other data.
 - [ ] (B) It always makes data public-safe.
 - [ ] (C) It means deleting the database.
 - [ ] (D) It only applies to XML files.
 
----
+> [!note]- Answer
+> **答案：A** — De-identification reduces but may not eliminate re-identification risk。
 
+
+---
 ### Q5
 
 Explain the difference between **authentication** and **authorisation** in a data platform.
 
----
+> [!note]- Answer
+> **Authentication**：verify identity。**Authorisation**：what identity may access/do。
 
+
+---
 ### Q6 · 策略题
 
 A health analytics team wants **suburb-level disease dashboards**. Small suburbs sometimes have counts of one or two. Explain the **privacy risk** and design a **release control**.
 
----
+> [!note]- Answer
+> Small cells reveal individuals；aggregate larger regions、suppress small cells、noise methods、access tiers。
 
+
+---
 ### Q7 · 公式题
 
 A dataset has **2,000,000 rows**. A retention policy requires deleting records older than **7 years**. If **18%** are older than 7 years, but **40,000** of those expired rows are under **legal hold** and must be retained, how many rows are **deleted now**?
 
----
+> [!note]- Answer
+> Expired = 2M × 18% = 360,000；minus 40,000 legal hold → **320,000 deleted**；retained 1,680,000。
 
+
+---
 ### Q8 · 概念题
 
 Why are **audit logs** themselves sensitive data?
 
----
+> [!note]- Answer
+> Logs reveal identities、queries、IPs、patterns；需 integrity protection、retention、restricted access。
 
+
+---
 ### Q9 · 选择题
 
 Which approach best follows **least privilege**?
 
-- [ ] (A) Give analysts only the views and fields needed for their approved task.
+- [x] (A) Give analysts only the views and fields needed for their approved task.
 - [ ] (B) Give everyone admin access because it is faster.
 - [ ] (C) Grant warehouse-wide read access to all analysts for convenience.
 - [ ] (D) Disable all logs.
 
----
+> [!note]- Answer
+> **答案：A** — Least privilege: only views/fields needed for task。
 
+
+---
 ### Q10
 
 A data lake stores raw API responses containing **IP addresses** and **precise mobile locations**. Design a **governance policy** that balances analytics value with privacy and security.
+
+> [!note]- Answer
+> Classify raw as sensitive、restrict raw zone、encrypt+log、minimise retention、aggregate/coarsen location、pseudonymise、deletion workflows、re-identification review。
+
 
 ---

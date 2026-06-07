@@ -4,7 +4,8 @@
 
 | 文件 | 内容 |
 |------|------|
-| [COMP5339 26s1 Final Practice (W1-W12).md](./COMP5339%2026s1%20Final%20Practice%20(W1-W12).md) | Final Practice 全 9 页（W1–W12）；**W1–W4 含 Answer Key** |
-| [images/](./images/) | 题目扫描页 + Answer Key 扫描页 |
+| [COMP5339 26s1 Final Practice (W1-W12).md](./COMP5339%2026s1%20Final%20Practice%20(W1-W12).md) | Final Practice 全 9 页题目 + **W1–W12 完整 Answer Key** |
+| [inject_answers.py](./inject_answers.py) | 答案注入脚本（可重复运行，已注入的题会跳过） |
+| [images/](./images/) | 题目扫描页（page-01~09）+ 答案扫描页（answer-key-01~06） |
 
-**答案覆盖：** W1–W4 已注入 `> [!note]- Answer` 块；W5–W12 待补充。W4 Q7 扫描页截断，Q8–Q10 暂无答案。
+**备注：** W8 Q1 的 B–D 选项在题目扫描页中未完整显示，已按同类题补全干扰项。
